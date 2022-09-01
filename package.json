@@ -1,6 +1,6 @@
 {
     "name": "@pushcorn/postgresql",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "description": "The PostgreSQL module for nit.",
     "license": "ISC",
     "files": [
