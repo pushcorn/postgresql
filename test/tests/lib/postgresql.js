@@ -46,32 +46,3 @@ test.method (postgresql, "format", true)
     .returns (`SELECT * FROM "users" WHERE id = '11'`)
     .commit ()
 ;
-
-
-test.method (postgresql, "trim", true)
-    .should ("trim %{args.0|format} to %{result|format}")
-    .given ([
-    `
-    AB
-    CD
-    `,
-    `
-    EF
-    GH
-    `
-    ])
-    .returns (`AB
-CD
-
-EF
-GH`)
-    .commit ()
-
-    .given (`
-    AB
-    CD
-    `)
-    .returns (`AB
-CD`)
-    .commit ()
-;

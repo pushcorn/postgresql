@@ -11,7 +11,7 @@ test.method ("postgresql.Database", "select")
         .given ("users", { id: 1 })
         .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
         .returns ([{ id: 1, user: "john" }])
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
             FROM "users"
             WHERE "id" = '1'
@@ -22,9 +22,26 @@ test.method ("postgresql.Database", "select")
         .given ("users")
         .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
         .returns ([{ id: 1, user: "john" }])
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
             FROM "users"
+        `)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "find")
+    .before (Tasks.createClient)
+    .snapshot ()
+
+    .should ("return first the row that matches the criteria")
+        .given ("users", { id: 1 })
+        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .returns ({ id: 1, user: "john" })
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            SELECT *
+            FROM "users"
+            WHERE "id" = '1'
         `)
         .commit ()
 ;
@@ -38,7 +55,7 @@ test.method ("postgresql.Database", "update")
         .given ("users", { name: "John" }, { id: 1 })
         .before (Tasks.returnResult ({ rowCount: 1 }))
         .returns (1)
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             UPDATE "users"
             SET "name" = 'John'
             WHERE "id" = '1'
@@ -55,7 +72,7 @@ test.method ("postgresql.Database", "insert")
         .given ("users", { name: "John", id: 1 })
         .before (Tasks.returnResult ({ rowCount: 1 }))
         .returns (1)
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             INSERT INTO "users" ("name", "id")
             VALUES ('John', '1')
         `)
@@ -71,7 +88,7 @@ test.method ("postgresql.Database", "upsert")
         .given ("users", { name: "John"}, { id: 1 })
         .before (Tasks.returnResult ({ rowCount: 1 }))
         .returns (1)
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             INSERT INTO "users" ("name", "id")
             VALUES ('John', '1')
             ON CONFLICT ("id")
@@ -90,7 +107,7 @@ test.method ("postgresql.Database", "delete")
         .given ("users", { id: 1 })
         .before (Tasks.returnResult ({ rowCount: 1 }))
         .returns (1)
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
             WHERE "id" = '1'
         `)
@@ -99,7 +116,7 @@ test.method ("postgresql.Database", "delete")
     .given ("users")
         .before (Tasks.returnResult ({ rowCount: 3 }))
         .returns (3)
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
         `)
         .commit ()
@@ -114,7 +131,7 @@ test.method ("postgresql.Database", "query")
         .given ("SELECT * FROM users WHERE id = &1", 100)
         .before (Tasks.returnResult ({ rows: [] }))
         .returns ({ rows: [] })
-        .expectingPropertyToBe ("object.client.statement", postgresql.trim`
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT * FROM users WHERE id = '100'
         `)
         .commit ()
