@@ -1,6 +1,12 @@
 const postgresql = nit.require ("postgresql");
-const MockPgClient = nit.require ("postgresql.MockPgClient");
+
+const MockPgClient = nit
+    .require ("postgresql.MockPgClient")
+    .require ("postgresql.MockPgPool")
+;
+
 const { Tasks } = MockPgClient;
+
 
 
 test.method ("postgresql.Database", "select")
@@ -306,6 +312,14 @@ test.method ("postgresql.Database", "connect")
 ;
 
 
+test.method ("postgresql.Database", "connect", { createArgs: [{ pooling: true }] })
+    .should ("return the pooled client if pooling is enabled")
+        .returnsInstanceOf ("postgresql.Database")
+        .expectingPropertyToBeOfType ("object.client", "postgresql.MockPgPool.Client")
+        .commit ()
+;
+
+
 test.method ("postgresql.Database", "disconnect")
     .before (function ()
     {
@@ -332,5 +346,53 @@ test.method ("postgresql.Database", "disconnect")
             await this.object.disconnect ();
         })
         .returnsInstanceOf (postgresql.Database)
+        .commit ()
+
+    .should ("rollback the current transaction before disconnect")
+        .mock ("object", "rollback")
+        .before (async function ()
+        {
+            await this.object.begin ();
+        })
+        .returnsInstanceOf (postgresql.Database)
+        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "disconnect", { createArgs: [{ pooling: true }] })
+    .should ("issue DISCARD ALL before releasing the client to the pool")
+        .mock ("object.client", "query")
+        .before (async function ()
+        {
+            await this.object.connect ();
+        })
+        .returnsInstanceOf ("postgresql.Database")
+        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", "DISCARD ALL")
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "model")
+    .should ("return a subclass of the given model and set its db property to the current database")
+        .before (function ()
+        {
+            this.UserModel = nit.defineClass ("test.models.User", "postgresql.Model");
+        })
+        .given ("test:user")
+        .returnsInstanceOf (Function)
+        .expectingPropertyToBe ("result.name", "test.models.User")
+        .expecting ("the returned model is a subclass of the given model", true, function (strategy)
+        {
+            return nit.is.subclassOf (strategy.result, strategy.UserModel);
+        })
+        .expecting ("the returned model is a local one", false, function (strategy)
+        {
+            return strategy.result == strategy.UserModel;
+        })
+        .expecting ("the model's db is set to the current database", true, function (strategy)
+        {
+            return strategy.object == strategy.result.db;
+        })
         .commit ()
 ;

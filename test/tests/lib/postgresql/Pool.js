@@ -3,9 +3,8 @@ nit.require ("postgresql.MockPgPool");
 
 test.method ("postgresql.Pool", "connect")
     .should ("create the pool and connect to the database")
-    .returnsInstanceOf ("postgresql.Database")
+    .returnsInstanceOf ("postgresql.MockPgPool.Client")
     .expectingPropertyToBeOfType ("object.pool", "postgresql.MockPgPool")
-    .expectingPropertyToBeOfType ("result.client", "postgresql.MockPgPool.Client")
     .expectingPropertyToBe ("object.stats",
     {
         totalCount: 1,
@@ -16,11 +15,11 @@ test.method ("postgresql.Pool", "connect")
 ;
 
 
-test.method ("postgresql.Pool", "disconnect")
+test.method ("postgresql.Pool", "end")
     .should ("release all clients and disconnect from the database")
-    .before (function ()
+    .before (async function ()
     {
-        return this.object.connect ();
+        await this.object.connect ();
     })
     .returnsInstanceOf ("postgresql.Pool")
     .expectingPropertyToBe ("object.pool._clients.length", 0)

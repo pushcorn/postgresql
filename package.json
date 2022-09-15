@@ -10,7 +10,7 @@
         "resources/**"
     ],
     "peerDependencies": {
-        "@pushcorn/nit": "github:pushcorn/nit#semver:^0.9.36"
+        "@pushcorn/nit": "github:pushcorn/nit#semver:^0.9.39"
     },
     "dependencies": {
         "pg": "8.8.0"
