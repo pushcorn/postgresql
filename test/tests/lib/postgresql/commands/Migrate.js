@@ -67,7 +67,7 @@ test.command ("postgresql.commands.Migrate")
         })
         .mock (Migration.table, "exists", true)
         .mock ("object", "log")
-        .mock ("context.input.dir", "read", [])
+        .mock ("context.input.dir", "read", () => [])
         .before (async function ()
         {
             this.context.input.yes = true;
