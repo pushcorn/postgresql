@@ -17,13 +17,12 @@ test.method ("postgresql.constraints.Unique", "validate", { createArgs: ["email"
             model: this.model,
             constraint: this.object,
             field: User.getField ("email"),
-            value: this.args[0]
+            value: "joe@example.com"
         }));
     })
     .snapshot ()
 
     .should ("check if the value of the specified field is unique")
-        .given ("joe@example.com")
         .mock (MockPgClient.prototype, "query", function ()
         {
             return { rows: [] };
@@ -32,7 +31,6 @@ test.method ("postgresql.constraints.Unique", "validate", { createArgs: ["email"
         .commit ()
 
     .should ("throw if the field value is not unique")
-        .given ("joe@example.com")
         .mock (MockPgClient.prototype, "query", function ()
         {
             return { rows: [{ id: 5678 }] };
@@ -51,10 +49,10 @@ test.method ("postgresql.constraints.Unique", "validate", { createArgs: ["id", "
             {
                 model: this.model,
                 constraint: this.object,
-                field: User.getField ("email")
+                field: User.getField ("email"),
+                value: "joe@example.com"
             }));
         })
-        .given ("joe@example.com")
         .mock (MockPgClient.prototype, "query", function ()
         {
             return { rows: [{ id: 1234 }] };
@@ -73,10 +71,10 @@ test.method ("postgresql.constraints.Unique", "validate")
             {
                 model: this.model,
                 constraint: this.object,
-                field: User.getField ("email")
+                field: User.getField ("email"),
+                value: "joe@example.com"
             }));
         })
-        .given ("joe@example.com")
         .mock (MockPgClient.prototype, "query", function ()
         {
             return { rows: [] };
