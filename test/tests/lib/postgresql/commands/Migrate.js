@@ -15,10 +15,10 @@ test.command ("postgresql.commands.Migrate")
             };
         })
         .mock (Migration.table, "exists", true)
-        .mock ("object", "log")
+        .mock ("object", "info")
         .before (async function ()
         {
-            await CreateMigration.run ("create-users-table", { yes: true });
+            await CreateMigration ().run ("create-users-table", { yes: true });
 
             let { dir } = this.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
@@ -51,7 +51,7 @@ test.command ("postgresql.commands.Migrate")
         .mock ("object", "confirm", false)
         .before (async function ()
         {
-            await CreateMigration.run ("create-users-table", { yes: true });
+            await CreateMigration ().run ("create-users-table", { yes: true });
         })
         .commit ()
 
@@ -66,7 +66,7 @@ test.command ("postgresql.commands.Migrate")
             };
         })
         .mock (Migration.table, "exists", true)
-        .mock ("object", "log")
+        .mock ("object", "info")
         .mock ("context.input.dir", "read", () => [])
         .before (async function ()
         {

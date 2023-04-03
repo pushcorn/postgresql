@@ -19,7 +19,7 @@ test.command ("postgresql.commands.RollbackMigration")
                 rows: []
             };
         })
-        .mock ("object", "log")
+        .mock ("object", "info")
         .expectingPropertyToBe ("mocks.2.invocations.0.args.0", "info.no_rollback_need")
         .commit ()
 
@@ -41,10 +41,10 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .mock ("object", "log")
+        .mock ("object", "info")
         .before (async function ()
         {
-            await CreateMigration.run ("create-users-table", { yes: true });
+            await CreateMigration ().run ("create-users-table", { yes: true });
 
             let { dir } = this.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
@@ -79,11 +79,11 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .mock ("object", "log")
+        .mock ("object", "info")
         .before (async function ()
         {
-            await CreateMigration.run ("create-users-table", { yes: true });
-            await CreateMigration.run ("create-groups-table", { yes: true });
+            await CreateMigration ().run ("create-users-table", { yes: true });
+            await CreateMigration ().run ("create-groups-table", { yes: true });
 
             let { dir } = this.context.input;
 
@@ -120,7 +120,7 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .mock ("object", "log")
+        .mock ("object", "info")
         .mock ("object", "confirm", false)
         .commit ()
 ;

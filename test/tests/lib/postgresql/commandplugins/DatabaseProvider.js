@@ -3,7 +3,7 @@ nit.require ("postgresql.MockPgClient");
 
 nit.defineCommand ("DbCommand")
     .plugin ("postgresql.commandplugins.DatabaseProvider")
-    .method ("run", function (ctx)
+    .run (function (ctx)
     {
         ctx.hasDb = !!ctx.db;
         ctx.lastStatement = ctx.db.client.statement;
@@ -18,7 +18,7 @@ nit.defineCommand ("DbCommand")
 
 nit.defineCommand ("DbNoTxCommand")
     .plugin ("postgresql.commandplugins.DatabaseProvider", "mydb", false)
-    .method ("run", function (ctx)
+    .run (function (ctx)
     {
         ctx.hasDb = !!ctx.mydb;
         ctx.lastStatement = ctx.mydb.client.statement;
