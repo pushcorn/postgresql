@@ -144,6 +144,29 @@ test.method ("postgresql.Database", "query")
 ;
 
 
+test.method ("postgresql.Database", "fetch")
+    .before (Tasks.createClient)
+    .snapshot ()
+
+    .should ("return the rows for the given statement")
+        .given ("SELECT * FROM users WHERE enabled = &1", true)
+        .before (Tasks.returnResult ({ rows:
+        [
+            { id: 1, name: "John", enabled: true },
+            { id: 2, name: "Jane", enabled: true }
+        ]}))
+        .returns (
+        [
+            { id: 1, name: "John", enabled: true },
+            { id: 2, name: "Jane", enabled: true }
+        ])
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            SELECT * FROM users WHERE enabled = 'true'
+        `)
+        .commit ()
+;
+
+
 test.method ("postgresql.Database", "begin")
     .before (Tasks.createClient)
     .snapshot ()
