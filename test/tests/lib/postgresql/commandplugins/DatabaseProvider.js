@@ -2,7 +2,7 @@ nit.require ("postgresql.MockPgClient");
 
 
 nit.defineCommand ("DbCommand")
-    .plugin ("postgresql.commandplugins.DatabaseProvider")
+    .commandplugin ("postgresql:database-provider")
     .run (function (ctx)
     {
         ctx.hasDb = !!ctx.db;
@@ -17,7 +17,7 @@ nit.defineCommand ("DbCommand")
 ;
 
 nit.defineCommand ("DbNoTxCommand")
-    .plugin ("postgresql.commandplugins.DatabaseProvider", "mydb", false)
+    .commandplugin ("postgresql:database-provider", "mydb", false)
     .run (function (ctx)
     {
         ctx.hasDb = !!ctx.mydb;
@@ -28,9 +28,9 @@ nit.defineCommand ("DbNoTxCommand")
 ;
 
 test.object ("postgresql.commandplugins.DatabaseProvider")
-    .should ("be an instance of nit.Command.Plugin")
+    .should ("be an instance of nit.Command.CommandPlugin")
     .given ("mydb")
-    .returnsInstanceOf (nit.Command.Plugin)
+    .returnsInstanceOf (nit.Command.CommandPlugin)
     .expectingPropertyToBe ("result.property", "mydb")
     .commit ()
 ;
