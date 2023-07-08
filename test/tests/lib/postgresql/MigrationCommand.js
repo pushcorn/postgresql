@@ -1,5 +1,5 @@
 const postgresql = nit.require ("postgresql");
-const MockPgClient = nit.require ("postgresql.MockPgClient");
+const MockPgClient = nit.require ("postgresql.mocks.PgClient");
 
 nit.require ("postgresql.MigrationCommand");
 
@@ -17,7 +17,7 @@ test.object ("postgresql.MigrationCommand.Context")
             ;
         })
         .mock (postgresql.Migration.table, "exists", true)
-        .expectingMethodToReturnValue ("result.getMigratedScripts", ["a.js", "b.js"])
+        .expectingMethodToReturnValue ("result.getMigratedScripts", null, ["a.js", "b.js"])
         .commit ()
 
     .given ({ db: nit.new ("postgresql.Database") })
@@ -39,6 +39,6 @@ test.object ("postgresql.MigrationCommand.Context")
                 return ["a.js", "b.js"];
             };
         })
-        .expectingMethodToReturnValue ("result.getUnmigratedScripts", ["b.js"])
+        .expectingMethodToReturnValue ("result.getUnmigratedScripts", null, ["b.js"])
         .commit ()
 ;

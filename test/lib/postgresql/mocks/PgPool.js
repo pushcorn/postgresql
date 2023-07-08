@@ -1,11 +1,11 @@
 module.exports = function (nit, postgresql, Self)
 {
-    return (Self = nit.test.defineMock ("postgresql.MockPgPool"))
+    return (Self = nit.test.defineMock ("postgresql.mocks.PgPool"))
         .do (function ()
         {
             postgresql.pg.Pool = Self;
         })
-        .defineInnerClass ("Client", "postgresql.MockPgClient", Client =>
+        .defineInnerClass ("Client", "postgresql.mocks.PgClient", Client =>
         {
             Client
                 .field ("onRelease", "function", "On release callback.")
@@ -18,7 +18,7 @@ module.exports = function (nit, postgresql, Self)
         .field ("totalCount", "integer")
         .field ("waitingCount", "integer")
         .field ("idleCount", "integer")
-        .field ("_clients...", "postgresql.MockPgPool.Client")
+        .field ("_clients...", "postgresql.mocks.PgPool.Client")
 
         .method ("connect", function ()
         {

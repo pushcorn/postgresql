@@ -1,8 +1,7 @@
 const Migration = nit.require ("postgresql.Migration");
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
-nit.require ("postgresql.MockPgClient");
-
+nit.require ("postgresql.mocks.PgClient");
 
 
 test.command ("postgresql.commands.RollbackMigration")
@@ -48,8 +47,8 @@ test.command ("postgresql.commands.RollbackMigration")
 
             let { dir } = this.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
-            let content = file.read ().replace (/\.down[^}]+\{[^}]+\}\)/s, nit.trim.text`
-            .down (function (db)
+            let content = file.read ().replace (/\.onDown[^}]+\{[^}]+\}\)/s, nit.trim.text`
+            .onDown (function (db)
             {
                 db.downCalled = true;
             })`);
@@ -90,8 +89,8 @@ test.command ("postgresql.commands.RollbackMigration")
             dir.read ().forEach (name =>
             {
                 let file = nit.File (dir.join (name));
-                let content = file.read ().replace (/\.down[^}]+\{[^}]+\}\)/s, nit.trim.text`
-                .down (function (db)
+                let content = file.read ().replace (/\.onDown[^}]+\{[^}]+\}\)/s, nit.trim.text`
+                .onDown (function (db)
                 {
                     db.downCalled = ~~db.downCalled + 1;
                 })`);

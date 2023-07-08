@@ -1,0 +1,405 @@
+{
+    "expects": [
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "INSERT INTO \"users\" (\"id\", \"name\")\nVALUES ('123', 'John Doe')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "DELETE FROM \"users\"\nWHERE \"id\" = '123'",
+            "result": {
+                "command": "DELETE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"countries\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"capitals\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    \"country_id\" INTEGER NOT NULL DEFAULT 0,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"capitals\"\nADD CONSTRAINT \"capitals_country_id_fk\" FOREIGN KEY (\"country_id\")\nREFERENCES \"countries\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"capitals\"\nADD CONSTRAINT \"capitals_country_id_uk\" UNIQUE (\"country_id\")",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'USA' AND \"id\" <> '1234'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"capitals\" (\"id\", \"name\", \"country_id\")\nVALUES ('222', 'Washington D.C.', '1234')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"id\" = '1234'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'USA'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'USA' AND \"id\" <> '1234'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"countries\" (\"id\", \"name\")\nVALUES ('1234', 'USA')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "DELETE FROM \"capitals\"\nWHERE \"id\" = '222'",
+            "result": {
+                "command": "DELETE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "DELETE FROM \"countries\"\nWHERE \"id\" = '1234'",
+            "result": {
+                "command": "DELETE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"capitals\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "country_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"countries\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        }
+    ]
+}

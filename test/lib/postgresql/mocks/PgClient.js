@@ -1,12 +1,13 @@
 module.exports = function (nit, postgresql, Self)
 {
-    return (Self = nit.test.defineMock ("postgresql.MockPgClient"))
+    return (Self = nit.test.defineMock ("postgresql.mocks.PgClient"))
         .do (function ()
         {
             postgresql.pg.Client = Self;
         })
-        .field ("result", "object", "The results to return.")
+        .field ("result", "object?", "The results to return.")
         .field ("statement", "string", "The last statement.")
+        .property ("statements...", "string")
 
         .defineInnerClass ("Tasks", Tasks =>
         {
@@ -26,14 +27,6 @@ module.exports = function (nit, postgresql, Self)
             ;
         })
 
-        .method ("escapeIdentifier", function (v)
-        {
-            return `"${v}"`;
-        })
-        .method ("escapeLiteral", function (v)
-        {
-            return `'${v}'`;
-        })
         .method ("connect", function ()
         {
         })
@@ -42,9 +35,15 @@ module.exports = function (nit, postgresql, Self)
         })
         .method ("query", function (statement)
         {
-            this.statement = statement;
+            this.statement = nit.trim (statement);
+            this.statements.push (this.statement);
 
-            return this.result;
+            return this.result || {
+                command: statement.split (/\s/)[0],
+                rows: [],
+                rowCount: 0,
+                fields: []
+            };
         })
     ;
 };

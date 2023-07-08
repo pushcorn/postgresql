@@ -1,4 +1,4 @@
-const MockPgClient = nit.require ("postgresql.MockPgClient");
+const MockPgClient = nit.require ("postgresql.mocks.PgClient");
 
 
 test.command ("postgresql.commands.Query")
@@ -10,7 +10,7 @@ test.command ("postgresql.commands.Query")
 
         return this.result = { command: "SELECT", rows: [{ id: 3 }, { id: 4 }] };
     })
-    .mock (nit, "log")
+    .mock (nit, "inspect")
     .expectingPropertyToBe ("mocks.0.invocations.0.args.0", `SELECT * FROM "users" WHERE id = '1'`)
     .expectingPropertyToBe ("mocks.1.invocations.length", 2)
     .expectingPropertyToBe ("mocks.1.invocations.0.args.0", { id: 3 })
@@ -25,7 +25,7 @@ test.command ("postgresql.commands.Query")
 
         return this.result = { command: "UPDATE", rowCount: 1 };
     })
-    .mock (nit, "log")
+    .mock (nit, "inspect")
     .expectingPropertyToBe ("mocks.0.invocations.0.args.0", `UPDATE "users" SET name = 'John' WHERE id = '1'`)
     .expectingPropertyToBe ("mocks.1.invocations.length", 1)
     .expectingPropertyToBe ("mocks.1.invocations.0.args.0", "UPDATE")

@@ -1,0 +1,955 @@
+{
+    "expects": [
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"users\" (\"id\", \"name\")\nVALUES ('123', 'John Doe')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '123'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "Jane Doe"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"email\")\nVALUES ('123', 'John Doe', 'jd@exp.com')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"email\" = 'jd@exp.com'\nWHERE \"id\" = '123'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "Jane Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"email\")\nVALUES ('123', 'John Doe', 'jd@exp.com')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"email\" = 'jd@exp.com'\nWHERE \"id\" = '123'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "Jane Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '456'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"email\")\nVALUES ('456', 'John Doe', 'jd@exp.com')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 456,
+                        "name": "John Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '456'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 456,
+                        "name": "John Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"email\" = 'jd@exp.com'\nWHERE \"id\" = '456'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 456,
+                        "name": "Jane Doe",
+                        "email": "jd@exp.com"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "email",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        }
+    ]
+}

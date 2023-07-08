@@ -1,8 +1,8 @@
 const postgresql = nit.require ("postgresql");
 
 const MockPgClient = nit
-    .require ("postgresql.MockPgClient")
-    .require ("postgresql.MockPgPool")
+    .require ("postgresql.mocks.PgClient")
+    .require ("postgresql.mocks.PgPool")
 ;
 
 const { Tasks } = MockPgClient;
@@ -14,13 +14,14 @@ test.method ("postgresql.Database", "select")
     .snapshot ()
 
     .should ("select the rows from the database")
-        .given ("users", { id: 1 })
+        .given ("users", { id: 1 }, "LIMIT 1")
         .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
         .returns ([{ id: 1, user: "john" }])
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
             FROM "users"
             WHERE "id" = '1'
+            LIMIT 1
         `)
         .commit ()
 
@@ -31,6 +32,21 @@ test.method ("postgresql.Database", "select")
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
             FROM "users"
+        `)
+        .commit ()
+
+    .should ("use the Query object if provided")
+        .given (
+            nit.new ("postgresql.queries.Select")
+                .$from ("users")
+                .$where ("id", 1)
+        )
+        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .returns ([{ id: 1, user: "john" }])
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            SELECT *
+            FROM "users"
+            WHERE "id" = '1'
         `)
         .commit ()
 ;
@@ -48,6 +64,7 @@ test.method ("postgresql.Database", "find")
             SELECT *
             FROM "users"
             WHERE "id" = '1'
+            LIMIT 1
         `)
         .commit ()
 ;
@@ -59,6 +76,22 @@ test.method ("postgresql.Database", "update")
 
     .should ("execute the update statement")
         .given ("users", { name: "John" }, { id: 1 })
+        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .returns (1)
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            UPDATE "users"
+            SET "name" = 'John'
+            WHERE "id" = '1'
+        `)
+        .commit ()
+
+    .should ("use the Query object if provided")
+        .given (
+            nit.new ("postgresql.queries.Update")
+                .$table ("users")
+                .$set ("name", "John")
+                .$where ("id", 1)
+        )
         .before (Tasks.returnResult ({ rowCount: 1 }))
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
@@ -83,6 +116,21 @@ test.method ("postgresql.Database", "insert")
             VALUES ('John', '1')
         `)
         .commit ()
+
+    .should ("use the Query object if provided")
+        .given (
+            nit.new ("postgresql.queries.Insert")
+                .$table ("users")
+                .$value ("name", "John")
+                .$value ("id", 1)
+        )
+        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .returns (1)
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            INSERT INTO "users" ("name", "id")
+            VALUES ('John', '1')
+        `)
+        .commit ()
 ;
 
 
@@ -99,7 +147,25 @@ test.method ("postgresql.Database", "upsert")
             VALUES ('John', '1')
             ON CONFLICT ("id")
             DO UPDATE
-            SET "name" = 'John'
+              SET "name" = EXCLUDED."name"
+        `)
+        .commit ()
+
+    .should ("use the Query object if provided")
+        .given (
+            nit.new ("postgresql.queries.Insert")
+                .$table ("users")
+                .$value ("name", "John")
+                .$conflictBy ("id", 1)
+        )
+        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .returns (1)
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            INSERT INTO "users" ("name", "id")
+            VALUES ('John', '1')
+            ON CONFLICT ("id")
+            DO UPDATE
+              SET "name" = EXCLUDED."name"
         `)
         .commit ()
 ;
@@ -126,6 +192,20 @@ test.method ("postgresql.Database", "delete")
             DELETE FROM "users"
         `)
         .commit ()
+
+    .should ("use the Query object if provided")
+        .given (
+            nit.new ("postgresql.queries.Delete")
+                .$table ("users")
+                .$where ("id", 1)
+        )
+        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .returns (1)
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            DELETE FROM "users"
+            WHERE "id" = '1'
+        `)
+        .commit ()
 ;
 
 
@@ -141,10 +221,25 @@ test.method ("postgresql.Database", "query")
             SELECT * FROM users WHERE id = '100'
         `)
         .commit ()
+
+    .should ("use the Query object if provided")
+        .given (
+            nit.new ("postgresql.queries.Select")
+                .$from ("users")
+                .$where ("id", 1)
+        )
+        .before (Tasks.returnResult ({ rows: [] }))
+        .returns ({ rows: [] })
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            SELECT *
+            FROM "users"
+            WHERE "id" = '1'
+        `)
+        .commit ()
 ;
 
 
-test.method ("postgresql.Database", "fetch")
+test.method ("postgresql.Database", "fetchAll")
     .before (Tasks.createClient)
     .snapshot ()
 
@@ -163,6 +258,37 @@ test.method ("postgresql.Database", "fetch")
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT * FROM users WHERE enabled = 'true'
         `)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "fetch")
+    .before (Tasks.createClient)
+    .snapshot ()
+
+    .should ("return a single row for the given statement")
+        .given ("SELECT * FROM users WHERE enabled = &1", true)
+        .before (Tasks.returnResult ({ rows:
+        [
+            { id: 1, name: "John", enabled: true },
+            { id: 2, name: "Jane", enabled: true }
+        ]}))
+        .returns ({ id: 1, name: "John", enabled: true })
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            SELECT * FROM users WHERE enabled = 'true'
+        `)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "value")
+    .before (Tasks.createClient)
+    .snapshot ()
+
+    .should ("return the value for the first column of the first row")
+        .given ("SELECT name FROM users WHERE enabled = &1", true)
+        .before (Tasks.returnResult ({ rows: [{ name: "John" }]}))
+        .returns ("John")
         .commit ()
 ;
 
@@ -281,7 +407,7 @@ test.method ("postgresql.Database", "transact")
         {
             throw new Error ("Unexpected!");
         })
-        .throws ("Unexpected!")
+        .throws ("error.database_error")
         .expectingPropertyToBe ("object.client.query.invocations.0.args.0", "BEGIN")
         .expectingPropertyToBe ("object.client.query.invocations.1.args.0", "ROLLBACK")
         .commit ()
@@ -307,8 +433,21 @@ test.method ("postgresql.Database", "execute")
         {
             throw new Error ("Invalid syntax!");
         })
-        .throws ("error.query_failed")
-        .expectingPropertyToBe ("error.message", "Invalid syntax!")
+        .throws ("error.database_error")
+        .expectingPropertyToBe ("error.message", "Database error: Invalid syntax!")
+        .commit ()
+
+    .should ("parse the value of an array column")
+        .given ("SELECT * FROM users")
+        .mock ("object.client", "query", function ()
+        {
+            return {
+                rows: [{ username: "johndoe", aliases: [JSON.stringify ({ n: "jd1" }), JSON.stringify ({ n: "jd2" })] }]
+            };
+        })
+        .returns ({
+            rows: [{ username: "johndoe", aliases: [{ n: "jd1" }, { n: "jd2" }] }]
+        })
         .commit ()
 ;
 
@@ -338,7 +477,7 @@ test.method ("postgresql.Database", "connect")
 test.method ("postgresql.Database", "connect", { createArgs: [{ pooling: true }] })
     .should ("return the pooled client if pooling is enabled")
         .returnsInstanceOf ("postgresql.Database")
-        .expectingPropertyToBeOfType ("object.client", "postgresql.MockPgPool.Client")
+        .expectingPropertyToBeOfType ("object.client", "postgresql.mocks.PgPool.Client")
         .commit ()
 ;
 
@@ -396,26 +535,103 @@ test.method ("postgresql.Database", "disconnect", { createArgs: [{ pooling: true
 ;
 
 
-test.method ("postgresql.Database", "model")
-    .should ("return a subclass of the given model and set its db property to the current database")
-        .before (function ()
+test.method ("postgresql.Database.Registry", "lookup")
+    .should ("return the model class from the cached registry")
+        .up (s => s.createArgs = new postgresql.Database)
+        .before (() =>
         {
-            this.UserModel = nit.defineClass ("test.models.User", "postgresql.Model");
+            postgresql.defineModel ("test.models.Country")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                    .constraint ("postgresql:unique")
+            ;
         })
-        .given ("test:user")
-        .returnsInstanceOf (Function)
-        .expectingPropertyToBe ("result.name", "test.models.User")
-        .expecting ("the returned model is a subclass of the given model", true, function (strategy)
+        .given ("test.models.Country")
+        .returnsInstanceOf ("function")
+        .expectingPropertyToBe ("result.name", "test.models.Country")
+        .expectingPropertyToBeOfType ("result.db", "postgresql.Database")
+        .commit ()
+;
+
+
+test.object (postgresql.Database)
+    .should ("have a shared property that provides a global database instance")
+        .expectingPropertyToBeOfType ("result.shared", "postgresql.Database")
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "info")
+    .should ("log the info message to the console")
+        .given ("This is a test.")
+        .mock (nit, "log")
+        .expectingPropertyToBe ("mocks.0.invocations.0.args", /\[INFO].*this is a test/i)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "debug")
+    .should ("log the debug message to the console")
+        .given ("This is a debug message.")
+        .before (s =>
         {
-            return nit.is.subclassOf (strategy.result, strategy.UserModel);
+            s.patterns = nit.debug.PATTERNS.slice ();
+
+            nit.debug ("postgresql.Database");
         })
-        .expecting ("the returned model is a local one", false, function (strategy)
+        .after (s => nit.debug.PATTERNS = s.patterns)
+        .mock (nit, "log")
+        .expectingPropertyToBe ("mocks.0.invocations.0.args", /\[DEBUG].*\(postgresql.Database.*\).*this is a debug/i)
+        .expectingPropertyToBe ("object.logColor", /^[a-z]+$/)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "createTables")
+    .should ("create tables for the given model classes")
+        .before ((s) =>
         {
-            return strategy.result == strategy.UserModel;
+            postgresql.defineModel ("test.models.Capital")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                    .constraint ("postgresql:unique")
+                .field ("<country>", "test.models.Country")
+            ;
+
+            s.args.push (nit.lookupClass ("test.models.Country"));
         })
-        .expecting ("the model's db is set to the current database", true, function (strategy)
-        {
-            return strategy.object == strategy.result.db;
-        })
+        .given ("test.models.Capital")
+        .spy ("object", "execute")
+        .expectingPropertyToBe ("spies.0.invocations.0.args.0", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "countries"
+            (
+                "id" TEXT NOT NULL,
+                "name" TEXT NOT NULL,
+                PRIMARY KEY ("id"),
+                UNIQUE ("name")
+            )
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.1.args.0", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "capitals"
+            (
+                "id" TEXT NOT NULL,
+                "name" TEXT NOT NULL,
+                "country_id" TEXT NOT NULL,
+                PRIMARY KEY ("id"),
+                UNIQUE ("name")
+            )
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.2.args.0", nit.trim.text`
+            ALTER TABLE "capitals"
+            ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
+            REFERENCES "countries" ("id")
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+            INITIALLY DEFERRED
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.3.args.0", nit.trim.text`
+            ALTER TABLE "capitals"
+            ADD CONSTRAINT "capitals_country_id_uk" UNIQUE ("country_id")
+        `)
         .commit ()
 ;

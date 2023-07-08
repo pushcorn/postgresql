@@ -1,0 +1,214 @@
+{
+    "expects": [
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"products\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"tags\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"productTagsTagProductsLinks\"\n(\n    \"product_id\" INTEGER NOT NULL,\n    \"tag_id\" INTEGER NOT NULL,\n    PRIMARY KEY (\"product_id\", \"tag_id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"productTagsTagProductsLinks\"\nADD CONSTRAINT \"productTagsTagProductsLinks_product_id_fk\" FOREIGN KEY (\"product_id\")\nREFERENCES \"products\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"productTagsTagProductsLinks\"\nADD CONSTRAINT \"productTagsTagProductsLinks_tag_id_fk\" FOREIGN KEY (\"tag_id\")\nREFERENCES \"tags\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_productTagsTagProductsLinks_tag_id\"\nON \"productTagsTagProductsLinks\" (\"tag_id\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'products'",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "tablename": "products"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'tags'",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "tablename": "tags"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'productTagsTagProductsLinks'",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "tablename": "productTagsTagProductsLinks"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "DROP TABLE IF EXISTS \"products\" CASCADE",
+            "result": {
+                "command": "DROP",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "DROP TABLE IF EXISTS \"productTagsTagProductsLinks\" CASCADE",
+            "result": {
+                "command": "DROP",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "DROP TABLE IF EXISTS \"tags\" CASCADE",
+            "result": {
+                "command": "DROP",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'products'",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'tags'",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'productTagsTagProductsLinks'",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-const MockPgClient = nit.require ("postgresql.MockPgClient");
+const MockPgClient = nit.require ("postgresql.mocks.PgClient");
 const Migration = nit.require ("postgresql.Migration");
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
@@ -22,8 +22,8 @@ test.command ("postgresql.commands.Migrate")
 
             let { dir } = this.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
-            let content = file.read ().replace (/\.up[^}]+\{[^}]+\}\)/s, nit.trim.text`
-            .up (function (db)
+            let content = file.read ().replace (/\.onUp[^}]+\{[^}]+\}\)/s, nit.trim.text`
+            .onUp (function (db)
             {
                 db.upCalled = true;
             })`);

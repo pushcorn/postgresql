@@ -1,12 +1,13 @@
-nit.require ("postgresql.MockPgClient");
+nit.require ("postgresql.mocks.PgClient");
 
 const Command = nit.require ("postgresql.Command");
 const Context = Command.Context;
 
+
 test.function (Context)
     .should ("provide a database connection")
     .expectingPropertyToBeOfType ("result.db", "postgresql.Database")
-    .expectingPropertyToBeOfType ("result.db.client", "postgresql.MockPgClient")
+    .expectingPropertyToBeOfType ("result.db.client", "postgresql.mocks.PgClient")
     .commit ()
 
     .should ("not create a database connection if one is provided")

@@ -1,10 +1,10 @@
-nit.require ("postgresql.MockPgPool");
+nit.require ("postgresql.mocks.PgPool");
 
 
 test.method ("postgresql.Pool", "connect")
     .should ("create the pool and connect to the database")
-    .returnsInstanceOf ("postgresql.MockPgPool.Client")
-    .expectingPropertyToBeOfType ("object.pool", "postgresql.MockPgPool")
+    .returnsInstanceOf ("postgresql.mocks.PgPool.Client")
+    .expectingPropertyToBeOfType ("object.pool", "postgresql.mocks.PgPool")
     .expectingPropertyToBe ("object.stats",
     {
         totalCount: 1,

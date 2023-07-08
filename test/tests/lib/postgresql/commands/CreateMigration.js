@@ -1,4 +1,4 @@
-nit.require ("postgresql.MockPgClient");
+nit.require ("postgresql.mocks.PgClient");
 
 
 test.command ("postgresql.commands.CreateMigration")

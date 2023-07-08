@@ -1,0 +1,1336 @@
+{
+    "expects": [
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "INSERT INTO \"users\" (\"id\", \"name\")\nVALUES ('123', 'John Doe')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"users\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "John Doe"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"capitals\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"name\" TEXT NOT NULL,\n    \"stats\" TEXT[],\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT UUID_GENERATE_V4 ()",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "uuid_generate_v4": "aa69a37c-811a-4537-b3da-88b7af70be1c"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "uuid_generate_v4",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"capitals\" (\"id\", \"name\", \"stats\")\nVALUES ('aa69a37c-811a-4537-b3da-88b7af70be1c', 'Taipei', E'{\"{\\\\\"year\\\\\":2000,\\\\\"population\\\\\":123,\\\\\"airports\\\\\":2}\",\"{\\\\\"year\\\\\":2010,\\\\\"population\\\\\":456,\\\\\"airports\\\\\":3}\"}')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"capitals\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": "aa69a37c-811a-4537-b3da-88b7af70be1c",
+                        "name": "Taipei",
+                        "stats": [
+                            {
+                                "year": 2000,
+                                "population": 123,
+                                "airports": 2
+                            },
+                            {
+                                "year": 2010,
+                                "population": 456,
+                                "airports": 3
+                            }
+                        ]
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "stats",
+                        "dataTypeID": 1009,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"capitals\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"name\" TEXT NOT NULL,\n    \"stats\" JSONB[],\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT UUID_GENERATE_V4 ()",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "uuid_generate_v4": "aa69a37c-811a-4537-b3da-88b7af70be1c"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "uuid_generate_v4",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"capitals\" (\"id\", \"name\", \"stats\")\nVALUES ('aa69a37c-811a-4537-b3da-88b7af70be1c', 'Tokyo', E'{\"{\\\\\"year\\\\\":2000,\\\\\"population\\\\\":123,\\\\\"airports\\\\\":2}\",\"{\\\\\"year\\\\\":2010,\\\\\"population\\\\\":456,\\\\\"airports\\\\\":3}\"}')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"capitals\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": "aa69a37c-811a-4537-b3da-88b7af70be1c",
+                        "name": "Tokyo",
+                        "stats": [
+                            {
+                                "year": 2000,
+                                "airports": 2,
+                                "population": 123
+                            },
+                            {
+                                "year": 2010,
+                                "airports": 3,
+                                "population": 456
+                            }
+                        ]
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "stats",
+                        "dataTypeID": 3807,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"books\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    \"tags\" TEXT[],\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "INSERT INTO \"books\" (\"id\", \"name\", \"tags\")\nVALUES ('10', 'Learn JavaScript', '{\"a\",\"b\"}')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"books\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 10,
+                        "name": "Learn JavaScript",
+                        "tags": [
+                            "a",
+                            "b"
+                        ]
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tags",
+                        "dataTypeID": 1009,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"products\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"tags\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"productTagsTagProductsLinks\"\n(\n    \"product_id\" INTEGER NOT NULL,\n    \"tag_id\" INTEGER NOT NULL,\n    PRIMARY KEY (\"product_id\", \"tag_id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"productTagsTagProductsLinks\"\nADD CONSTRAINT \"productTagsTagProductsLinks_product_id_fk\" FOREIGN KEY (\"product_id\")\nREFERENCES \"products\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"productTagsTagProductsLinks\"\nADD CONSTRAINT \"productTagsTagProductsLinks_tag_id_fk\" FOREIGN KEY (\"tag_id\")\nREFERENCES \"tags\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_productTagsTagProductsLinks_tag_id\"\nON \"productTagsTagProductsLinks\" (\"tag_id\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'b' AND \"id\" <> '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"products\" (\"id\", \"name\")\nVALUES ('10', 'Notebook')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"id\" = '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"tags\" (\"id\", \"name\")\nVALUES ('2', 'a')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"productTagsTagProductsLinks\"\nWHERE \"product_id\" = '10' AND \"tag_id\" = '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "product_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tag_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'b' AND \"id\" <> '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"productTagsTagProductsLinks\" (\"product_id\", \"tag_id\")\nVALUES ('10', '2')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"id\" = '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'b'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'b' AND \"id\" <> '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"tags\" (\"id\", \"name\")\nVALUES ('3', 'b')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"productTagsTagProductsLinks\"\nWHERE \"product_id\" = '10' AND \"tag_id\" = '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "product_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tag_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'b' AND \"id\" <> '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'b' AND \"id\" <> '3'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"productTagsTagProductsLinks\" (\"product_id\", \"tag_id\")\nVALUES ('10', '3')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"products\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 10,
+                        "name": "Notebook"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 2,
+                        "name": "a"
+                    },
+                    {
+                        "id": 3,
+                        "name": "b"
+                    }
+                ],
+                "rowCount": 2,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"productTagsTagProductsLinks\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "product_id": 10,
+                        "tag_id": 2
+                    },
+                    {
+                        "product_id": 10,
+                        "tag_id": 3
+                    }
+                ],
+                "rowCount": 2,
+                "fields": [
+                    {
+                        "name": "product_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tag_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"products\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"tag_id\" INTEGER,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"tags\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"products\"\nADD CONSTRAINT \"products_tag_id_fk\" FOREIGN KEY (\"tag_id\")\nREFERENCES \"tags\" (\"id\")\nON DELETE SET NULL\nON UPDATE SET NULL\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_products_tag_id\"\nON \"products\" (\"tag_id\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"products\" (\"id\", \"name\", \"tag_id\")\nVALUES ('10', 'Notebook', '2')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"id\" = '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"\nWHERE \"name\" = 'a' AND \"id\" <> '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"tags\" (\"id\", \"name\")\nVALUES ('2', 'a')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"products\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 10,
+                        "name": "Notebook",
+                        "tag_id": 2
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tag_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"tags\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 2,
+                        "name": "a"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"products\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"makers\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"product_id\" INTEGER,\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"makers\"\nADD CONSTRAINT \"makers_product_id_fk\" FOREIGN KEY (\"product_id\")\nREFERENCES \"products\" (\"id\")\nON DELETE SET NULL\nON UPDATE SET NULL\nINITIALLY DEFERRED",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ALTER TABLE \"makers\"\nADD CONSTRAINT \"makers_product_id_uk\" UNIQUE (\"product_id\")",
+            "result": {
+                "command": "ALTER",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "INSERT INTO \"products\" (\"id\", \"name\")\nVALUES ('10', 'Notebook')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"makers\"\nWHERE \"id\" = '2'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "product_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"makers\" (\"id\", \"name\", \"product_id\")\nVALUES ('2', 'a', '10')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"products\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 10,
+                        "name": "Notebook"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"makers\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 2,
+                        "name": "a",
+                        "product_id": 10
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "product_id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        }
+    ]
+}
