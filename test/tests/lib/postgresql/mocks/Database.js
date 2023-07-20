@@ -57,14 +57,14 @@ test.object ("postgresql.mocks.Database.Expect")
 
 test.method ("postgresql.mocks.Database.DataFile", "save")
     .should ("save the contents to a file")
-    .app ()
-    .up (({ self, application }) =>
+    .application ()
+    .up (({ self, app }) =>
     {
         const { Expect, Result } = Database;
 
         self.createArgs =
         [
-            new nit.File (application.root.join ("data.json")),
+            new nit.File (app.root.join ("data.json")),
             new Expect ("BEGIN", Result.command ("BEGIN"))
         ];
     })
@@ -92,10 +92,10 @@ test.method ("postgresql.mocks.Database.DataFile", "save")
 
 test.method ("postgresql.mocks.Database.DataFile", "load")
     .should ("load the saved query results from a file")
-        .app ()
-        .up (async ({ self, application }) =>
+        .application ()
+        .up (async ({ self, app }) =>
         {
-            let source = new nit.File (application.root.join ("data.json"));
+            let source = new nit.File (app.root.join ("data.json"));
 
             self.createArgs = source;
 
@@ -145,10 +145,10 @@ test.method ("postgresql.mocks.Database.DataFile", "load")
         })
         .commit ()
 
-    .app ()
-        .up (async ({ self, application }) =>
+    .application ()
+        .up (async ({ self, app }) =>
         {
-            let source = new nit.File (application.root.join ("data.json"));
+            let source = new nit.File (app.root.join ("data.json"));
 
             self.createArgs = source;
 
@@ -215,23 +215,23 @@ test.method ("postgresql.mocks.Database", "rewrite")
 test.method ("postgresql.mocks.Database", "connect")
     .useMockPgClient ()
     .should ("connect to the database if record mode is on")
-        .app ()
+        .application ()
         .up (s =>
         {
             s.createArgs =
             {
                 record: true,
-                dataFile: s.application.root.join ("data.json")
+                dataFile: s.app.root.join ("data.json")
             };
         })
         .returnsInstanceOf ("postgresql.mocks.Database")
         .commit ()
 
     .should ("load query results from the data file if record mode is off")
-        .app ()
+        .application ()
         .up (async (s) =>
         {
-            let dataFile = nit.new ("nit.File", s.application.root.join ("data.json"));
+            let dataFile = nit.new ("nit.File", s.app.root.join ("data.json"));
 
             s.createArgs =
             {
@@ -263,10 +263,10 @@ test.method ("postgresql.mocks.Database", "connect")
         .commit ()
 
     .should ("skip loading the data file does not exist")
-        .app ()
+        .application ()
         .up (async (s) =>
         {
-            let dataFile = nit.new ("nit.File", s.application.root.join ("data.json"));
+            let dataFile = nit.new ("nit.File", s.app.root.join ("data.json"));
 
             s.createArgs =
             {
@@ -283,13 +283,13 @@ test.method ("postgresql.mocks.Database", "connect")
 test.method ("postgresql.mocks.Database", "disconnect")
     .useMockPgClient ()
     .should ("disconnect the database and write the recorded queries to file")
-        .app ()
+        .application ()
         .up (s =>
         {
             s.createArgs =
             {
                 record: true,
-                dataFile: s.application.root.join ("data.json")
+                dataFile: s.app.root.join ("data.json")
             };
         })
         .before (async (s) =>
@@ -307,13 +307,13 @@ test.method ("postgresql.mocks.Database", "disconnect")
         .commit ()
 
     .should ("not write queries to the data file if record mode is off")
-        .app ()
+        .application ()
         .up (s => s.createArgs = { record: false })
         .returnsInstanceOf ("postgresql.mocks.Database")
         .commit ()
 
     .should ("not write queries to the data file if unexpected test errors occurred")
-        .app ()
+        .application ()
         .up (s => s.createArgs = { record: true })
         .before (() => test.unexpectedErrors.push (new Error ("NO!")))
         .after (() => test.unexpectedErrors = [])
@@ -325,11 +325,11 @@ test.method ("postgresql.mocks.Database", "disconnect")
 test.method ("postgresql.mocks.Database", "execute")
     .useMockPgClient ()
     .should ("record the executed statements if record mode is on")
-        .app ()
+        .application ()
         .up (s => s.createArgs =
         {
             record: true,
-            dataFile: s.application.root.join ("data.json")
+            dataFile: s.app.root.join ("data.json")
         })
         .given ("BEGIN")
         .after (async ({ self, object: db }) =>
@@ -348,11 +348,11 @@ test.method ("postgresql.mocks.Database", "execute")
         .commit ()
 
     .should ("record the query errors")
-        .app ()
+        .application ()
         .up (s => s.createArgs =
         {
             record: true,
-            dataFile: s.application.root.join ("data.json")
+            dataFile: s.app.root.join ("data.json")
         })
         .given ("SELECT * FROM abc")
         .before (({ postgresql }) => test.mock (
@@ -372,20 +372,20 @@ test.method ("postgresql.mocks.Database", "execute")
         .commit ()
 
     .should ("throw if the statement not in the data file when record mode is off")
-        .app ()
+        .application ()
         .up (s => s.createArgs =
         {
-            dataFile: s.application.root.join ("data.json")
+            dataFile: s.app.root.join ("data.json")
         })
         .given ("SELECT * FROM abc")
         .throws (/query was not expected/)
         .commit ()
 
     .should ("return the corresponding result for the given statement when record mode is off")
-        .app ()
+        .application ()
         .up (s => s.createArgs =
         {
-            dataFile: s.application.root.join ("data.json")
+            dataFile: s.app.root.join ("data.json")
         })
         .before (async ({ object: db }) =>
         {
@@ -416,10 +416,10 @@ test.method ("postgresql.mocks.Database", "execute")
         .commit ()
 
     .should ("throw the recorded error")
-        .app ()
+        .application ()
         .up (s => s.createArgs =
         {
-            dataFile: s.application.root.join ("data.json")
+            dataFile: s.app.root.join ("data.json")
         })
         .before (async ({ object: db }) =>
         {

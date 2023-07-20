@@ -9,7 +9,7 @@ test.command ("postgresql.commands.RollbackMigration")
     .snapshot ()
 
     .should ("show the info message if no migrations to rollback")
-        .app ()
+        .application ()
         .mock ("context.db.client", "query", function (statement)
         {
             return this.result =
@@ -24,7 +24,7 @@ test.command ("postgresql.commands.RollbackMigration")
 
 
     .should ("rollback one migration if count is not specified")
-        .app ()
+        .application ()
         .mock ("context.db.client", "query", function (statement)
         {
             let { strategy } = this;
@@ -62,7 +62,7 @@ test.command ("postgresql.commands.RollbackMigration")
         .commit ()
 
     .should ("rollback specified number of migrations")
-        .app ()
+        .application ()
         .mock ("context.db.client", "query", function (statement)
         {
             let { strategy } = this;
@@ -106,7 +106,7 @@ test.command ("postgresql.commands.RollbackMigration")
         .commit ()
 
     .should ("cancel the rollback if the confirmation is declined")
-        .app ()
+        .application ()
         .mock ("context.db.client", "query", function (statement)
         {
             let command = statement.split (/\s+/)[0];

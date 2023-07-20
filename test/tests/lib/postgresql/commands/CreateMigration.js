@@ -4,7 +4,7 @@ nit.require ("postgresql.mocks.PgClient");
 test.command ("postgresql.commands.CreateMigration")
     .should ("create a migration file")
         .given ("Create users table", { yes: true })
-        .app ()
+        .application ()
         .after (function ()
         {
             this.firstFile = this.context.input.dir.read ()[0];

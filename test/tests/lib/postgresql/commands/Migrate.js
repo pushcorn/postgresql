@@ -5,7 +5,7 @@ const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
 test.command ("postgresql.commands.Migrate")
     .should ("perform the migration")
-        .app ()
+        .application ()
         .mock (MockPgClient.prototype, "query", function (statement)
         {
             return this.result =
@@ -38,7 +38,7 @@ test.command ("postgresql.commands.Migrate")
         .commit ()
 
     .should ("cancel if confirmation is declined")
-        .app ()
+        .application ()
         .mock (MockPgClient.prototype, "query", function (statement)
         {
             return this.result =
@@ -56,7 +56,7 @@ test.command ("postgresql.commands.Migrate")
         .commit ()
 
     .should ("show the info message if no migration is available")
-        .app ()
+        .application ()
         .mock (MockPgClient.prototype, "query", function (statement)
         {
             return this.result =
