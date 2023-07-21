@@ -152,8 +152,10 @@ module.exports = function (nit, postgresql, Self)
         .property ("rewrites...", Self.Rewrite.name)
         .property ("connected", "boolean", { writer })
 
-        .onPostConstruct (function (self)
+        .onPostConstruct (function ()
         {
+            let self = this;
+
             self.record = self.record || Self.record;
 
             if (!self.dataFile)
