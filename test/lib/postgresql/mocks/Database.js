@@ -129,7 +129,7 @@ module.exports = function (nit, postgresql, Self)
                     {
                         let result = expect.result;
 
-                        if (result?.fields?.length)
+                        if (result?.fields.length)
                         {
                             let fields = nit.index (result.fields, "name");
 
