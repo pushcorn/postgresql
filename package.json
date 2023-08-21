@@ -1,6 +1,6 @@
 {
     "name": "@pushcorn/postgresql",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "The PostgreSQL module for nit.",
     "license": "ISC",
     "files": [
@@ -10,7 +10,7 @@
         "resources/**"
     ],
     "peerDependencies": {
-        "@pushcorn/nit": "github:pushcorn/nit#semver:^1.4.0"
+        "@pushcorn/nit": "github:pushcorn/nit#semver:^1.5.1"
     },
     "peerDependenciesMeta": {
         "@pushcorn/nit": {
@@ -18,6 +18,6 @@
         }
     },
     "dependencies": {
-        "pg": "8.11.2"
+        "pg": "8.11.3"
     }
 }

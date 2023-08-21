@@ -2,7 +2,7 @@ test.method ("postgresql.Clause", "sql", true)
     .should ("set the constant SQL to the provided template")
     .given ("SELECT * FROM %{table}")
     .before (s => s.class = s.class.defineSubclass ("Test", true))
-    .expectingPropertyToBe ("class.SQL", "SELECT * FROM %{table}")
+    .expectingPropertyToBeOfType ("class.SQL", "nit.Template")
     .commit ()
 ;
 
