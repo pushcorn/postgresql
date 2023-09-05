@@ -182,6 +182,134 @@ test.method ("postgresql.mocks.Database.DataFile", "load")
             }
         })
         .commit ()
+
+    .should ("not parse null fields")
+        .application ()
+        .up (async ({ self, app }) =>
+        {
+            let source = new nit.File (app.root.join ("data.json"));
+
+            self.createArgs = source;
+
+            await source.writeAsync (nit.toJson (
+            {
+                expects:
+                [
+                {
+                    statement: "SELECT id, pid FROM users",
+                    result:
+                    {
+                        command: "SELECT",
+                        rows: [{ id: "3", pid: null }],
+                        rowCount: 1,
+                        fields:
+                        [
+                        {
+                            name: "id",
+                            dataTypeID: 2950,
+                            format: "text"
+                        },
+                        {
+                            name: "pid",
+                            dataTypeID: 2950,
+                            format: "text"
+                        }
+                        ]
+                    }
+                }
+                ]
+            }, true));
+        })
+        .expectingPropertyToBe ("object.expects.length", 1)
+        .expectingMethodToReturnValue ("object.expects.0.toPojo", null,
+        {
+            statement: "SELECT id, pid FROM users",
+            error: undefined,
+            result:
+            {
+                command: "SELECT",
+                rows: [{ id: "3", pid: null }],
+                rowCount: 1,
+                fields:
+                [
+                {
+                    name: "id",
+                    dataTypeID: 2950,
+                    format: "text"
+                },
+                {
+                    name: "pid",
+                    dataTypeID: 2950,
+                    format: "text"
+                }
+                ]
+            }
+        })
+        .commit ()
+
+    .should ("not parse array fields")
+        .application ()
+        .up (async ({ self, app }) =>
+        {
+            let source = new nit.File (app.root.join ("data.json"));
+
+            self.createArgs = source;
+
+            await source.writeAsync (nit.toJson (
+            {
+                expects:
+                [
+                {
+                    statement: "SELECT id, stats FROM users",
+                    result:
+                    {
+                        command: "SELECT",
+                        rows: [{ id: "3", stats: [{ a: 1, b: 2 }] }],
+                        rowCount: 1,
+                        fields:
+                        [
+                        {
+                            name: "id",
+                            dataTypeID: 2950,
+                            format: "text"
+                        },
+                        {
+                            name: "stats",
+                            dataTypeID: 1009,
+                            format: "text"
+                        }
+                        ]
+                    }
+                }
+                ]
+            }, true));
+        })
+        .expectingPropertyToBe ("object.expects.length", 1)
+        .expectingMethodToReturnValue ("object.expects.0.toPojo", null,
+        {
+            statement: "SELECT id, stats FROM users",
+            error: undefined,
+            result:
+            {
+                command: "SELECT",
+                rows: [{ id: "3", stats: [{ a: 1, b: 2 }] }],
+                rowCount: 1,
+                fields:
+                [
+                {
+                    name: "id",
+                    dataTypeID: 2950,
+                    format: "text"
+                },
+                {
+                    name: "stats",
+                    dataTypeID: 1009,
+                    format: "text"
+                }
+                ]
+            }
+        })
+        .commit ()
 ;
 
 
@@ -347,6 +475,23 @@ test.method ("postgresql.mocks.Database", "execute")
         .expectingPropertyToBe ("data.expects.2.statement", "ROLLBACK")
         .commit ()
 
+    .should ("accept a query object")
+        .application ()
+        .up (s => s.createArgs =
+        {
+            record: true,
+            dataFile: s.app.root.join ("data.json")
+        })
+        .given (nit.new ("postgresql.queries.Select").$from ("users"))
+        .after (async ({ self, object: db }) =>
+        {
+            await db.disconnect ();
+            self.data = JSON.parse (await db.dataFile.readAsync ());
+        })
+        .expectingPropertyToBe ("data.expects.length", 1)
+        .expectingPropertyToBe ("data.expects.0.statement", "SELECT *\nFROM \"users\"")
+        .commit ()
+
     .should ("record the query errors")
         .application ()
         .up (s => s.createArgs =
@@ -379,6 +524,52 @@ test.method ("postgresql.mocks.Database", "execute")
         })
         .given ("SELECT * FROM abc")
         .throws (/query was not expected/)
+        .commit ()
+
+    .should ("set db.transacting to true in replay mode if the statement is BEGIN")
+        .application ()
+        .up (s => s.createArgs =
+        {
+            dataFile: s.app.root.join ("data.json")
+        })
+        .before (async (s) =>
+        {
+            await s.object.dataFile.writeAsync (JSON.stringify (
+            {
+                expects:
+                [
+                {
+                    statement: "BEGIN",
+                    result: {
+                        command: "BEGIN",
+                        rows: [],
+                        rowCount: 0,
+                        fields: []
+                    }
+                }
+                ,
+                {
+                    statement: "ROLLBACK",
+                    result: {
+                        command: "ROLLBACK",
+                        rows: [],
+                        rowCount: 0,
+                        fields: []
+                    }
+                }
+                ]
+            }));
+        })
+        .given ("BEGIN")
+        .expectingPropertyToBe ("object.transacting", true)
+        .expectingMethodToReturnValue ("object.execute", "ROLLBACK",
+        {
+            command: "ROLLBACK",
+            rows: [],
+            rowCount: 0,
+            fields: []
+        })
+        .expectingPropertyToBe ("object.transacting", false)
         .commit ()
 
     .should ("return the corresponding result for the given statement when record mode is off")
