@@ -137,7 +137,12 @@ module.exports = function (nit, postgresql, Self)
                             {
                                 for (let k in row)
                                 {
-                                    row[k] = postgresql.pg.types.getTypeParser (fields[k].dataTypeID) (row[k]);
+                                    let parser = postgresql.pg.types.getTypeParser (fields[k].dataTypeID);
+
+                                    if (!nit.is.undef (row[k]) && !parser.name.endsWith ("Array"))
+                                    {
+                                        row[k] = postgresql.pg.types.getTypeParser (fields[k].dataTypeID) (row[k]);
+                                    }
                                 }
                             }
                         }
@@ -264,6 +269,17 @@ module.exports = function (nit, postgresql, Self)
                 if (expect.error)
                 {
                     self.throw (expect.error);
+                }
+
+                if (expect.result.command == "BEGIN")
+                {
+                    self.transacting = true;
+                }
+                else
+                if (self.transacting
+                    && (expect.result.command == "COMMIT" || expect.result.command == "ROLLBACK"))
+                {
+                    self.transacting = false;
                 }
             }
 

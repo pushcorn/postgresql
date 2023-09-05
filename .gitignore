@@ -1,5 +1,5 @@
 npm-debug.log
 coverage/
-node_modules
+/node_modules
 test/tests/playground.js
 setup.local.js
