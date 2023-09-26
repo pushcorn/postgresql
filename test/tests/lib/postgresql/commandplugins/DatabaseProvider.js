@@ -1,7 +1,7 @@
 nit.require ("postgresql.mocks.PgClient");
 
 
-nit.defineCommand ("DbCommand")
+nit.defineCommand ("commands.DbCommand")
     .commandplugin ("postgresql:database-provider")
     .onRun (function (ctx)
     {
@@ -17,7 +17,7 @@ nit.defineCommand ("DbCommand")
 ;
 
 
-nit.defineCommand ("DbNoTxCommand")
+nit.defineCommand ("commands.DbNoTxCommand")
     .commandplugin ("postgresql:database-provider", "mydb", false)
     .onRun (function (ctx)
     {
@@ -38,7 +38,7 @@ test.object ("postgresql.commandplugins.DatabaseProvider")
 ;
 
 
-test.command ("DbCommand")
+test.command ("commands.DbCommand")
     .should ("have the db connection ready before running")
     .returns (true)
     .expectingPropertyToBe ("context.lastStatement", "BEGIN")
@@ -47,7 +47,7 @@ test.command ("DbCommand")
 ;
 
 
-test.command ("DbNoTxCommand")
+test.command ("commands.DbNoTxCommand")
     .should ("have the db connection ready before running")
     .returns (true)
     .expectingPropertyToBe ("context.lastStatement", "")
