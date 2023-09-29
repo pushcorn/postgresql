@@ -41,6 +41,7 @@ test.command ("postgresql.commands.RollbackMigration")
             return this.result = { command, rows };
         })
         .mock ("object", "info")
+        .before (s => s.context.db.connect ())
         .before (async function ()
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
@@ -79,6 +80,7 @@ test.command ("postgresql.commands.RollbackMigration")
             return this.result = { command, rows };
         })
         .mock ("object", "info")
+        .before (s => s.context.db.connect ())
         .before (async function ()
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
@@ -107,6 +109,7 @@ test.command ("postgresql.commands.RollbackMigration")
 
     .should ("cancel the rollback if the confirmation is declined")
         .application ()
+        .before (s => s.context.db.connect ())
         .mock ("context.db.client", "query", function (statement)
         {
             let command = statement.split (/\s+/)[0];
