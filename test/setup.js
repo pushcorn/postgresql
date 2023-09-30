@@ -1,6 +1,7 @@
 nit.test.Strategy
     .property ("models...", "string")
-    .getter ("postgresql", () => nit.require ("postgresql"))
+    .memo ("postgresql", () => nit.require ("postgresql"))
+    .memo ("Model", () => nit.require ("postgresql.Model"))
 
     .method ("useModels", function (...models)
     {
