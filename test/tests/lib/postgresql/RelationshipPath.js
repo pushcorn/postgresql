@@ -561,18 +561,34 @@ test.method ("postgresql.RelationshipPath", "toQuery", { recreate: false })
             ;
         })
         .before (s => s.object = s.Product.fieldMap.owner.relationshipPath)
+        .given (nit.new ("postgresql.QueryOptions",
+        {
+            relationships:
+            {
+                path: "Product.owner",
+                filter: "name ILIKE 'john'",
+                alias: "u"
+            }
+        }))
         .returnsInstanceOf ("postgresql.queries.EagerSelect")
         .expectingPropertyToBe ("result.sql", nit.trim.text`
+            WITH u AS
+            (
+              SELECT *
+              FROM "users"
+              WHERE name ILIKE 'john'
+            )
+
             SELECT
               t0."id" AS "t0_id",
               t0."name" AS "t0_name",
               t0."owner_id" AS "t0_owner_id"
               ,
-              t1."id" AS "t1_id",
-              t1."name" AS "t1_name"
+              u."id" AS "u_id",
+              u."name" AS "u_name"
 
             FROM "products" t0
-              LEFT JOIN "users" t1 ON t1."id" = t0."owner_id"
+              LEFT JOIN u ON u."id" = t0."owner_id"
         `)
         .commit ()
 ;

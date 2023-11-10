@@ -589,13 +589,26 @@ test.method ("postgresql.Database", "debug")
 
 test.method ("postgresql.Database", "createTables")
     .should ("create tables for the given model classes")
-        .before ((s) =>
+        .before (s =>
         {
+            postgresql.defineModel ("test.models.Person")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                .field ("followers...", "test.models.Person")
+            ;
+
+            postgresql.defineModel ("test.models.Country")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                    .constraint ("postgresql:unique")
+            ;
+
             postgresql.defineModel ("test.models.Capital")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                     .constraint ("postgresql:unique")
                 .field ("<country>", "test.models.Country")
+                .field ("mayor", "test.models.Person")
             ;
 
             s.args.push (nit.lookupClass ("test.models.Country"));
@@ -617,11 +630,28 @@ test.method ("postgresql.Database", "createTables")
                 "id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
                 "country_id" TEXT NOT NULL,
+                "mayor_id" TEXT,
                 PRIMARY KEY ("id"),
                 UNIQUE ("name")
             )
         `)
         .expectingPropertyToBe ("spies.0.invocations.2.args.0", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "people"
+            (
+                "id" TEXT NOT NULL,
+                "name" TEXT NOT NULL,
+                PRIMARY KEY ("id")
+            )
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.3.args.0", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "personFollowersPersonPeopleLinks"
+            (
+                "person_id" TEXT NOT NULL,
+                "follower_id" TEXT NOT NULL,
+                PRIMARY KEY ("person_id", "follower_id")
+            )
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.4.args.0", nit.trim.text`
             ALTER TABLE "capitals"
             ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
             REFERENCES "countries" ("id")
@@ -629,9 +659,67 @@ test.method ("postgresql.Database", "createTables")
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
-        .expectingPropertyToBe ("spies.0.invocations.3.args.0", nit.trim.text`
+        .expectingPropertyToBe ("spies.0.invocations.5.args.0", nit.trim.text`
             ALTER TABLE "capitals"
             ADD CONSTRAINT "capitals_country_id_uk" UNIQUE ("country_id")
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.8.args.0", nit.trim.text`
+            ALTER TABLE "personFollowersPersonPeopleLinks"
+            ADD CONSTRAINT "personFollowersPersonPeopleLinks_person_id_fk" FOREIGN KEY ("person_id")
+            REFERENCES "people" ("id")
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+            INITIALLY DEFERRED
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.9.args.0", nit.trim.text`
+            ALTER TABLE "personFollowersPersonPeopleLinks"
+            ADD CONSTRAINT "personFollowersPersonPeopleLinks_follower_id_fk" FOREIGN KEY ("follower_id")
+            REFERENCES "people" ("id")
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+            INITIALLY DEFERRED
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.10.args.0", nit.trim.text`
+            CREATE INDEX IF NOT EXISTS "idx_personFollowersPersonPeopleLinks_follower_id"
+            ON "personFollowersPersonPeopleLinks" ("follower_id")
+        `)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "dropTables")
+    .should ("drop the tables owned by the specifed models")
+        .before (s =>
+        {
+            postgresql.defineModel ("test.models.Person")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                .field ("followers...", "test.models.Person")
+            ;
+
+            postgresql.defineModel ("test.models.Country")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                    .constraint ("postgresql:unique")
+            ;
+
+            postgresql.defineModel ("test.models.Capital")
+                .field ("<id>", "string", { key: true })
+                .field ("<name>", "string")
+                    .constraint ("postgresql:unique")
+                .field ("<country>", "test.models.Country")
+                .field ("mayor", "test.models.Person")
+            ;
+
+            s.args.push (nit.lookupClass ("test.models.Country"));
+        })
+        .given ("test.models.Capital")
+        .spy ("object", "execute")
+        .expectingPropertyToBe ("spies.0.invocations.0.args.0", nit.trim.text`
+            DROP TABLE IF EXISTS "capitals" CASCADE
+        `)
+        .expectingPropertyToBe ("spies.0.invocations.1.args.0", nit.trim.text`
+            DROP TABLE IF EXISTS "countries" CASCADE
         `)
         .commit ()
 ;

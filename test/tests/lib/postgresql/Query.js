@@ -224,3 +224,15 @@ test.object ("postgresql.Query.Join", { property: "sql" })
         .commit ()
 ;
 
+
+test.method ("postgresql.Query", "merge")
+    .should ("merge the values from another query")
+        .before (s => s.object = nit.new ("postgresql.queries.Select").$from ("users"))
+        .given (nit.new ("postgresql.queries.Select").$limit (10))
+        .expectingPropertyToBe ("result.sql", nit.trim.text`
+            SELECT *
+            FROM "users"
+            LIMIT 10
+        `)
+        .commit ()
+;

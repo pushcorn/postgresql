@@ -377,6 +377,7 @@ test.method ("postgresql.Relationship", "new", true)
                 .field ("<product>", "string")
                 .field ("<unitPrice>", "integer")
                 .field ("<quantity>", "integer")
+                .field ("order", "test.models.Order", { mappedBy: "items" })
                 .field ("total", "integer",
                 {
                     getter: function ()
@@ -410,6 +411,7 @@ test.method ("postgresql.Relationship", "new", true)
                 .field ("<product>", "string")
                 .field ("<unitPrice>", "integer")
                 .field ("<quantity>", "integer")
+                .field ("<order>", "test.models.Order")
                 .field ("total", "integer",
                 {
                     getter: function ()
@@ -420,7 +422,7 @@ test.method ("postgresql.Relationship", "new", true)
             ;
         })
         .before (s => s.args.push (s.Order.fieldMap.items))
-        .throws ("error.array_owner_field_not_allowed")
+        .returnsInstanceOf ("postgresql.Relationship")
         .commit ()
 ;
 

@@ -385,8 +385,8 @@ test.object ("postgresql.Model", false)
                 "product" TEXT NOT NULL,
                 "unitPrice" INTEGER NOT NULL DEFAULT 0,
                 "quantity" INTEGER NOT NULL DEFAULT 0,
-                "total" INTEGER DEFAULT 0,
                 "order_id" INTEGER NOT NULL,
+                "total" INTEGER DEFAULT 0,
                 PRIMARY KEY ("id")
             )
         `)
@@ -1287,6 +1287,62 @@ test.method ("postgresql.Model", "eagerSelect", true)
                 { id: 3, name: "TAG B" }
             ]
         })
+        .commit ()
+
+    .should ("should merge the CTE with the filter from the relationshiPath")
+        .defineModel ("test.models.Tag", Tag =>
+        {
+            Tag
+                .field ("<id>", "integer", { key: true })
+                .field ("name", "string")
+            ;
+        })
+        .defineModel ("test.models.Product", Product =>
+        {
+            Product
+                .field ("<id>", "intstr", { key: true })
+                .field ("<name>", "string")
+                .field ("tags...", "test.models.Tag", { relType: "manyToMany" })
+            ;
+        })
+        .before (s =>
+        {
+            s.Product.db = s.db;
+            s.object = s.Product;
+            s.args = [
+                s.class.Select ().$from (s.Product).$whereExpr ("LENGTH (name) > 10"),
+                nit.new ("postgresql.QueryOptions",
+                {
+                    relationships:
+                    {
+                        path: "Product",
+                        filter: "name ILIKE 'jo%'"
+                    }
+                })
+            ];
+        })
+        .expectingMethodToReturnValue ("object.db.client.statements.join", "\n--\n", nit.trim.text`
+            WITH t0 AS
+            (
+              SELECT *
+              FROM "products"
+              WHERE name ILIKE 'jo%' AND LENGTH (name) > 10
+            )
+
+            SELECT
+              t0."id" AS "t0_id",
+              t0."name" AS "t0_name"
+              ,
+              t1."product_id" AS "t1_product_id",
+              t1."tag_id" AS "t1_tag_id"
+              ,
+              t2."id" AS "t2_id",
+              t2."name" AS "t2_name"
+
+            FROM t0
+              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "tags" t2 ON t2."id" = t1."tag_id"
+        `)
         .commit ()
 ;
 

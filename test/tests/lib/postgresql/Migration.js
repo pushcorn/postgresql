@@ -1,12 +1,11 @@
 nit.require ("postgresql.mocks.PgClient");
 
 
-test.object ("postgresql.Migration")
+test.object ("postgresql.Migration", { recreate: false })
     .should ("represent a migration task")
-    .given (nit.new ("postgresql.Database"))
-    .expectingMethodToReturnValue ("result.up", undefined)
-    .expectingMethodToReturnValue ("result.down", undefined)
-    .expectingPropertyToBeOfType ("result.constructor.table", "postgresql.Table")
+    .expectingMethodToReturnValue ("class.up")
+    .expectingMethodToReturnValue ("class.down")
+    .expectingPropertyToBeOfType ("class.table", "postgresql.Table")
     .commit ()
 
 

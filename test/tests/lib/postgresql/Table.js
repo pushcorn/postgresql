@@ -32,40 +32,50 @@ test.method ("postgresql.Table", "$column", { createArgs: ["users"] })
 ;
 
 
-test.method ("postgresql.Table", "create",
-    {
-        createArgs:
+test.method ("postgresql.Table", "create")
+    .should ("create the table")
+        .up (s => s.createArgs =
         {
             name: "users",
             columns: ["id", "username"]
-        }
-    })
-    .should ("create the table")
-    .before (async (s) =>
-    {
-        let db = s.object.db;
+        })
+        .returnsInstanceOf ("postgresql.Table")
+        .expectingPropertyToBe ("object.db.client.statement", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "users"
+            (
+                "id" TEXT,
+                "username" TEXT
+            )
+        `)
+        .commit ()
 
-        await db.connect ();
-
-        db.client.result =
+    .should ("create the table and the indexes and constraints if all = true")
+        .up (s => s.createArgs =
         {
-            command: "CREATE",
-            rowCount: null
-        };
-    })
-    .expectingPropertyToBe ("result",
-    {
-        command: "CREATE",
-        rowCount: null
-    })
-    .expectingPropertyToBe ("object.db.client.statement", nit.trim.text`
-        CREATE TABLE IF NOT EXISTS "users"
-        (
-            "id" TEXT,
-            "username" TEXT
-        )
-    `)
-    .commit ()
+            name: "clients",
+            columns: ["id", "username"]
+        })
+        .given (true)
+        .before (s => s.object.db = nit.new ("postgresql.Database"))
+        .before (s => s.object.$index ("username"))
+        .before (s => s.object.$constraint ("check", "LENGTH (username) > 10"))
+        .returnsInstanceOf ("postgresql.Table")
+        .expectingPropertyToBe ("object.db.client.statements.0", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "clients"
+            (
+                "id" TEXT,
+                "username" TEXT
+            )
+        `)
+        .expectingPropertyToBe ("object.db.client.statements.1", nit.trim.text`
+            CREATE INDEX IF NOT EXISTS "idx_clients_username"
+            ON "clients" ("username")
+        `)
+        .expectingPropertyToBe ("object.db.client.statements.2", nit.trim.text`
+            ALTER TABLE "clients"
+            ADD CONSTRAINT "clients_1_chk" CHECK (LENGTH (username) > 10)
+        `)
+        .commit ()
 ;
 
 
@@ -297,20 +307,220 @@ test.object ("postgresql.Table.constraints.Check")
 
 test.method ("postgresql.Table", "$constraint", { createArgs: ["users"] })
     .should ("add a constraint to the table")
-    .given ("unique", "email")
-    .returnsInstanceOf ("postgresql.Table")
-    .expectingPropertyToBe ("result.constraints.length", 1)
-    .expectingPropertyToBeOfType ("result.constraints.0", "postgresql.Table.constraints.Unique")
-    .commit ()
+        .given ("unique", "email")
+        .returnsInstanceOf ("postgresql.Table")
+        .expectingPropertyToBe ("result.constraints.length", 1)
+        .expectingPropertyToBeOfType ("result.constraints.0", "postgresql.Table.constraints.Unique")
+        .commit ()
 ;
 
 
 test.method ("postgresql.Table", "$index", { createArgs: ["users"] })
     .should ("add an index to the table")
-    .given ("email")
-    .returnsInstanceOf ("postgresql.Table")
-    .expectingPropertyToBe ("result.indexes.length", 1)
-    .expectingPropertyToBeOfType ("result.indexes.0", "postgresql.Table.Index")
-    .commit ()
+        .given ("email")
+        .returnsInstanceOf ("postgresql.Table")
+        .expectingPropertyToBe ("result.indexes.length", 1)
+        .expectingPropertyToBeOfType ("result.indexes.0", "postgresql.Table.Index")
+        .commit ()
 ;
 
+
+test.method ("postgresql.Table", "patch")
+    .should ("alter the settings to that of the given table")
+        .up (s => s.createArgs =
+        {
+            name: "users",
+            columns:
+            [
+            {
+                name: "id",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "age",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "firstname",
+                type: "TEXT",
+                defval: "''"
+            }
+            ,
+            {
+                name: "lastname",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "url",
+                type: "TEXT",
+                nullable: false
+            }
+            ,
+            {
+                name: "role_id",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "hobbies",
+                type: "TEXT"
+            }
+            ]
+        })
+        .given (nit.new ("postgresql.Table",
+        {
+            name: "users",
+            columns:
+            [
+            {
+                name: "id",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "age",
+                type: "INTEGER",
+                defval: 10
+            }
+            ,
+            {
+                name: "firstname",
+                type: "TEXT",
+                nullable: false
+            }
+            ,
+            {
+                name: "email",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "url",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "role_id",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "hobbies",
+                type: "TEXT",
+                array: true
+            }
+            ]
+        }))
+        .before (s => s.object.db = nit.new ("postgresql.Database"))
+        .before (s => s.object.$index ("firstname", "lastname"))
+        .before (s => s.object.$index ("email", { method: "GIN" }))
+        .before (s => s.object.$constraint ("check", "LENGTH (firstname) > 10"))
+        .before (s => s.object.$constraint ("foreign-key", "role_id", "roles"))
+        .before (s => s.args[0].$index ("firstname"))
+        .before (s => s.args[0].$index ("email", { method: "BTREE" }))
+        .before (s => s.args[0].$constraint ("check", "LENGTH (firstname) > 20"))
+        .before (s => s.args[0].$constraint ("unique", "email"))
+        .expectingMethodToReturnValue ("object.db.client.statements.join", "\n--\n", nit.trim.text`
+            ALTER TABLE "users"
+            ADD COLUMN "email" TEXT
+            --
+            ALTER TABLE "users"
+            DROP COLUMN IF EXISTS "lastname"
+            --
+            ALTER TABLE "users"
+            ALTER COLUMN "age" TYPE INTEGER
+            --
+            ALTER TABLE "users"
+            ALTER COLUMN "age" SET DEFAULT 10
+            --
+            ALTER TABLE "users"
+            ALTER COLUMN "firstname" DROP DEFAULT
+            --
+            ALTER TABLE "users"
+            ALTER COLUMN "firstname" SET NOT NULL
+            --
+            ALTER TABLE "users"
+            ALTER COLUMN "url" DROP NOT NULL
+            --
+            ALTER TABLE "users"
+            ALTER COLUMN "hobbies" TYPE TEXT[]
+            --
+            ALTER TABLE "users"
+            ADD CONSTRAINT "users_email_uk" UNIQUE ("email")
+            --
+            ALTER TABLE "users"
+            DROP CONSTRAINT IF EXISTS "users_role_id_fk"
+            --
+            ALTER TABLE "users"
+            DROP CONSTRAINT IF EXISTS "users_1_chk"
+            --
+            ALTER TABLE "users"
+            ADD CONSTRAINT "users_1_chk" CHECK (LENGTH (firstname) > 20)
+            --
+            CREATE INDEX IF NOT EXISTS "idx_users_firstname"
+            ON "users" ("firstname")
+            --
+            DROP INDEX IF EXISTS "idx_users_firstname_lastname"
+            --
+            DROP INDEX IF EXISTS "idx_users_email"
+            --
+            CREATE INDEX IF NOT EXISTS "idx_users_email"
+            ON "users" USING BTREE ("email")
+        `)
+        .commit ()
+
+    .should ("skip the action if the filter returns false")
+        .up (s => s.createArgs =
+        {
+            name: "users",
+            columns:
+            [
+            {
+                name: "id",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "age",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "url",
+                type: "TEXT",
+                nullable: false
+            }
+            ]
+        })
+        .given (nit.new ("postgresql.Table",
+        {
+            name: "users",
+            columns:
+            [
+            {
+                name: "id",
+                type: "TEXT"
+            }
+            ,
+            {
+                name: "age",
+                type: "INTEGER",
+                defval: 10
+            }
+            ,
+            {
+                name: "url",
+                type: "TEXT"
+            }
+            ]
+        }), action => !(action.constructor.simpleName == "AlterColumn" && action.column.name == "age"))
+        .before (s => s.object.db = nit.new ("postgresql.Database"))
+        .expectingMethodToReturnValue ("object.db.client.statements.join", "\n--\n", nit.trim.text`
+            ALTER TABLE "users"
+            ALTER COLUMN "url" DROP NOT NULL
+        `)
+        .commit ()
+;

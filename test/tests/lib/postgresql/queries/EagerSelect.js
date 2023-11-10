@@ -71,7 +71,7 @@ test.object ("postgresql.queries.EagerSelect")
               WHERE "id" = '4'
               LIMIT 1
             )
-            WITH t2 AS
+            , t2 AS
             (
               SELECT *
               FROM "tags"

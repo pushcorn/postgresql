@@ -117,3 +117,25 @@ test.method ("postgresql.QueryOptions", "clone", true)
     .expectingMethodToReturnValueContaining ("result.entities.marshalled.entities.0.toPojo", null, { id: "5" })
     .commit ()
 ;
+
+
+test.object ("postgresql.QueryOptions", true, "relationshipMap")
+    .should ("contain the relationships indexed by path")
+    .given (
+    {
+        relationships:
+        {
+            path: "User.friends",
+            alias: "f"
+        }
+    })
+    .returnsResultContaining (
+    {
+        "User.friends":
+        {
+            path: "User.friends",
+            alias: "f"
+        }
+    })
+    .commit ()
+;

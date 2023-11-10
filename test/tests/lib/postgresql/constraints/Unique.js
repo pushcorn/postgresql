@@ -60,6 +60,7 @@ test.method ("postgresql.constraints.Unique", "validate", { createArgs: ["id", "
 
 
 test.method ("postgresql.constraints.Unique", "validate", { createArgs: ["email", "addr"] })
+    .useMockPgClient ()
     .should ("throw if the composite value is not unique")
         .before (function ()
         {
@@ -77,6 +78,35 @@ test.method ("postgresql.constraints.Unique", "validate", { createArgs: ["email"
             return { rows: [{ id: 5678 }] };
         })
         .throws ("error.value_not_unique")
+        .commit ()
+
+    .should ("throw if not all composite keys were provided")
+        .defineModel ("test.models.Product", Product =>
+        {
+            Product
+                .defineInnerModel ("Tag", Tag =>
+                {
+                    Tag
+                        .field ("<name>", "string")
+                    ;
+                })
+                .field ("<id>", "string")
+                .field ("model", "string")
+                .field ("tag", Product.Tag.name)
+            ;
+        })
+        .up (s => s.createArgs = ["model", "tag"])
+        .before (s =>
+        {
+            s.entity = s.Product.new ({ id: 1234, model: "px" });
+            s.args.push (new s.Product.ValidationContext (
+            {
+                entity: s.entity,
+                constraint: s.object,
+                field: s.Product.getField ("tag")
+            }));
+        })
+        .throws ("error.insufficient_values")
         .commit ()
 ;
 

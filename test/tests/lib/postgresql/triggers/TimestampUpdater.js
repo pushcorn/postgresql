@@ -1,4 +1,4 @@
-test.method ("postgresql.modellisteners.TimestampUpdater", "preUpdate")
+test.method ("postgresql.triggers.TimestampUpdater", "preUpdate")
     .should ("update the timestamp field on update")
         .up (s => s.User = s.postgresql.defineModel ("User")
             .field ("dateModified", "Date")
@@ -34,7 +34,7 @@ test.method ("postgresql.modellisteners.TimestampUpdater", "preUpdate")
 ;
 
 
-test.method ("postgresql.modellisteners.TimestampUpdater", "preInsert")
+test.method ("postgresql.triggers.TimestampUpdater", "preInsert")
     .should ("update the timestamp field on insert")
         .up (s => s.User = s.postgresql.defineModel ("User")
             .field ("dateModified", "Date")

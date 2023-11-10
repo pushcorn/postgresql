@@ -11,9 +11,14 @@ test.method ("postgresql.Id", "getHashKeys", true)
 
 test.method ("postgresql.Id", "marshall", true)
     .should ("return the marshalled data")
-    .given (Id.new (1234))
-    .returns ({ value: "1234" })
-    .commit ()
+        .given (Id.new (1234))
+        .returns ({ value: "1234" })
+        .commit ()
+
+    .should ("just return the value if it's not an instance of nit.Object")
+        .given ({ value: 1234 })
+        .returns ({ value: 1234 })
+        .commit ()
 ;
 
 

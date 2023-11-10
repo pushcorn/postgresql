@@ -853,4 +853,34 @@ test.method ("postgresql.Field", "unmarshall")
         .expectingMethodToReturnValue ("model.tags.0.toPojo", null, { id: 3, name: "" })
         .expectingMethodToReturnValue ("model.tags.1.toPojo", null, { id: 4, name: "" })
         .commit ()
+
+    .should ("skip a model field if the object is empty")
+        .defineModel ("test.models.Book", Book =>
+        {
+            Book
+                .defineInnerModel ("Tag", Tag =>
+                {
+                    Tag
+                        .field ("<name>", "string")
+                    ;
+                })
+                .field ("<id>", "integer", { key: true })
+                .field ("<name>", "string")
+                .field ("tag", Book.Tag.name)
+            ;
+        })
+        .up (s => s.createArgs = { spec: "tag", type: "test.models.Book.Tag" })
+        .up (s => s.class = s.db.lookup ("test.models.Book").Field)
+        .before (({ self, object: field, Book }) =>
+        {
+            let book = Book.new (1, "JavaScript");
+            let row = { tag_name: undefined };
+
+            self.args = [row, book, new Book.QueryOptions];
+
+            field.bind (Book.prototype);
+            self.assign ({ model: book, row });
+        })
+        .expectingPropertyToBe ("model.tag", undefined)
+        .commit ()
 ;
