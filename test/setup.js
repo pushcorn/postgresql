@@ -14,11 +14,13 @@ nit.test.Strategy
         nit.require ("postgresql.mocks.PgClient");
 
         return this
-            .up (s =>
+            .up (async (s) =>
             {
                 s.db = new s.postgresql.Database;
 
                 nit.require ("postgresql.registries.Cached").clearCache ();
+
+                await s.db.connect ();
             })
             .before (({ self, models, db }) =>
             {
