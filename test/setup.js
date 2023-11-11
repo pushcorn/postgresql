@@ -100,6 +100,10 @@ nit.test.Strategy
             })
         ;
     })
+    .method ("mockGetDb", function (property)
+    {
+        return this.mock (property || "class.prototype", "getDb", function () { return this.strategy.db; });
+    })
     .method ("expectingFieldEagerQueryToBe", function (dotPath, query)
     {
         const self = this;

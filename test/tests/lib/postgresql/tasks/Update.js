@@ -13,7 +13,7 @@ test.task ("postgresql.tasks.Update")
                 "": "age > 10"
             }
         })
-        .mock ("object", "getDb", function () { return this.strategy.db; })
+        .mockGetDb ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             UPDATE "users"
             SET "disabled" = 'true'

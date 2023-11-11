@@ -25,6 +25,17 @@ test.method ("postgresql.Database", "select")
         `)
         .commit ()
 
+    .should ("treat value of the empty match key as the where expression")
+        .given ("users", { "": "age > 10" })
+        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .returns ([{ id: 1, user: "john" }])
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            SELECT *
+            FROM "users"
+            WHERE age > 10
+        `)
+        .commit ()
+
     .should ("return all rows if no condition was specified")
         .given ("users")
         .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
@@ -82,6 +93,17 @@ test.method ("postgresql.Database", "update")
             UPDATE "users"
             SET "name" = 'John'
             WHERE "id" = '1'
+        `)
+        .commit ()
+
+    .should ("treat value of the empty match key as the where expression")
+        .given ("users", { name: "John" }, { "": "age > 10" })
+        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .returns (1)
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            UPDATE "users"
+            SET "name" = 'John'
+            WHERE age > 10
         `)
         .commit ()
 
@@ -182,6 +204,16 @@ test.method ("postgresql.Database", "delete")
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
             WHERE "id" = '1'
+        `)
+        .commit ()
+
+    .should ("treat value of the empty match key as the where expression")
+        .given ("users", { "": "age > 10" })
+        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .returns (1)
+        .expectingPropertyToBe ("object.client.statement", nit.trim.text`
+            DELETE FROM "users"
+            WHERE age > 10
         `)
         .commit ()
 
