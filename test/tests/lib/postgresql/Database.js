@@ -1,21 +1,34 @@
 const postgresql = nit.require ("postgresql");
-
 const MockPgClient = nit
     .require ("postgresql.mocks.PgClient")
     .require ("postgresql.mocks.PgPool")
 ;
 
-const { Tasks } = MockPgClient;
 
+nit.test.Strategy
+    .method ("mockClient", function (result)
+    {
+        return this
+            .up (s => s.client = new MockPgClient ({ result }))
+            .up (() => MockPgClient.reset ())
+            .mock ("object", "connect", function ()
+            {
+                let { target, strategy } = this;
+
+                target.client = strategy.client;
+
+                return target;
+            })
+            .deinit (s => s.client = undefined)
+        ;
+    })
+;
 
 
 test.method ("postgresql.Database", "select")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("select the rows from the database")
         .given ("users", { id: 1 }, "LIMIT 1")
-        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .mockClient ({ rows: [{ id: 1, user: "john" }] })
         .returns ([{ id: 1, user: "john" }])
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
@@ -27,7 +40,7 @@ test.method ("postgresql.Database", "select")
 
     .should ("treat value of the empty match key as the where expression")
         .given ("users", { "": "age > 10" })
-        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .mockClient ({ rows: [{ id: 1, user: "john" }] })
         .returns ([{ id: 1, user: "john" }])
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
@@ -38,7 +51,7 @@ test.method ("postgresql.Database", "select")
 
     .should ("return all rows if no condition was specified")
         .given ("users")
-        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .mockClient ({ rows: [{ id: 1, user: "john" }] })
         .returns ([{ id: 1, user: "john" }])
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
@@ -52,7 +65,7 @@ test.method ("postgresql.Database", "select")
                 .$from ("users")
                 .$where ("id", 1)
         )
-        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .mockClient ({ rows: [{ id: 1, user: "john" }] })
         .returns ([{ id: 1, user: "john" }])
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
@@ -64,12 +77,9 @@ test.method ("postgresql.Database", "select")
 
 
 test.method ("postgresql.Database", "find")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("return first the row that matches the criteria")
         .given ("users", { id: 1 })
-        .before (Tasks.returnResult ({ rows: [{ id: 1, user: "john" }] }))
+        .mockClient ({ rows: [{ id: 1, user: "john" }] })
         .returns ({ id: 1, user: "john" })
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
@@ -82,12 +92,9 @@ test.method ("postgresql.Database", "find")
 
 
 test.method ("postgresql.Database", "update")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("execute the update statement")
         .given ("users", { name: "John" }, { id: 1 })
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             UPDATE "users"
@@ -98,7 +105,7 @@ test.method ("postgresql.Database", "update")
 
     .should ("treat value of the empty match key as the where expression")
         .given ("users", { name: "John" }, { "": "age > 10" })
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             UPDATE "users"
@@ -114,7 +121,7 @@ test.method ("postgresql.Database", "update")
                 .$set ("name", "John")
                 .$where ("id", 1)
         )
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             UPDATE "users"
@@ -126,12 +133,9 @@ test.method ("postgresql.Database", "update")
 
 
 test.method ("postgresql.Database", "insert")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("execute the insert statement")
         .given ("users", { name: "John", id: 1 })
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             INSERT INTO "users" ("name", "id")
@@ -146,7 +150,7 @@ test.method ("postgresql.Database", "insert")
                 .$value ("name", "John")
                 .$value ("id", 1)
         )
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             INSERT INTO "users" ("name", "id")
@@ -157,12 +161,9 @@ test.method ("postgresql.Database", "insert")
 
 
 test.method ("postgresql.Database", "upsert")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("perform an upsert")
         .given ("users", { name: "John"}, { id: 1 })
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             INSERT INTO "users" ("name", "id")
@@ -180,7 +181,7 @@ test.method ("postgresql.Database", "upsert")
                 .$value ("name", "John")
                 .$conflictBy ("id", 1)
         )
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             INSERT INTO "users" ("name", "id")
@@ -194,12 +195,9 @@ test.method ("postgresql.Database", "upsert")
 
 
 test.method ("postgresql.Database", "delete")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("perform the deletion")
         .given ("users", { id: 1 })
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
@@ -209,7 +207,7 @@ test.method ("postgresql.Database", "delete")
 
     .should ("treat value of the empty match key as the where expression")
         .given ("users", { "": "age > 10" })
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
@@ -218,7 +216,7 @@ test.method ("postgresql.Database", "delete")
         .commit ()
 
     .given ("users")
-        .before (Tasks.returnResult ({ rowCount: 3 }))
+        .mockClient ({ rowCount: 3 })
         .returns (3)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
@@ -231,7 +229,7 @@ test.method ("postgresql.Database", "delete")
                 .$table ("users")
                 .$where ("id", 1)
         )
-        .before (Tasks.returnResult ({ rowCount: 1 }))
+        .mockClient ({ rowCount: 1 })
         .returns (1)
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             DELETE FROM "users"
@@ -242,12 +240,9 @@ test.method ("postgresql.Database", "delete")
 
 
 test.method ("postgresql.Database", "query")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("format and execute a statement")
         .given ("SELECT * FROM users WHERE id = &1", 100)
-        .before (Tasks.returnResult ({ rows: [] }))
+        .mockClient ({ rows: [] })
         .returns ({ rows: [] })
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT * FROM users WHERE id = '100'
@@ -260,7 +255,7 @@ test.method ("postgresql.Database", "query")
                 .$from ("users")
                 .$where ("id", 1)
         )
-        .before (Tasks.returnResult ({ rows: [] }))
+        .mockClient ({ rows: [] })
         .returns ({ rows: [] })
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT *
@@ -272,16 +267,13 @@ test.method ("postgresql.Database", "query")
 
 
 test.method ("postgresql.Database", "fetchAll")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("return the rows for the given statement")
         .given ("SELECT * FROM users WHERE enabled = &1", true)
-        .before (Tasks.returnResult ({ rows:
+        .mockClient ({ rows:
         [
             { id: 1, name: "John", enabled: true },
             { id: 2, name: "Jane", enabled: true }
-        ]}))
+        ]})
         .returns (
         [
             { id: 1, name: "John", enabled: true },
@@ -295,16 +287,13 @@ test.method ("postgresql.Database", "fetchAll")
 
 
 test.method ("postgresql.Database", "fetch")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("return a single row for the given statement")
         .given ("SELECT * FROM users WHERE enabled = &1", true)
-        .before (Tasks.returnResult ({ rows:
+        .mockClient ({ rows:
         [
             { id: 1, name: "John", enabled: true },
             { id: 2, name: "Jane", enabled: true }
-        ]}))
+        ]})
         .returns ({ id: 1, name: "John", enabled: true })
         .expectingPropertyToBe ("object.client.statement", nit.trim.text`
             SELECT * FROM users WHERE enabled = 'true'
@@ -314,32 +303,25 @@ test.method ("postgresql.Database", "fetch")
 
 
 test.method ("postgresql.Database", "value")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("return the value for the first column of the first row")
         .given ("SELECT name FROM users WHERE enabled = &1", true)
-        .before (Tasks.returnResult ({ rows: [{ name: "John" }]}))
+        .mockClient ({ rows: [{ name: "John" }]})
         .returns ("John")
         .commit ()
 ;
 
 
 test.method ("postgresql.Database", "begin")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("start a transaction")
+        .mockClient ()
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.statement", "BEGIN")
         .expectingPropertyToBe ("object.client.query.invocations.length", 1)
         .commit ()
 
     .should ("not start a new transaction if one exists")
-        .after (async function ()
-        {
-            await this.object.begin ();
-        })
+        .mockClient ()
+        .after (s => s.object.begin ())
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.statement", "BEGIN")
         .expectingPropertyToBe ("object.client.query.invocations.length", 1)
@@ -348,34 +330,24 @@ test.method ("postgresql.Database", "begin")
 
 
 test.method ("postgresql.Database", "commit")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("not commit if no transaction was started")
+        .mockClient ()
         .returnsInstanceOf (postgresql.Database)
-        .expectingPropertyToBe ("object.client.statement", "")
-        .expectingPropertyToBe ("object.client.query.invocations.length", 0)
+        .expectingPropertyToBe ("object.client", undefined)
         .commit ()
 
     .should ("commit if a transaction was started")
-        .before (async function ()
-        {
-            await this.object.begin ();
-        })
+        .mockClient ()
+        .before (s => s.object.begin ())
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.statement", "COMMIT")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
         .commit ()
 
     .should ("commit only once if called multiple times")
-        .before (async function ()
-        {
-            await this.object.begin ();
-        })
-        .after (async function ()
-        {
-            await this.object.commit ();
-        })
+        .mockClient ()
+        .before (s => s.object.begin ())
+        .after (s => s.object.commit ())
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.statement", "COMMIT")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
@@ -384,34 +356,27 @@ test.method ("postgresql.Database", "commit")
 
 
 test.method ("postgresql.Database", "rollback")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("not rollback if no transaction was started")
+        .mockClient ()
         .returnsInstanceOf (postgresql.Database)
-        .expectingPropertyToBe ("object.client.statement", "")
-        .expectingPropertyToBe ("object.client.query.invocations.length", 0)
+        .expectingPropertyToBe ("object.client", undefined)
         .commit ()
 
     .should ("rollback if a transaction was started")
-        .before (async function ()
-        {
-            await this.object.begin ();
-        })
+        .mockClient ()
+        .before (s => s.object.begin ())
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.statement", "ROLLBACK")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
         .commit ()
 
     .should ("rollback only once if called multiple times")
-        .before (async function ()
+        .mockClient ()
+        .before (s => s.object.begin ())
+        .after (async (s) =>
         {
-            await this.object.begin ();
-        })
-        .after (async function ()
-        {
-            await this.object.rollback ();
-            await this.object.rollback ();
+            await s.object.rollback ();
+            await s.object.rollback ();
         })
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.statement", "ROLLBACK")
@@ -421,10 +386,8 @@ test.method ("postgresql.Database", "rollback")
 
 
 test.method ("postgresql.Database", "transact")
-    .before (Tasks.createClient)
-    .snapshot ()
-
     .should ("run tasks in a transaction")
+        .mockClient ()
         .given (function ()
         {
             return 100;
@@ -435,6 +398,7 @@ test.method ("postgresql.Database", "transact")
         .commit ()
 
     .should ("rollback if the task throws")
+        .mockClient ()
         .given (function ()
         {
             throw new Error ("Unexpected!");
@@ -447,21 +411,10 @@ test.method ("postgresql.Database", "transact")
 
 
 test.method ("postgresql.Database", "execute")
-    .before (Tasks.createClient)
-    .snapshot ()
-
-    .should ("execute the given statement")
-        .given ("SELECT COUNT (*) FROM users")
-        .mock ("object.client", "query", function ()
-        {
-            return 3;
-        })
-        .returns (3)
-        .commit ()
-
     .should ("throw if the the statement caused an error")
+        .mockClient ()
         .given ("SELECT that!")
-        .mock ("object.client", "query", function ()
+        .mock ("client", "query", function ()
         {
             throw new Error ("Invalid syntax!");
         })
@@ -469,13 +422,17 @@ test.method ("postgresql.Database", "execute")
         .expectingPropertyToBe ("error.message", "Database error: Invalid syntax!")
         .commit ()
 
+    .should ("execute the given statement")
+        .mockClient ({ rows: [{ "count": 3 }] })
+        .given ("SELECT COUNT (*) FROM users")
+        .returns ({ rows: [{ "count": 3 }] })
+        .commit ()
+
     .should ("parse the value of an array column")
         .given ("SELECT * FROM users")
-        .mock ("object.client", "query", function ()
+        .mockClient (
         {
-            return {
-                rows: [{ username: "johndoe", aliases: [JSON.stringify ({ n: "jd1" }), JSON.stringify ({ n: "jd2" })] }]
-            };
+            rows: [{ username: "johndoe", aliases: [JSON.stringify ({ n: "jd1" }), JSON.stringify ({ n: "jd2" })] }]
         })
         .returns ({
             rows: [{ username: "johndoe", aliases: [{ n: "jd1" }, { n: "jd2" }] }]
@@ -485,21 +442,14 @@ test.method ("postgresql.Database", "execute")
 
 
 test.method ("postgresql.Database", "connect")
-    .before (function ()
-    {
-        MockPgClient.reset ();
-    })
-    .snapshot ()
-
     .should ("set up the client")
+        .mockClient ()
         .returnsInstanceOf (postgresql.Database)
         .commit ()
 
     .should ("only create the client if not connected")
-        .before (async function ()
-        {
-            await this.object.connect ();
-        })
+        .mockClient ()
+        .before (s => s.object.connect ())
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client.connect.invocations.length", 1)
         .commit ()
@@ -515,41 +465,26 @@ test.method ("postgresql.Database", "connect", { createArgs: [{ pooling: true }]
 
 
 test.method ("postgresql.Database", "disconnect")
-    .before (function ()
-    {
-        MockPgClient.reset ();
-    })
-    .snapshot ()
-
     .should ("disconnect and release the client")
-        .before (async function ()
-        {
-            await this.object.connect ();
-        })
+        .mockClient ()
+        .before (s => s.object.connect ())
         .returnsInstanceOf (postgresql.Database)
         .expectingPropertyToBe ("object.client", undefined)
         .commit ()
 
     .should ("only disconnect the client only if connected")
-        .before (async function ()
-        {
-            await this.object.connect ();
-        })
-        .after (async function ()
-        {
-            await this.object.disconnect ();
-        })
+        .mockClient ()
+        .before (s => s.object.connect ())
+        .after (s => s.object.connect ())
         .returnsInstanceOf (postgresql.Database)
         .commit ()
 
     .should ("rollback the current transaction before disconnect")
+        .mockClient ()
         .mock ("object", "rollback")
-        .before (async function ()
-        {
-            await this.object.begin ();
-        })
+        .before (s => s.object.begin ())
         .returnsInstanceOf (postgresql.Database)
-        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
+        .expectingPropertyToBe ("mocks.1.invocations.length", 1)
         .commit ()
 ;
 
@@ -557,10 +492,7 @@ test.method ("postgresql.Database", "disconnect")
 test.method ("postgresql.Database", "disconnect", { createArgs: [{ pooling: true }] })
     .should ("issue DISCARD ALL before releasing the client to the pool")
         .mock ("object.client", "query")
-        .before (async function ()
-        {
-            await this.object.connect ();
-        })
+        .before (s => s.object.connect ())
         .returnsInstanceOf ("postgresql.Database")
         .expectingPropertyToBe ("mocks.0.invocations.0.args.0", "DISCARD ALL")
         .commit ()

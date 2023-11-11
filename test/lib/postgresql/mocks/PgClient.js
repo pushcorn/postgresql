@@ -9,24 +9,6 @@ module.exports = function (nit, postgresql, Self)
         .field ("statement", "string", "The last statement.")
         .property ("statements...", "string")
 
-        .defineInnerClass ("Tasks", Tasks =>
-        {
-            Tasks
-                .staticMethod ("createClient", function ()
-                {
-                    Self.reset ();
-                    this.object.client = new Self;
-                })
-                .staticMethod ("returnResult", function (result)
-                {
-                    return function ()
-                    {
-                        this.object.client.result = result;
-                    };
-                })
-            ;
-        })
-
         .method ("connect", function ()
         {
         })
