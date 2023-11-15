@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:create")
             ;
         })
         .given ("test.models.User", { data: { name: "John Doe" } })
-        .mockGetDb ()
+        .registerDbService ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             INSERT INTO "users" ("id", "name")
             VALUES ('0', 'John Doe')

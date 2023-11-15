@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:get")
             ;
         })
         .given ("test.models.User", 10)
-        .mockGetDb ()
+        .registerDbService ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "users"

@@ -15,7 +15,7 @@ test.workflowStep ("postgresql:update-entity")
             }
         ])
         .before (s => s.db.client.result = { rows: [{ id: 10, name: "John Doe" }] })
-        .mockGetDb ()
+        .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
             FROM "users"

@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:select")
             ;
         })
         .given ("test.models.User", { matches: { name: "John Doe" } })
-        .mockGetDb ()
+        .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
             FROM "users"

@@ -100,9 +100,9 @@ nit.test.Strategy
             })
         ;
     })
-    .method ("mockGetDb", function (property)
+    .method ("registerDbService", function (property)
     {
-        return this.mock (property || "class.prototype", "getDb", function () { return this.strategy.db; });
+        return this.preTest (s => s[property || "context"].registerService ("client", "postgresql.Database", s.db));
     })
     .method ("expectingFieldEagerQueryToBe", function (dotPath, query)
     {

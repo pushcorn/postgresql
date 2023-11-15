@@ -2,7 +2,7 @@ test.task ("postgresql.tasks.Find")
     .useMockPgClient ()
     .should ("find the row that matches the criteria")
         .given ("users", { matches: { id: 3 } })
-        .mockGetDb ()
+        .registerDbService ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "users"

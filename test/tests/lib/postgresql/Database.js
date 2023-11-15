@@ -11,11 +11,13 @@ nit.test.Strategy
         return this
             .up (s => s.client = new MockPgClient ({ result }))
             .up (() => MockPgClient.reset ())
-            .mock ("object", "connect", function ()
+            .mock ("object", "connect", { iterations: 1 }, function ()
             {
                 let { target, strategy } = this;
 
                 target.client = strategy.client;
+
+                strategy.client.connect ();
 
                 return target;
             })

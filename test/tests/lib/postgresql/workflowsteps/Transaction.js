@@ -18,7 +18,7 @@ test.workflowStep ("postgresql:transaction")
             }
         })
         .up (s => s.WorkflowStep = s.postgresql.WorkflowStep)
-        .mockGetDb ("WorkflowStep.prototype")
+        .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             BEGIN
             --
@@ -45,7 +45,7 @@ test.workflowStep ("postgresql:transaction")
             }
         })
         .up (s => s.WorkflowStep = s.postgresql.WorkflowStep)
-        .mockGetDb ("WorkflowStep.prototype")
+        .registerDbService ()
         .throws ("error.component_not_found")
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             BEGIN

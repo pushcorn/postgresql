@@ -13,7 +13,7 @@ test.task ("postgresql.tasks.Update")
                 "": "age > 10"
             }
         })
-        .mockGetDb ()
+        .registerDbService ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             UPDATE "users"
             SET "disabled" = 'true'
