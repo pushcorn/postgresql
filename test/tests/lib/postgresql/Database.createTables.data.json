@@ -19,7 +19,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"products\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_products'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_products\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -28,7 +78,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"tags\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_tags'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_tags\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -37,7 +137,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"productTagsTagProductsLinks\"\n(\n    \"product_id\" INTEGER NOT NULL,\n    \"tag_id\" INTEGER NOT NULL,\n    PRIMARY KEY (\"product_id\", \"tag_id\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_productTagsTagProductsLinks'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_productTagsTagProductsLinks\"\n(\n    \"product_id\" INTEGER NOT NULL,\n    \"tag_id\" INTEGER NOT NULL,\n    PRIMARY KEY (\"product_id\", \"tag_id\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -46,7 +196,7 @@
             }
         },
         {
-            "statement": "ALTER TABLE \"productTagsTagProductsLinks\"\nADD CONSTRAINT \"productTagsTagProductsLinks_product_id_fk\" FOREIGN KEY (\"product_id\")\nREFERENCES \"products\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "statement": "ALTER TABLE \"test_productTagsTagProductsLinks\"\nADD CONSTRAINT \"test_productTagsTagProductsLinks_product_id_fk\" FOREIGN KEY (\"product_id\")\nREFERENCES \"test_products\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
             "result": {
                 "command": "ALTER",
                 "rows": [],
@@ -55,7 +205,7 @@
             }
         },
         {
-            "statement": "ALTER TABLE \"productTagsTagProductsLinks\"\nADD CONSTRAINT \"productTagsTagProductsLinks_tag_id_fk\" FOREIGN KEY (\"tag_id\")\nREFERENCES \"tags\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "statement": "ALTER TABLE \"test_productTagsTagProductsLinks\"\nADD CONSTRAINT \"test_productTagsTagProductsLinks_tag_id_fk\" FOREIGN KEY (\"tag_id\")\nREFERENCES \"test_tags\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
             "result": {
                 "command": "ALTER",
                 "rows": [],
@@ -64,7 +214,7 @@
             }
         },
         {
-            "statement": "CREATE INDEX IF NOT EXISTS \"idx_productTagsTagProductsLinks_tag_id\"\nON \"productTagsTagProductsLinks\" (\"tag_id\")",
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_test_productTagsTagProductsLinks_tag_id\"\nON \"test_productTagsTagProductsLinks\" (\"tag_id\")",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -73,12 +223,12 @@
             }
         },
         {
-            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'products'",
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'test_products'",
             "result": {
                 "command": "SELECT",
                 "rows": [
                     {
-                        "tablename": "products"
+                        "tablename": "test_products"
                     }
                 ],
                 "rowCount": 1,
@@ -92,12 +242,12 @@
             }
         },
         {
-            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'tags'",
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'test_tags'",
             "result": {
                 "command": "SELECT",
                 "rows": [
                     {
-                        "tablename": "tags"
+                        "tablename": "test_tags"
                     }
                 ],
                 "rowCount": 1,
@@ -111,12 +261,12 @@
             }
         },
         {
-            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'productTagsTagProductsLinks'",
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'test_productTagsTagProductsLinks'",
             "result": {
                 "command": "SELECT",
                 "rows": [
                     {
-                        "tablename": "productTagsTagProductsLinks"
+                        "tablename": "test_productTagsTagProductsLinks"
                     }
                 ],
                 "rowCount": 1,
@@ -130,7 +280,7 @@
             }
         },
         {
-            "statement": "DROP TABLE IF EXISTS \"products\" CASCADE",
+            "statement": "DROP TABLE IF EXISTS \"test_products\" CASCADE",
             "result": {
                 "command": "DROP",
                 "rows": [],
@@ -139,7 +289,7 @@
             }
         },
         {
-            "statement": "DROP TABLE IF EXISTS \"productTagsTagProductsLinks\" CASCADE",
+            "statement": "DROP TABLE IF EXISTS \"test_productTagsTagProductsLinks\" CASCADE",
             "result": {
                 "command": "DROP",
                 "rows": [],
@@ -148,7 +298,7 @@
             }
         },
         {
-            "statement": "DROP TABLE IF EXISTS \"tags\" CASCADE",
+            "statement": "DROP TABLE IF EXISTS \"test_tags\" CASCADE",
             "result": {
                 "command": "DROP",
                 "rows": [],
@@ -157,7 +307,7 @@
             }
         },
         {
-            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'products'",
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'test_products'",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -172,7 +322,7 @@
             }
         },
         {
-            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'tags'",
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'test_tags'",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -187,7 +337,7 @@
             }
         },
         {
-            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'productTagsTagProductsLinks'",
+            "statement": "SELECT tablename FROM pg_tables WHERE tablename = 'test_productTagsTagProductsLinks'",
             "result": {
                 "command": "SELECT",
                 "rows": [],

@@ -62,7 +62,7 @@ test.method ("postgresql.Database", "createTables")
                 }
             }
         })
-        .expectingPropertyToBe ("createdTables", ["products", "tags", "productTagsTagProductsLinks"])
-        .expectingPropertyToBe ("droppedTables", ["products", "tags", "productTagsTagProductsLinks"])
+        .expectingPropertyToBe ("createdTables", ["test_products", "test_tags", "test_productTagsTagProductsLinks"])
+        .expectingPropertyToBe ("droppedTables", ["test_products", "test_tags", "test_productTagsTagProductsLinks"])
         .commit ()
 ;

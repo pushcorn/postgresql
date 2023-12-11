@@ -64,8 +64,8 @@ test.method ("postgresql.Database", "select")
     .should ("use the Query object if provided")
         .given (
             nit.new ("postgresql.queries.Select")
-                .$from ("users")
-                .$where ("id", 1)
+                .From ("users")
+                .Where ("id", 1)
         )
         .mockClient ({ rows: [{ id: 1, user: "john" }] })
         .returns ([{ id: 1, user: "john" }])
@@ -119,9 +119,9 @@ test.method ("postgresql.Database", "update")
     .should ("use the Query object if provided")
         .given (
             nit.new ("postgresql.queries.Update")
-                .$table ("users")
-                .$set ("name", "John")
-                .$where ("id", 1)
+                .Table ("users")
+                .Set ("name", "John")
+                .Where ("id", 1)
         )
         .mockClient ({ rowCount: 1 })
         .returns (1)
@@ -148,9 +148,9 @@ test.method ("postgresql.Database", "insert")
     .should ("use the Query object if provided")
         .given (
             nit.new ("postgresql.queries.Insert")
-                .$table ("users")
-                .$value ("name", "John")
-                .$value ("id", 1)
+                .Table ("users")
+                .Value ("name", "John")
+                .Value ("id", 1)
         )
         .mockClient ({ rowCount: 1 })
         .returns (1)
@@ -179,9 +179,9 @@ test.method ("postgresql.Database", "upsert")
     .should ("use the Query object if provided")
         .given (
             nit.new ("postgresql.queries.Insert")
-                .$table ("users")
-                .$value ("name", "John")
-                .$conflictBy ("id", 1)
+                .Table ("users")
+                .Value ("name", "John")
+                .ConflictBy ("id", 1)
         )
         .mockClient ({ rowCount: 1 })
         .returns (1)
@@ -228,8 +228,8 @@ test.method ("postgresql.Database", "delete")
     .should ("use the Query object if provided")
         .given (
             nit.new ("postgresql.queries.Delete")
-                .$table ("users")
-                .$where ("id", 1)
+                .Table ("users")
+                .Where ("id", 1)
         )
         .mockClient ({ rowCount: 1 })
         .returns (1)
@@ -254,8 +254,8 @@ test.method ("postgresql.Database", "query")
     .should ("use the Query object if provided")
         .given (
             nit.new ("postgresql.queries.Select")
-                .$from ("users")
-                .$where ("id", 1)
+                .From ("users")
+                .Where ("id", 1)
         )
         .mockClient ({ rows: [] })
         .returns ({ rows: [] })
@@ -309,6 +309,15 @@ test.method ("postgresql.Database", "value")
         .given ("SELECT name FROM users WHERE enabled = &1", true)
         .mockClient ({ rows: [{ name: "John" }]})
         .returns ("John")
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "values")
+    .should ("return the value for the first column of all rows")
+        .given ("SELECT name FROM users WHERE enabled = &1", true)
+        .mockClient ({ rows: [{ name: "John" }, { name: "Jane" }]})
+        .returns (["John", "Jane"])
         .commit ()
 ;
 
@@ -409,6 +418,18 @@ test.method ("postgresql.Database", "transact")
         .expectingPropertyToBe ("object.client.query.invocations.0.args.0", "BEGIN")
         .expectingPropertyToBe ("object.client.query.invocations.1.args.0", "ROLLBACK")
         .commit ()
+
+    .should ("log error if ignoreError is true")
+        .mockClient ()
+        .given (function ()
+        {
+            throw new Error ("Unexpected!");
+        }, true)
+        .mock ("object", "error")
+        .expectingPropertyToBeOfType ("mocks.1.invocations.0.args.0", "Error")
+        .expectingPropertyToBe ("object.client.query.invocations.0.args.0", "BEGIN")
+        .expectingPropertyToBe ("object.client.query.invocations.1.args.0", "ROLLBACK")
+        .commit ()
 ;
 
 
@@ -421,7 +442,7 @@ test.method ("postgresql.Database", "execute")
             throw new Error ("Invalid syntax!");
         })
         .throws ("error.database_error")
-        .expectingPropertyToBe ("error.message", "Database error: Invalid syntax!")
+        .expectingPropertyToBe ("error.message", "Database error: Invalid syntax! (Statement: SELECT that!)")
         .commit ()
 
     .should ("execute the given statement")
@@ -578,11 +599,25 @@ test.method ("postgresql.Database", "createTables")
             ;
 
             s.args.push (nit.lookupClass ("test.models.Country"));
+            s.queries = [];
         })
         .given ("test.models.Capital")
         .spy ("object", "execute")
-        .expectingPropertyToBe ("spies.0.invocations.0.args.0", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "countries"
+        .after (s =>
+        {
+            nit.each (s.spies[0].invocations, function ({ args: [statement] })
+            {
+                s.queries.push (statement instanceof s.postgresql.Query ? statement.sql : statement);
+            });
+        })
+        .expectingPropertyToBe ("queries.0", nit.trim.text`
+            SELECT *
+            FROM "pg_tables"
+            WHERE "tablename" = 'test_countries'
+            LIMIT 1
+        `)
+        .expectingPropertyToBe ("queries.1", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "test_countries"
             (
                 "id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
@@ -590,8 +625,14 @@ test.method ("postgresql.Database", "createTables")
                 UNIQUE ("name")
             )
         `)
-        .expectingPropertyToBe ("spies.0.invocations.1.args.0", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+        .expectingPropertyToBe ("queries.2", nit.trim.text`
+            SELECT *
+            FROM "pg_tables"
+            WHERE "tablename" = 'test_capitals'
+            LIMIT 1
+        `)
+        .expectingPropertyToBe ("queries.3", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
@@ -601,53 +642,77 @@ test.method ("postgresql.Database", "createTables")
                 UNIQUE ("name")
             )
         `)
-        .expectingPropertyToBe ("spies.0.invocations.2.args.0", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "people"
+        .expectingPropertyToBe ("queries.4", nit.trim.text`
+            SELECT *
+            FROM "pg_tables"
+            WHERE "tablename" = 'test_people'
+            LIMIT 1
+        `)
+        .expectingPropertyToBe ("queries.5", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "test_people"
             (
                 "id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
                 PRIMARY KEY ("id")
             )
         `)
-        .expectingPropertyToBe ("spies.0.invocations.3.args.0", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "personFollowersPersonPeopleLinks"
+        .expectingPropertyToBe ("queries.6", nit.trim.text`
+            SELECT *
+            FROM "pg_tables"
+            WHERE "tablename" = 'test_personFollowersPersonPeopleLinks'
+            LIMIT 1
+        `)
+        .expectingPropertyToBe ("queries.7", nit.trim.text`
+            CREATE TABLE IF NOT EXISTS "test_personFollowersPersonPeopleLinks"
             (
                 "person_id" TEXT NOT NULL,
                 "follower_id" TEXT NOT NULL,
                 PRIMARY KEY ("person_id", "follower_id")
             )
         `)
-        .expectingPropertyToBe ("spies.0.invocations.4.args.0", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
-            REFERENCES "countries" ("id")
+        .expectingPropertyToBe ("queries.8", nit.trim.text`
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_country_id_fk" FOREIGN KEY ("country_id")
+            REFERENCES "test_countries" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
-        .expectingPropertyToBe ("spies.0.invocations.5.args.0", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_country_id_uk" UNIQUE ("country_id")
+        .expectingPropertyToBe ("queries.9", nit.trim.text`
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_country_id_uk" UNIQUE ("country_id")
         `)
-        .expectingPropertyToBe ("spies.0.invocations.8.args.0", nit.trim.text`
-            ALTER TABLE "personFollowersPersonPeopleLinks"
-            ADD CONSTRAINT "personFollowersPersonPeopleLinks_person_id_fk" FOREIGN KEY ("person_id")
-            REFERENCES "people" ("id")
+        .expectingPropertyToBe ("queries.10", nit.trim.text`
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_mayor_id_fk" FOREIGN KEY ("mayor_id")
+            REFERENCES "test_people" ("id")
+            ON DELETE SET NULL
+            ON UPDATE SET NULL
+            INITIALLY DEFERRED
+        `)
+        .expectingPropertyToBe ("queries.11", nit.trim.text`
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_mayor_id_uk" UNIQUE ("mayor_id")
+        `)
+        .expectingPropertyToBe ("queries.12", nit.trim.text`
+            ALTER TABLE "test_personFollowersPersonPeopleLinks"
+            ADD CONSTRAINT "test_personFollowersPersonPeopleLinks_person_id_fk" FOREIGN KEY ("person_id")
+            REFERENCES "test_people" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
-        .expectingPropertyToBe ("spies.0.invocations.9.args.0", nit.trim.text`
-            ALTER TABLE "personFollowersPersonPeopleLinks"
-            ADD CONSTRAINT "personFollowersPersonPeopleLinks_follower_id_fk" FOREIGN KEY ("follower_id")
-            REFERENCES "people" ("id")
+        .expectingPropertyToBe ("queries.13", nit.trim.text`
+            ALTER TABLE "test_personFollowersPersonPeopleLinks"
+            ADD CONSTRAINT "test_personFollowersPersonPeopleLinks_follower_id_fk" FOREIGN KEY ("follower_id")
+            REFERENCES "test_people" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
-        .expectingPropertyToBe ("spies.0.invocations.10.args.0", nit.trim.text`
-            CREATE INDEX IF NOT EXISTS "idx_personFollowersPersonPeopleLinks_follower_id"
-            ON "personFollowersPersonPeopleLinks" ("follower_id")
+        .expectingPropertyToBe ("queries.14", nit.trim.text`
+            CREATE INDEX IF NOT EXISTS "idx_test_personFollowersPersonPeopleLinks_follower_id"
+            ON "test_personFollowersPersonPeopleLinks" ("follower_id")
         `)
         .commit ()
 ;
@@ -682,10 +747,32 @@ test.method ("postgresql.Database", "dropTables")
         .given ("test.models.Capital")
         .spy ("object", "execute")
         .expectingPropertyToBe ("spies.0.invocations.0.args.0", nit.trim.text`
-            DROP TABLE IF EXISTS "capitals" CASCADE
+            DROP TABLE IF EXISTS "test_capitals" CASCADE
         `)
         .expectingPropertyToBe ("spies.0.invocations.1.args.0", nit.trim.text`
-            DROP TABLE IF EXISTS "countries" CASCADE
+            DROP TABLE IF EXISTS "test_countries" CASCADE
         `)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "notify")
+    .should ("send a message to the channel")
+        .given ("tc")
+        .mock ("object", "execute")
+        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", "NOTIFY \"tc\"")
+        .commit ()
+
+    .given ("tc", "mesg")
+        .mock ("object", "execute")
+        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", "NOTIFY \"tc\", 'mesg'")
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "acquire")
+    .should ("create a new db with the connection from the pool")
+        .mock ("class.prototype", "connect")
+        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
         .commit ()
 ;

@@ -18,7 +18,7 @@ test.object ("postgresql.Table")
 ;
 
 
-test.method ("postgresql.Table", "$column", { createArgs: ["users"] })
+test.method ("postgresql.Table", "Column", { createArgs: ["users"] })
     .should ("add a column to the table")
     .given ("id", { primaryKey: true })
     .expectingPropertyToBe ("result.createSql", nit.trim.text`
@@ -49,6 +49,18 @@ test.method ("postgresql.Table", "create")
         `)
         .commit ()
 
+    .should ("return if the table already exists")
+        .up (s => s.createArgs =
+        {
+            name: "users",
+            columns: ["id", "username"]
+        })
+        .returnsInstanceOf ("postgresql.Table")
+        .mock ("object", "exists", true)
+        .before (s => s.object.db.client.statement = "")
+        .expectingPropertyToBe ("object.db.client.statement", "")
+        .commit ()
+
     .should ("create the table and the indexes and constraints if all = true")
         .up (s => s.createArgs =
         {
@@ -57,21 +69,27 @@ test.method ("postgresql.Table", "create")
         })
         .given (true)
         .before (s => s.object.db = nit.new ("postgresql.Database"))
-        .before (s => s.object.$index ("username"))
-        .before (s => s.object.$constraint ("check", "LENGTH (username) > 10"))
+        .before (s => s.object.Index ("username"))
+        .before (s => s.object.Constraint ("check", "LENGTH (username) > 10"))
         .returnsInstanceOf ("postgresql.Table")
         .expectingPropertyToBe ("object.db.client.statements.0", nit.trim.text`
+            SELECT *
+            FROM "pg_tables"
+            WHERE "tablename" = 'clients'
+            LIMIT 1
+        `)
+        .expectingPropertyToBe ("object.db.client.statements.1", nit.trim.text`
             CREATE TABLE IF NOT EXISTS "clients"
             (
                 "id" TEXT,
                 "username" TEXT
             )
         `)
-        .expectingPropertyToBe ("object.db.client.statements.1", nit.trim.text`
+        .expectingPropertyToBe ("object.db.client.statements.2", nit.trim.text`
             CREATE INDEX IF NOT EXISTS "idx_clients_username"
             ON "clients" ("username")
         `)
-        .expectingPropertyToBe ("object.db.client.statements.2", nit.trim.text`
+        .expectingPropertyToBe ("object.db.client.statements.3", nit.trim.text`
             ALTER TABLE "clients"
             ADD CONSTRAINT "clients_1_chk" CHECK (LENGTH (username) > 10)
         `)
@@ -79,123 +97,111 @@ test.method ("postgresql.Table", "create")
 ;
 
 
-test.method ("postgresql.Table", "drop",
-    {
-        createArgs: ["users"]
-    })
+test.method ("postgresql.Table", "drop", { createArgs: ["users"] })
     .should ("drop the table")
-    .before (async (s) =>
-    {
-        let db = s.object.db;
+        .before (async (s) =>
+        {
+            let db = s.object.db;
 
-        await db.connect ();
+            await db.connect ();
 
-        db.client.result =
+            db.client.result =
+            {
+                command: "DROP",
+                rowCount: null
+            };
+        })
+        .expectingPropertyToBe ("result",
         {
             command: "DROP",
             rowCount: null
-        };
-    })
-    .expectingPropertyToBe ("result",
-    {
-        command: "DROP",
-        rowCount: null
-    })
-    .expectingPropertyToBe ("object.db.client.statement", `DROP TABLE IF EXISTS "users" CASCADE`)
-    .commit ()
+        })
+        .expectingPropertyToBe ("object.db.client.statement", `DROP TABLE IF EXISTS "users" CASCADE`)
+        .commit ()
 ;
 
 
-test.method ("postgresql.Table", "exists",
-    {
-        createArgs: ["users"]
-    })
+test.method ("postgresql.Table", "exists", { createArgs: ["users"] })
     .should ("returns true if the table exists")
-    .before (async (s) =>
-    {
-        let db = s.object.db;
-
-        await db.connect ();
-
-        db.client.result =
+        .before (async (s) =>
         {
-            rows:
-            [
+            let db = s.object.db;
+
+            await db.connect ();
+
+            db.client.result =
             {
-                schemaname: 'public',
-                tablename: 'users',
-                tableowner: 'postgres',
-                tablespace: null,
-                hasindexes: true,
-                hasrules: false,
-                hastriggers: false,
-                rowsecurity: false
-            }
-            ]
-        };
-    })
-    .returns (true)
-    .commit ()
+                rows:
+                [
+                {
+                    schemaname: 'public',
+                    tablename: 'users',
+                    tableowner: 'postgres',
+                    tablespace: null,
+                    hasindexes: true,
+                    hasrules: false,
+                    hastriggers: false,
+                    rowsecurity: false
+                }
+                ]
+            };
+        })
+        .returns (true)
+        .commit ()
 ;
 
 
-test.method ("postgresql.Table", "addColumn",
-    {
-        createArgs: ["users"]
-    })
+test.method ("postgresql.Table", "addColumn", { createArgs: ["users"] })
     .should ("add a column to the table")
-    .before (async (s) =>
-    {
-        let db = s.object.db;
+        .before (async (s) =>
+        {
+            let db = s.object.db;
 
-        await db.connect ();
+            await db.connect ();
 
-        s.object.$column ("id", "integer", { primaryKey: true });
-    })
-    .given ("id")
-    .expectingPropertyToBe ("object.db.client.statement", nit.trim.text`
-        ALTER TABLE "users"
-        ADD COLUMN "id" integer NOT NULL
-    `)
-    .commit ()
+            s.object.Column ("id", "integer", { primaryKey: true });
+        })
+        .given ("id")
+        .expectingPropertyToBe ("object.db.client.statement", nit.trim.text`
+            ALTER TABLE "users"
+            ADD COLUMN "id" integer NOT NULL
+        `)
+        .commit ()
 ;
 
 
-test.method ("postgresql.Table", "dropColumn",
-    {
-        createArgs: ["users"]
-    })
+test.method ("postgresql.Table", "dropColumn", { createArgs: ["users"] })
     .should ("add a column to the table")
-    .before (async (s) =>
-    {
-        let db = s.object.db;
+        .before (async (s) =>
+        {
+            let db = s.object.db;
 
-        await db.connect ();
+            await db.connect ();
 
-        s.object.$column ("id", "integer", { primaryKey: true });
-    })
-    .given ("id")
-    .expectingPropertyToBe ("object.db.client.statement", nit.trim.text`
-        ALTER TABLE "users"
-        DROP COLUMN IF EXISTS "id"
-    `)
-    .commit ()
+            s.object.Column ("id", "integer", { primaryKey: true });
+        })
+        .given ("id")
+        .expectingPropertyToBe ("object.db.client.statement", nit.trim.text`
+            ALTER TABLE "users"
+            DROP COLUMN IF EXISTS "id"
+        `)
+        .commit ()
 ;
 
 
 test.object ("postgresql.Table.Column")
     .should ("represent a column of a postgresql table")
-    .given ("username", "VARCHAR (255)", { key : true })
-    .expectingPropertyToBe ("result.sql", `"username" VARCHAR (255)`)
-    .commit ()
+        .given ("username", "VARCHAR (255)", { key : true })
+        .expectingPropertyToBe ("result.sql", `"username" VARCHAR (255)`)
+        .commit ()
 
     .given ("userId", { unique: true, reference: "users" })
-    .expectingPropertyToBe ("result.sql", `"userId" TEXT`)
-    .commit ()
+        .expectingPropertyToBe ("result.sql", `"userId" TEXT`)
+        .commit ()
 
     .given ("dateCreated", "TIMESTAMP", { defval: "NOW ()", nullable: false })
-    .expectingPropertyToBe ("result.sql", `"dateCreated" TIMESTAMP NOT NULL DEFAULT NOW ()`)
-    .commit ()
+        .expectingPropertyToBe ("result.sql", `"dateCreated" TIMESTAMP NOT NULL DEFAULT NOW ()`)
+        .commit ()
 ;
 
 
@@ -305,7 +311,7 @@ test.object ("postgresql.Table.constraints.Check")
 ;
 
 
-test.method ("postgresql.Table", "$constraint", { createArgs: ["users"] })
+test.method ("postgresql.Table", "Constraint", { createArgs: ["users"] })
     .should ("add a constraint to the table")
         .given ("unique", "email")
         .returnsInstanceOf ("postgresql.Table")
@@ -315,7 +321,7 @@ test.method ("postgresql.Table", "$constraint", { createArgs: ["users"] })
 ;
 
 
-test.method ("postgresql.Table", "$index", { createArgs: ["users"] })
+test.method ("postgresql.Table", "Index", { createArgs: ["users"] })
     .should ("add an index to the table")
         .given ("email")
         .returnsInstanceOf ("postgresql.Table")
@@ -415,14 +421,14 @@ test.method ("postgresql.Table", "patch")
             ]
         }))
         .before (s => s.object.db = nit.new ("postgresql.Database"))
-        .before (s => s.object.$index ("firstname", "lastname"))
-        .before (s => s.object.$index ("email", { method: "GIN" }))
-        .before (s => s.object.$constraint ("check", "LENGTH (firstname) > 10"))
-        .before (s => s.object.$constraint ("foreign-key", "role_id", "roles"))
-        .before (s => s.args[0].$index ("firstname"))
-        .before (s => s.args[0].$index ("email", { method: "BTREE" }))
-        .before (s => s.args[0].$constraint ("check", "LENGTH (firstname) > 20"))
-        .before (s => s.args[0].$constraint ("unique", "email"))
+        .before (s => s.object.Index ("firstname", "lastname"))
+        .before (s => s.object.Index ("email", { method: "GIN" }))
+        .before (s => s.object.Constraint ("check", "LENGTH (firstname) > 10"))
+        .before (s => s.object.Constraint ("foreign-key", "role_id", "roles"))
+        .before (s => s.args[0].Index ("firstname"))
+        .before (s => s.args[0].Index ("email", { method: "BTREE" }))
+        .before (s => s.args[0].Constraint ("check", "LENGTH (firstname) > 20"))
+        .before (s => s.args[0].Constraint ("unique", "email"))
         .expectingMethodToReturnValue ("object.db.client.statements.join", "\n--\n", nit.trim.text`
             ALTER TABLE "users"
             ADD COLUMN "email" TEXT
