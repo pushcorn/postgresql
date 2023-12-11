@@ -102,7 +102,7 @@ nit.test.Strategy
     })
     .method ("registerDbService", function (property)
     {
-        return this.preTest (s => s[property || "context"].registerService ("client", "postgresql.Database", s.db));
+        return this.before (s => s[property || "context"].registerService (s.db));
     })
     .method ("expectingFieldEagerQueryToBe", function (dotPath, query)
     {

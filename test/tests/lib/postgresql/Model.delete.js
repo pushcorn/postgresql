@@ -17,7 +17,7 @@ test.method ("postgresql.Model", "delete")
             await s.object.insert ();
         })
         .expectingPropertyToBe ("object.postgresql\\.Model\\.dbId", undefined)
-        .expectingMethodToReturnValue ("db.select", "users", [])
+        .expectingMethodToReturnValue ("db.select", "test_users", [])
         .expecting ("the same entity will not be deleted twice", true, async (s) => (await s.object.delete (s.options)) instanceof s.User)
         .commit ()
 
@@ -34,7 +34,7 @@ test.method ("postgresql.Model", "delete")
             s.object = s.User.new (123, "John Doe");
         })
         .expectingPropertyToBe ("object.postgresql\\.Model\\.dbId", undefined)
-        .expectingMethodToReturnValue ("db.select", "users", [])
+        .expectingMethodToReturnValue ("db.select", "test_users", [])
         .commit ()
 
     .should ("be able to delete the related entities if cascade is true")
@@ -63,7 +63,7 @@ test.method ("postgresql.Model", "delete")
 
             await s.object.insert (true);
         })
-        .expectingMethodToReturnValue ("db.select", "capitals", [])
-        .expectingMethodToReturnValue ("db.select", "countries", [])
+        .expectingMethodToReturnValue ("db.select", "test_capitals", [])
+        .expectingMethodToReturnValue ("db.select", "test_countries", [])
         .commit ()
 ;

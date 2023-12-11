@@ -19,7 +19,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    \"note\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_users'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    \"note\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -28,7 +78,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"note\")\nVALUES ('123', 'John Doe', '')",
+            "statement": "INSERT INTO \"test_users\" (\"id\", \"name\", \"note\")\nVALUES ('123', 'John Doe', '')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -37,7 +87,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -68,7 +118,78 @@
             }
         },
         {
-            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"note\" = ''\nWHERE \"id\" = '123'",
+            "statement": "UPDATE \"test_users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '123'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"test_users\"\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "Jane Doe",
+                        "note": ""
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "note",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": 123,
+                        "name": "Jane Doe",
+                        "note": ""
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "name",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "note",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"test_users\"\nSET \"id\" = '123'\nWHERE \"id\" = '123'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -86,7 +207,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -117,7 +238,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -148,7 +269,7 @@
             }
         },
         {
-            "statement": "UPDATE \"users\"\nSET \"name\" = 'John Doe', \"note\" = ''\nWHERE \"id\" = '123'",
+            "statement": "UPDATE \"test_users\"\nSET \"name\" = 'John Doe'\nWHERE \"id\" = '123'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -157,7 +278,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -215,7 +336,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    \"note\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_users'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    \"note\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -224,7 +395,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -276,7 +447,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"countries\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_countries'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_countries\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"name\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -285,7 +506,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"capitals\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    \"country_id\" INTEGER NOT NULL DEFAULT 0,\n    PRIMARY KEY (\"id\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_capitals'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_capitals\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT NOT NULL,\n    \"country_id\" INTEGER NOT NULL DEFAULT 0,\n    PRIMARY KEY (\"id\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -294,7 +565,7 @@
             }
         },
         {
-            "statement": "ALTER TABLE \"capitals\"\nADD CONSTRAINT \"capitals_country_id_fk\" FOREIGN KEY (\"country_id\")\nREFERENCES \"countries\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
+            "statement": "ALTER TABLE \"test_capitals\"\nADD CONSTRAINT \"test_capitals_country_id_fk\" FOREIGN KEY (\"country_id\")\nREFERENCES \"test_countries\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE\nINITIALLY DEFERRED",
             "result": {
                 "command": "ALTER",
                 "rows": [],
@@ -303,7 +574,7 @@
             }
         },
         {
-            "statement": "ALTER TABLE \"capitals\"\nADD CONSTRAINT \"capitals_country_id_uk\" UNIQUE (\"country_id\")",
+            "statement": "ALTER TABLE \"test_capitals\"\nADD CONSTRAINT \"test_capitals_country_id_uk\" UNIQUE (\"country_id\")",
             "result": {
                 "command": "ALTER",
                 "rows": [],
@@ -312,7 +583,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"capitals\"\nWHERE \"id\" = '222'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_capitals\"\nWHERE \"id\" = '222'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -337,7 +608,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'USA' AND \"id\" <> '1234'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"name\" = 'USA' AND \"id\" <> '1234'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -357,7 +628,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"capitals\" (\"id\", \"name\", \"country_id\")\nVALUES ('222', 'Washington D.C.', '1234')",
+            "statement": "INSERT INTO \"test_capitals\" (\"id\", \"name\", \"country_id\")\nVALUES ('222', 'Washington D.C.', '1234')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -366,7 +637,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"id\" = '1234'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"id\" = '1234'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -386,7 +657,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'USA'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"name\" = 'USA'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -406,7 +677,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'USA' AND \"id\" <> '1234'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"name\" = 'USA' AND \"id\" <> '1234'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -426,7 +697,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"countries\" (\"id\", \"name\")\nVALUES ('1234', 'USA')",
+            "statement": "INSERT INTO \"test_countries\" (\"id\", \"name\")\nVALUES ('1234', 'USA')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -435,7 +706,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'Taiwan' AND \"id\" <> '1234'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"name\" = 'Taiwan' AND \"id\" <> '1234'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -455,7 +726,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"capitals\"\nWHERE \"id\" = '222'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_capitals\"\nWHERE \"id\" = '222'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -486,7 +757,7 @@
             }
         },
         {
-            "statement": "UPDATE \"capitals\"\nSET \"name\" = 'Taipei', \"country_id\" = '1234'\nWHERE \"id\" = '222'",
+            "statement": "UPDATE \"test_capitals\"\nSET \"name\" = 'Taipei'\nWHERE \"id\" = '222'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -495,7 +766,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"name\" = 'Taiwan' AND \"id\" <> '1234'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"name\" = 'Taiwan' AND \"id\" <> '1234'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -515,7 +786,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"\nWHERE \"id\" = '1234'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_countries\"\nWHERE \"id\" = '1234'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -540,7 +811,7 @@
             }
         },
         {
-            "statement": "UPDATE \"countries\"\nSET \"name\" = 'Taiwan'\nWHERE \"id\" = '1234'",
+            "statement": "UPDATE \"test_countries\"\nSET \"name\" = 'Taiwan'\nWHERE \"id\" = '1234'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -558,7 +829,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"capitals\"",
+            "statement": "SELECT *\nFROM \"test_capitals\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -589,7 +860,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"countries\"",
+            "statement": "SELECT *\nFROM \"test_countries\"",
             "result": {
                 "command": "SELECT",
                 "rows": [

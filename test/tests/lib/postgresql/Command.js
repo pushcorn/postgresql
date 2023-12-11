@@ -1,21 +1,24 @@
-nit.require ("postgresql.mocks.PgClient");
+test.object ("postgresql.Command.Context", true, "db")
+    .should ("provide a default db instance")
+        .before (s => s.instance.command = nit.new ("postgresql.Command"))
+        .returnsInstanceOf ("postgresql.Database")
+        .commit ()
 
-const Command = nit.require ("postgresql.Command");
-const Context = Command.Context;
-
-
-test.function (Context)
-    .should ("provide a database connection")
-        .expectingPropertyToBeOfType ("result.db", "postgresql.Database")
+    .should ("return the existing db instance")
+        .before (s => s.instance.command = nit.new ("postgresql.Command"))
+        .before (s => s.instance.registerService (nit.new ("postgresql.Database")))
+        .returnsInstanceOf ("postgresql.Database")
         .commit ()
 ;
 
 
 test.method ("postgresql.Command", "finally")
-    .should ("disconnect the database")
-        .up (s => s.args = new Context)
-        .up (s => s.args[0].db.connect ())
+    .should ("disconnect the created database")
+        .before (s => s.context = s.class.Context.new ({ command: s.object }))
+        .before (s => s.context.db)
+        .before (s => s.args = s.context)
+        .mock ("postgresql.Database.prototype", "disconnect")
         .expectingPropertyToBeOfType ("args.0.db", "postgresql.Database")
-        .expectingPropertyToBe ("args.0.db.client", undefined)
+        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
         .commit ()
 ;

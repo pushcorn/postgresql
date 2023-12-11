@@ -12,7 +12,7 @@ test.method ("postgresql.Model", "create", true)
         .given (123, "John Doe")
         .returnsInstanceOf ("test.models.User")
         .expectingMethodToReturnValue ("result.toPojo", null, { id: 123, name: "John Doe" })
-        .expectingMethodToReturnValue ("db.select", "users", [{ id: 123, name: "John Doe" }])
+        .expectingMethodToReturnValue ("db.select", "test_users", [{ id: 123, name: "John Doe" }])
         .commit ()
 
     .should ("be able to persist inner model array field")
@@ -47,7 +47,7 @@ test.method ("postgresql.Model", "create", true)
             ]
         })
         .returnsInstanceOf ("test.models.Capital")
-        .expectingMethodToReturnValue ("db.select", "capitals",
+        .expectingMethodToReturnValue ("db.select", "test_capitals",
         [
         {
             id: "aa69a37c-811a-4537-b3da-88b7af70be1c",
@@ -93,7 +93,7 @@ test.method ("postgresql.Model", "create", true)
             ]
         })
         .returnsInstanceOf ("test.models.Capital")
-        .expectingMethodToReturnValue ("db.select", "capitals",
+        .expectingMethodToReturnValue ("db.select", "test_capitals",
         [
         {
             id: "aa69a37c-811a-4537-b3da-88b7af70be1c",
@@ -122,7 +122,7 @@ test.method ("postgresql.Model", "create", true)
         })
         .given (10, "Learn JavaScript", { tags: ["a", "b"] })
         .returnsInstanceOf ("test.models.Book")
-        .expectingMethodToReturnValue ("db.select", "books",
+        .expectingMethodToReturnValue ("db.select", "test_books",
         [
         {
             id: 10,
@@ -164,13 +164,13 @@ test.method ("postgresql.Model", "create", true)
 
         }, nit.require ("postgresql.QueryOptions").cascade ())
         .returnsInstanceOf ("test.models.Product")
-        .expectingMethodToReturnValue ("db.select", "products", [{ id: 10, name: "Notebook" }])
-        .expectingMethodToReturnValue ("db.select", "tags",
+        .expectingMethodToReturnValue ("db.select", "test_products", [{ id: 10, name: "Notebook" }])
+        .expectingMethodToReturnValue ("db.select", "test_tags",
         [
             { id: 2, name: "a" },
             { id: 3, name: "b" }
         ])
-        .expectingMethodToReturnValue ("db.select", "productTagsTagProductsLinks",
+        .expectingMethodToReturnValue ("db.select", "test_productTagsTagProductsLinks",
         [
             { product_id: 10, tag_id: 2 },
             { product_id: 10, tag_id: 3 }
@@ -205,8 +205,8 @@ test.method ("postgresql.Model", "create", true)
 
         }, nit.require ("postgresql.QueryOptions").cascade ())
         .returnsInstanceOf ("test.models.Product")
-        .expectingMethodToReturnValue ("db.select", "products", [{ id: 10, name: "Notebook", tag_id: 2 }])
-        .expectingMethodToReturnValue ("db.select", "tags", [{ id: 2, name: "a" }])
+        .expectingMethodToReturnValue ("db.select", "test_products", [{ id: 10, name: "Notebook", tag_id: 2 }])
+        .expectingMethodToReturnValue ("db.select", "test_tags", [{ id: 2, name: "a" }])
         .commit ()
 
     .should ("be able to persist a one-to-one relationship")
@@ -236,7 +236,7 @@ test.method ("postgresql.Model", "create", true)
 
         }, nit.require ("postgresql.QueryOptions").cascade ())
         .returnsInstanceOf ("test.models.Product")
-        .expectingMethodToReturnValue ("db.select", "products", [{ id: 10, name: "Notebook" }])
-        .expectingMethodToReturnValue ("db.select", "makers", [{ id: 2, name: "a", product_id: 10 }])
+        .expectingMethodToReturnValue ("db.select", "test_products", [{ id: 10, name: "Notebook" }])
+        .expectingMethodToReturnValue ("db.select", "test_makers", [{ id: 2, name: "a", product_id: 10 }])
         .commit ()
 ;

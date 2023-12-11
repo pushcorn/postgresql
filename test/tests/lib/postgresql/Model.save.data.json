@@ -19,7 +19,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_users'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_users\"\n(\n    \"id\" INTEGER NOT NULL DEFAULT 0,\n    \"name\" TEXT,\n    PRIMARY KEY (\"id\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -28,7 +78,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -48,7 +98,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"users\" (\"id\", \"name\")\nVALUES ('123', 'John Doe')",
+            "statement": "INSERT INTO \"test_users\" (\"id\", \"name\")\nVALUES ('123', 'John Doe')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -66,7 +116,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -91,7 +141,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -116,7 +166,7 @@
             }
         },
         {
-            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '123'",
+            "statement": "UPDATE \"test_users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '123'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -125,7 +175,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -177,7 +227,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_users'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -186,7 +286,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -211,7 +311,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -236,7 +336,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -261,7 +361,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"email\")\nVALUES ('123', 'John Doe', 'jd@exp.com')",
+            "statement": "INSERT INTO \"test_users\" (\"id\", \"name\", \"email\")\nVALUES ('123', 'John Doe', 'jd@exp.com')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -270,7 +370,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -301,7 +401,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -326,7 +426,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -357,7 +457,7 @@
             }
         },
         {
-            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"email\" = 'jd@exp.com'\nWHERE \"id\" = '123'",
+            "statement": "UPDATE \"test_users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '123'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -375,7 +475,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -433,7 +533,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_users'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -442,7 +592,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -467,7 +617,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -492,7 +642,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -517,7 +667,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"email\")\nVALUES ('123', 'John Doe', 'jd@exp.com')",
+            "statement": "INSERT INTO \"test_users\" (\"id\", \"name\", \"email\")\nVALUES ('123', 'John Doe', 'jd@exp.com')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -526,7 +676,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '456'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -551,7 +701,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -582,7 +732,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -607,7 +757,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '123'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '123'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -638,7 +788,7 @@
             }
         },
         {
-            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"email\" = 'jd@exp.com'\nWHERE \"id\" = '123'",
+            "statement": "UPDATE \"test_users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '123'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -656,7 +806,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -714,7 +864,57 @@
             }
         },
         {
-            "statement": "CREATE TABLE IF NOT EXISTS \"users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'test_users'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"test_users\"\n(\n    \"id\" SERIAL NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"email\" TEXT NOT NULL,\n    PRIMARY KEY (\"id\"),\n    UNIQUE (\"email\")\n)",
             "result": {
                 "command": "CREATE",
                 "rows": [],
@@ -723,7 +923,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '456'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -748,7 +948,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -773,7 +973,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '456'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '456'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -798,7 +998,7 @@
             }
         },
         {
-            "statement": "INSERT INTO \"users\" (\"id\", \"name\", \"email\")\nVALUES ('456', 'John Doe', 'jd@exp.com')",
+            "statement": "INSERT INTO \"test_users\" (\"id\", \"name\", \"email\")\nVALUES ('456', 'John Doe', 'jd@exp.com')",
             "result": {
                 "command": "INSERT",
                 "rows": [],
@@ -807,7 +1007,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '456'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -838,7 +1038,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '456'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"email\" = 'jd@exp.com' AND \"id\" <> '456'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [],
@@ -863,7 +1063,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"\nWHERE \"id\" = '456'\nLIMIT 1",
+            "statement": "SELECT *\nFROM \"test_users\"\nWHERE \"id\" = '456'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
                 "rows": [
@@ -894,7 +1094,7 @@
             }
         },
         {
-            "statement": "UPDATE \"users\"\nSET \"name\" = 'Jane Doe', \"email\" = 'jd@exp.com'\nWHERE \"id\" = '456'",
+            "statement": "UPDATE \"test_users\"\nSET \"name\" = 'Jane Doe'\nWHERE \"id\" = '456'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -912,7 +1112,7 @@
             }
         },
         {
-            "statement": "SELECT *\nFROM \"users\"",
+            "statement": "SELECT *\nFROM \"test_users\"",
             "result": {
                 "command": "SELECT",
                 "rows": [

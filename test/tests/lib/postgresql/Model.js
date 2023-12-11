@@ -6,6 +6,13 @@ test.object ("postgresql.Model", false)
     .should ("provide a class type parser")
         .expectingPropertyToBeOfType ("class.classTypeParser", "postgresql.Model.ClassTypeParser")
         .commit ()
+
+    .should ("not prepend the package prefix if prefixedTableName is false")
+        .up (s => s.class = s.class.defineSubclass ("test.models.User")
+            .do (cls => cls.prefixedTableName = false)
+        )
+        .expectingPropertyToBe ("class.tableName", "users")
+        .commit ()
 ;
 
 
@@ -109,7 +116,7 @@ test.object ("postgresql.Model", false)
             ;
         })
         .before (s => s.class = s.User)
-        .expectingPropertyToBe ("class.tableName", "users")
+        .expectingPropertyToBe ("class.tableName", "test_users")
         .commit ()
 
     .should ("have a getter for primary key names")
@@ -176,7 +183,7 @@ test.object ("postgresql.Model", false)
         })
         .expectingPropertyToBeOfType ("Country.table", "postgresql.Table")
         .expectingPropertyToBe ("Country.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "countries"
+            CREATE TABLE IF NOT EXISTS "test_countries"
             (
                 "id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
@@ -185,7 +192,7 @@ test.object ("postgresql.Model", false)
             )
         `)
         .expectingPropertyToBe ("Capital.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "id" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),
                 "name" TEXT NOT NULL,
@@ -213,7 +220,7 @@ test.object ("postgresql.Model", false)
             ;
         })
         .expectingPropertyToBe ("Capital.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "id" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),
                 "name" TEXT NOT NULL,
@@ -222,9 +229,9 @@ test.object ("postgresql.Model", false)
             )
         `)
         .expectingPropertyToBe ("Capital.table.constraints.0.sql", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
-            REFERENCES "countries" ("id")
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_country_id_fk" FOREIGN KEY ("country_id")
+            REFERENCES "test_countries" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
@@ -240,7 +247,7 @@ test.object ("postgresql.Model", false)
             ;
         })
         .expectingPropertyToBe ("Capital.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "country_id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
@@ -248,9 +255,9 @@ test.object ("postgresql.Model", false)
             )
         `)
         .expectingPropertyToBe ("Capital.table.constraints.0.sql", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
-            REFERENCES "countries" ("id")
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_country_id_fk" FOREIGN KEY ("country_id")
+            REFERENCES "test_countries" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
@@ -267,7 +274,7 @@ test.object ("postgresql.Model", false)
             ;
         })
         .expectingPropertyToBe ("Capital.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "country_id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
@@ -276,9 +283,9 @@ test.object ("postgresql.Model", false)
             )
         `)
         .expectingPropertyToBe ("Capital.table.constraints.0.sql", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
-            REFERENCES "countries" ("id")
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_country_id_fk" FOREIGN KEY ("country_id")
+            REFERENCES "test_countries" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
@@ -304,7 +311,7 @@ test.object ("postgresql.Model", false)
         })
         .expectingPropertyToBe ("Capital.fieldMap.category.relationship.ownerField.name", "category")
         .expectingPropertyToBe ("Capital.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "country_id" TEXT NOT NULL,
                 "name" TEXT NOT NULL,
@@ -314,24 +321,24 @@ test.object ("postgresql.Model", false)
         `)
         .expectingPropertyToBe ("Capital.table.constraints.length", 3)
         .expectingPropertyToBe ("Capital.table.constraints.0.sql", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_country_id_fk" FOREIGN KEY ("country_id")
-            REFERENCES "countries" ("id")
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_country_id_fk" FOREIGN KEY ("country_id")
+            REFERENCES "test_countries" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
         .expectingPropertyToBe ("Capital.table.constraints.1.sql", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_category_id_fk" FOREIGN KEY ("category_id")
-            REFERENCES "categories" ("id")
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_category_id_fk" FOREIGN KEY ("category_id")
+            REFERENCES "test_categories" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
         .expectingPropertyToBe ("Capital.table.constraints.2.sql", nit.trim.text`
-            ALTER TABLE "capitals"
-            ADD CONSTRAINT "capitals_name_category_id_uk" UNIQUE ("name", "category_id")
+            ALTER TABLE "test_capitals"
+            ADD CONSTRAINT "test_capitals_name_category_id_uk" UNIQUE ("name", "category_id")
         `)
         .commit ()
 ;
@@ -370,7 +377,7 @@ test.object ("postgresql.Model", false)
         .expectingPropertyToBe ("OrderItem.fieldMap.order.relationship.ownerField.name", "order")
         .expectingPropertyToBe ("OrderItem.fieldMap.order.relType", "manyToOne")
         .expectingPropertyToBe ("Order.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "orders"
+            CREATE TABLE IF NOT EXISTS "test_orders"
             (
                 "id" SERIAL NOT NULL,
                 "user" TEXT NOT NULL,
@@ -379,7 +386,7 @@ test.object ("postgresql.Model", false)
         `)
         .expectingPropertyToBe ("Order.table.constraints.length", 0)
         .expectingPropertyToBe ("OrderItem.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "orderItems"
+            CREATE TABLE IF NOT EXISTS "test_orderItems"
             (
                 "id" SERIAL NOT NULL,
                 "product" TEXT NOT NULL,
@@ -392,17 +399,17 @@ test.object ("postgresql.Model", false)
         `)
         .expectingPropertyToBe ("OrderItem.table.constraints.length", 1)
         .expectingPropertyToBe ("OrderItem.table.constraints.0.sql", nit.trim.text`
-            ALTER TABLE "orderItems"
-            ADD CONSTRAINT "orderItems_order_id_fk" FOREIGN KEY ("order_id")
-            REFERENCES "orders" ("id")
+            ALTER TABLE "test_orderItems"
+            ADD CONSTRAINT "test_orderItems_order_id_fk" FOREIGN KEY ("order_id")
+            REFERENCES "test_orders" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
         .expectingPropertyToBe ("OrderItem.table.indexes.length", 1)
         .expectingPropertyToBe ("OrderItem.table.indexes.0.sql", nit.trim.text`
-            CREATE INDEX IF NOT EXISTS "idx_orderItems_order_id"
-            ON "orderItems" ("order_id")
+            CREATE INDEX IF NOT EXISTS "idx_test_orderItems_order_id"
+            ON "test_orderItems" ("order_id")
         `)
         .commit ()
 ;
@@ -431,7 +438,7 @@ test.object ("postgresql.Model", false)
         .expectingPropertyToBe ("Product.fieldMap.tags.relationship.ownerField.name", "tags")
         .expectingPropertyToBe ("Product.fieldMap.tags.relType", "manyToMany")
         .expectingPropertyToBe ("Product.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "products"
+            CREATE TABLE IF NOT EXISTS "test_products"
             (
                 "id" SERIAL NOT NULL,
                 "name" TEXT NOT NULL,
@@ -439,7 +446,7 @@ test.object ("postgresql.Model", false)
             )
         `)
         .expectingPropertyToBe ("Tag.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "tags"
+            CREATE TABLE IF NOT EXISTS "test_tags"
             (
                 "id" SERIAL NOT NULL,
                 "name" TEXT NOT NULL,
@@ -454,7 +461,7 @@ test.object ("postgresql.Model", false)
         .expectingPropertyToBe ("Product.joinTables.length", 1)
         .expectingPropertyToBe ("Tag.joinTables.length", 0)
         .expectingPropertyToBe ("Product.joinTables.0.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "productTagsTagProductsLinks"
+            CREATE TABLE IF NOT EXISTS "test_productTagsTagProductsLinks"
             (
                 "product_id" INTEGER NOT NULL,
                 "tag_id" INTEGER NOT NULL,
@@ -463,25 +470,25 @@ test.object ("postgresql.Model", false)
         `)
         .expectingPropertyToBe ("Product.joinTables.0.constraints.length", 2)
         .expectingPropertyToBe ("Product.joinTables.0.constraints.0.sql", nit.trim.text`
-            ALTER TABLE "productTagsTagProductsLinks"
-            ADD CONSTRAINT "productTagsTagProductsLinks_product_id_fk" FOREIGN KEY ("product_id")
-            REFERENCES "products" ("id")
+            ALTER TABLE "test_productTagsTagProductsLinks"
+            ADD CONSTRAINT "test_productTagsTagProductsLinks_product_id_fk" FOREIGN KEY ("product_id")
+            REFERENCES "test_products" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
         .expectingPropertyToBe ("Product.joinTables.0.constraints.1.sql", nit.trim.text`
-            ALTER TABLE "productTagsTagProductsLinks"
-            ADD CONSTRAINT "productTagsTagProductsLinks_tag_id_fk" FOREIGN KEY ("tag_id")
-            REFERENCES "tags" ("id")
+            ALTER TABLE "test_productTagsTagProductsLinks"
+            ADD CONSTRAINT "test_productTagsTagProductsLinks_tag_id_fk" FOREIGN KEY ("tag_id")
+            REFERENCES "test_tags" ("id")
             ON DELETE CASCADE
             ON UPDATE CASCADE
             INITIALLY DEFERRED
         `)
         .expectingPropertyToBe ("Product.joinTables.0.indexes.length", 1)
         .expectingPropertyToBe ("Product.joinTables.0.indexes.0.sql", nit.trim.text`
-            CREATE INDEX IF NOT EXISTS "idx_productTagsTagProductsLinks_tag_id"
-            ON "productTagsTagProductsLinks" ("tag_id")
+            CREATE INDEX IF NOT EXISTS "idx_test_productTagsTagProductsLinks_tag_id"
+            ON "test_productTagsTagProductsLinks" ("tag_id")
         `)
         .expectingPropertyToBe ("Product.tables.length", 2)
         .expectingPropertyToBe ("Tag.tables.length", 1)
@@ -797,7 +804,7 @@ test.method ("postgresql.Model", "validate", true)
         .expectingPropertyToBe ("error.context.validationContext.violations.0.field", "capital.stats.population")
         .expectingPropertyToBe ("db.client.statements.0", nit.trim.text`
             SELECT *
-            FROM "countries"
+            FROM "test_countries"
             WHERE "name" = 'USA' AND "id" <> '1111'
             LIMIT 1
         `)
@@ -1018,7 +1025,7 @@ test.method ("postgresql.Model", "marshallData", true)
             ]
         })
         .expectingPropertyToBe ("Order.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "orders"
+            CREATE TABLE IF NOT EXISTS "test_orders"
             (
                 "id" SERIAL NOT NULL,
                 "user" TEXT NOT NULL,
@@ -1066,7 +1073,7 @@ test.method ("postgresql.Model", "marshallData", true)
             ]
         })
         .expectingPropertyToBe ("Capital.table.createSql", nit.trim.text`
-            CREATE TABLE IF NOT EXISTS "capitals"
+            CREATE TABLE IF NOT EXISTS "test_capitals"
             (
                 "id" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),
                 "name" TEXT NOT NULL,
@@ -1123,7 +1130,7 @@ test.method ("postgresql.Model", "select", true)
 
     .should ("use the provided query")
         .before (s => s.object = s.User)
-        .before (s => s.args = s.class.Select ().$from ("users"))
+        .before (s => s.args = s.class.Select ().From ("users"))
         .mock ("class", "lazySelect")
         .expectingPropertyToBe ("mocks.0.invocations.length", 1)
         .expectingPropertyToBe ("mocks.0.invocations.0.args.0.sql", nit.trim.text`
@@ -1134,7 +1141,7 @@ test.method ("postgresql.Model", "select", true)
 
     .reset ()
         .before (s => s.object = s.User)
-        .before (s => s.args = [{ id: 5 }, s.class.Select ().$from ("users")])
+        .before (s => s.args = [{ id: 5 }, s.class.Select ().From ("users")])
         .mock ("class", "lazySelect")
         .expectingPropertyToBe ("mocks.0.invocations.0.args.0.sql", nit.trim.text`
             SELECT *
@@ -1145,7 +1152,7 @@ test.method ("postgresql.Model", "select", true)
 
     .reset ()
         .before (s => s.object = s.User)
-        .before (s => s.args = [{ id: 5 }, "LIMIT 1", s.class.Select ().$from ("users")])
+        .before (s => s.args = [{ id: 5 }, "LIMIT 1", s.class.Select ().From ("users")])
         .mock ("class", "lazySelect")
         .expectingPropertyToBe ("mocks.0.invocations.0.args.0.sql", nit.trim.text`
             SELECT *
@@ -1179,7 +1186,7 @@ test.method ("postgresql.Model", "eagerSelect", true)
         {
             s.Product.db = s.db;
             s.object = s.Product;
-            s.args = s.class.Select ().$from (s.Product);
+            s.args = s.class.Select ().From (s.Product);
         })
         .mock ("db", "fetchAll", () =>
         [
@@ -1200,8 +1207,8 @@ test.method ("postgresql.Model", "eagerSelect", true)
               t1."id" AS "t1_id",
               t1."name" AS "t1_name"
 
-            FROM "products" t0
-              LEFT JOIN "users" t1 ON t1."id" = t0."owner_id"
+            FROM "test_products" t0
+              LEFT JOIN "test_users" t1 ON t1."id" = t0."owner_id"
         `)
         .expectingPropertyToBeOfType ("result.0", "test.models.Product")
         .expectingPropertyToBeOfType ("result.0.owner", "test.models.User")
@@ -1231,7 +1238,7 @@ test.method ("postgresql.Model", "eagerSelect", true)
         {
             s.Product.db = s.db;
             s.object = s.Product;
-            s.args = s.class.Select ().$from (s.Product).$where ("age", 3, ">");
+            s.args = s.class.Select ().From (s.Product).Where ("age", 3, ">");
         })
         .mock ("db", "fetchAll", () => [
         {
@@ -1256,7 +1263,7 @@ test.method ("postgresql.Model", "eagerSelect", true)
             WITH t0 AS
             (
               SELECT *
-              FROM "products"
+              FROM "test_products"
               WHERE "age" > '3'
             )
 
@@ -1271,8 +1278,8 @@ test.method ("postgresql.Model", "eagerSelect", true)
               t2."name" AS "t2_name"
 
             FROM t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
-              LEFT JOIN "tags" t2 ON t2."id" = t1."tag_id"
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_tags" t2 ON t2."id" = t1."tag_id"
         `)
         .expectingPropertyToBeOfType ("result.0", "test.models.Product")
         .expectingPropertyToBeOfType ("result.0.tags.0", "test.models.Tag")
@@ -1310,7 +1317,7 @@ test.method ("postgresql.Model", "eagerSelect", true)
             s.Product.db = s.db;
             s.object = s.Product;
             s.args = [
-                s.class.Select ().$from (s.Product).$whereExpr ("LENGTH (name) > 10"),
+                s.class.Select ().From (s.Product).WhereExpr ("LENGTH (name) > 10"),
                 nit.new ("postgresql.QueryOptions",
                 {
                     relationships:
@@ -1325,7 +1332,7 @@ test.method ("postgresql.Model", "eagerSelect", true)
             WITH t0 AS
             (
               SELECT *
-              FROM "products"
+              FROM "test_products"
               WHERE name ILIKE 'jo%' AND LENGTH (name) > 10
             )
 
@@ -1340,8 +1347,8 @@ test.method ("postgresql.Model", "eagerSelect", true)
               t2."name" AS "t2_name"
 
             FROM t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
-              LEFT JOIN "tags" t2 ON t2."id" = t1."tag_id"
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_tags" t2 ON t2."id" = t1."tag_id"
         `)
         .commit ()
 ;
@@ -1392,7 +1399,6 @@ test.method ("postgresql.Model", "marshall", true)
         })
         .returns ({ id: 1234, name: "Washington D.C.", country_id: 1111 })
         .commit ()
-
 ;
 
 

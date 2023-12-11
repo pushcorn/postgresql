@@ -19,10 +19,17 @@ test.method ("postgresql.Model", "update")
 
             s.object.name = "Jane Doe";
         })
-        .expectingMethodToReturnValue ("db.select", "users", [{ id: 123, name: "Jane Doe", note: "" }])
+        .after (async (s) =>
+        {
+            s.user = await s.User.load (123);
+
+            await s.user.update ({ name: "Jane Doe" });
+        })
+        .expectingMethodToReturnValue ("db.select", "test_users", [{ id: 123, name: "Jane Doe", note: "" }])
         .expecting ("the same entity will not be updated twice", true, async (s) => (await s.object.update (s.options)) instanceof s.User)
         .expecting ("the provided data object can be used to update the entity", true, async (s) => (await s.object.update ({ name: "John Doe" })) instanceof s.User)
-        .expectingMethodToReturnValue ("db.select", "users", [{ id: 123, name: "John Doe", note: "" }])
+        .expectingMethodToReturnValue ("db.select", "test_users", [{ id: 123, name: "John Doe", note: "" }])
+        .expectingPropertyToBe ("user.name", "Jane Doe")
         .commit ()
 
     .should ("throw if the entity was not found in the database")
@@ -71,7 +78,7 @@ test.method ("postgresql.Model", "update")
             s.object.name = "Taipei";
             s.object.country.name = "Taiwan";
         })
-        .expectingMethodToReturnValue ("db.select", "capitals", [{ id: 222, name: "Taipei", country_id: 1234 }])
-        .expectingMethodToReturnValue ("db.select", "countries", [{ id: 1234, name: "Taiwan" }])
+        .expectingMethodToReturnValue ("db.select", "test_capitals", [{ id: 222, name: "Taipei", country_id: 1234 }])
+        .expectingMethodToReturnValue ("db.select", "test_countries", [{ id: 1234, name: "Taiwan" }])
         .commit ()
 ;
