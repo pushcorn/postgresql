@@ -351,15 +351,16 @@ test.method ("postgresql.Field", "marshall")
                     Stats
                         .field ("population", "integer")
                         .field ("airports", "integer")
+                        .field ("restrooms", "integer")
                     ;
                 })
                 .field ("<id>", "postgresql.ids.BigSerial", { key: true })
                 .field ("<name>", "string")
                 .field ("country", "test.models.Country")
-                .field ("stats", "test.models.Capital.Stats")
+                .field ("stats", "test.models.Capital.Stats", { marshallType: "compact" })
             ;
         })
-        .up (s => s.createArgs = { spec: "stats", type: "test.models.Capital.Stats" })
+        .up (s => s.createArgs = { spec: "stats", type: "test.models.Capital.Stats", marshallType: "compact" })
         .up (s => s.class = s.db.lookup ("test.models.Capital").Field)
         .before (({ self, object: field, Capital }) =>
         {
@@ -371,7 +372,7 @@ test.method ("postgresql.Field", "marshall")
             field.bind (Capital.prototype);
             self.assign ({ capital, row });
         })
-        .expectingPropertyToBe ("row", { stats: { population: 689545, airports: 5 } })
+        .expectingPropertyToBe ("row", { stats: { "@class": "test.models.Capital.Stats", population: 689545, airports: 5 } })
         .commit ()
 
     .should ("clone a primitive value")
@@ -395,7 +396,7 @@ test.method ("postgresql.Field", "marshall")
         .up (s => s.class = s.db.lookup ("test.models.Capital").Field)
         .before (({ self, object: field, Capital }) =>
         {
-            let capital = Capital.new ("222", "Washington D.C.", { stats: { population: 689545, airports: 5 } });
+            let capital = Capital.new ("222", "Washington D.C.", { stats: { population: 689545, airports: 6 } });
             let row = {};
 
             self.args = [capital, row, new Capital.ActionContext];
@@ -404,7 +405,7 @@ test.method ("postgresql.Field", "marshall")
             self.assign ({ capital, row });
         })
         .expectingPropertyToBeOfType ("row.stats", "Object")
-        .expectingPropertyToBe ("row", { stats: { population: 689545, airports: 5 } })
+        .expectingPropertyToBe ("row", { stats: { population: 689545, airports: 6 } })
         .commit ()
 
     .should ("be able to marshall a non-model array field")
