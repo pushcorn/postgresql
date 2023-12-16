@@ -482,7 +482,7 @@ test.method ("postgresql.mocks.Database", "execute")
             record: true,
             dataFile: s.app.root.join ("data.json")
         })
-        .given (nit.new ("postgresql.queries.Select").$from ("users"))
+        .given (nit.new ("postgresql.queries.Select").From ("users"))
         .after (async ({ self, object: db }) =>
         {
             await db.disconnect ();

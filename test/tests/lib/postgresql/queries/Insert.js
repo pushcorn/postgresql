@@ -4,12 +4,12 @@ test.object ("postgresql.queries.Insert")
         .after (s =>
         {
             s.result
-                .$table ("users")
-                .$conflictBy ("name", "John Doe")
-                .$value ("age", 3)
-                .$valueExpr ("date", "NOW ()")
-                .$valueAny ("arr", [1, 2])
-                .$valueAny ("obj", { a: 3 })
+                .Table ("users")
+                .ConflictBy ("name", "John Doe")
+                .Value ("age", 3)
+                .ValueExpr ("date", "NOW ()")
+                .ValueAny ("arr", [1, 2])
+                .ValueAny ("obj", { a: 3 })
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
@@ -25,14 +25,14 @@ test.object ("postgresql.queries.Insert")
         .after (s =>
         {
             s.result
-                .$table ("users")
-                .$column ("name")
-                .$column ("age")
-                .$query (nit.new ("postgresql.queries.Select")
-                    .$from ("tmp")
-                    .$limit (10)
+                .Table ("users")
+                .Column ("name")
+                .Column ("age")
+                .Query (nit.new ("postgresql.queries.Select")
+                    .From ("tmp")
+                    .Limit (10)
                 )
-                .$append ("RETURNING *")
+                .Append ("RETURNING *")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
@@ -78,24 +78,24 @@ test.object ("postgresql.queries.Insert")
         .after (s =>
         {
             s.result
-                .$table ("users")
-                .$column ("name")
-                .$column ("age")
-                .$query (nit.new ("postgresql.queries.EagerSelect")
-                    .$column ("t0.name")
-                    .$column ("t1.age")
-                    .$from (s.Product)
-                        .$with (query =>
+                .Table ("users")
+                .Column ("name")
+                .Column ("age")
+                .Query (nit.new ("postgresql.queries.EagerSelect")
+                    .Column ("t0.name")
+                    .Column ("t1.age")
+                    .From (s.Product)
+                        .With (query =>
                         {
                             query
-                                .$where ("id", 4)
-                                .$limit (1)
+                                .Where ("id", 4)
+                                .Limit (1)
                             ;
                         })
-                    .$join (s.Product.fieldMap.tags.relationship.joinModelClass)
-                        .$on ("id", "product_id")
+                    .Join (s.Product.fieldMap.tags.relationship.joinModelClass)
+                        .On ("id", "product_id")
                 )
-                .$append ("RETURNING *")
+                .Append ("RETURNING *")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
@@ -104,7 +104,7 @@ test.object ("postgresql.queries.Insert")
               WITH t0 AS
               (
                 SELECT *
-                FROM "products"
+                FROM "test_products"
                 WHERE "id" = '4'
                 LIMIT 1
               )
@@ -114,7 +114,7 @@ test.object ("postgresql.queries.Insert")
                 t1."age"
 
               FROM t0
-                LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+                LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
             )
             INSERT INTO "users" ("name", "age")
             SELECT *

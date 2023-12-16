@@ -5,14 +5,14 @@ test.object ("postgresql.queries.Delete")
             const { NULL } = query.constructor;
 
             query
-                .$table ("users", "u")
-                .$using ("roles", "r")
-                .$where ("id", 3, ">")
-                .$where ("u.name", "a string")
-                .$where ("c", NULL)
-                .$whereExpr ("r.name = u.role")
-                .$with ("roles", "SELECT * FROM roles WHERE name = 'manager'")
-                .$append ("RETURNING *")
+                .Table ("users", "u")
+                .Using ("roles", "r")
+                .Where ("id", 3, ">")
+                .Where ("u.name", "a string")
+                .Where ("c", NULL)
+                .WhereExpr ("r.name = u.role")
+                .With ("roles", "SELECT * FROM roles WHERE name = 'manager'")
+                .Append ("RETURNING *")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`

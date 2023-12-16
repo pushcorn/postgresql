@@ -29,37 +29,37 @@ test.object ("postgresql.queries.EagerSelect")
         .after (s =>
         {
             s.result
-                .$from (s.Product)
-                    .$with (query =>
+                .From (s.Product)
+                    .With (query =>
                     {
                         query
-                            .$where ("id", 4)
-                            .$limit (1)
+                            .Where ("id", 4)
+                            .Limit (1)
                         ;
                     })
-                .$join (s.Product.fieldMap.tags.relationship.joinModelClass)
-                    .$on ("id", "product_id")
-                .$join (s.Tag)
-                    .$with (query =>
+                .Join (s.Product.fieldMap.tags.relationship.joinModelClass)
+                    .On ("id", "product_id")
+                .Join (s.Tag)
+                    .With (query =>
                     {
-                        query.$whereExpr ("name ILIKE 'joseph'");
+                        query.WhereExpr ("name ILIKE 'joseph'");
                     })
-                    .$on ("tag_id", "id")
-                .$join (s.User)
-                    .$on ("owner_id", "id", "t0")
-                    .$onExpr ("a + 3", 9)
-                .$where ("t0.name", "notebook")
-                .$whereRef ("t0.name", "t1.name")
-                .$whereExpr ("LENGTH (t0.name) > 20")
-                .$groupBy ("t0.name")
-                .$groupByExpr ("UPPER (t0.name)")
-                .$orderBy ("t0.name", "ASC")
-                .$orderByExpr ("UPPER (t1.city)", "DESC")
-                .$having ("t0.age", 3, ">")
-                .$limit (10)
-                .$offset (10)
-                .$append ("FOR UPDATE")
-                .$prepend ("FOR SELECT")
+                    .On ("tag_id", "id")
+                .Join (s.User)
+                    .On ("owner_id", "id", "t0")
+                    .OnExpr ("a + 3", 9)
+                .Where ("t0.name", "notebook")
+                .WhereRef ("t0.name", "t1.name")
+                .WhereExpr ("LENGTH (t0.name) > 20")
+                .GroupBy ("t0.name")
+                .GroupByExpr ("UPPER (t0.name)")
+                .OrderBy ("t0.name", "ASC")
+                .OrderByExpr ("UPPER (t1.city)", "DESC")
+                .Having ("t0.age", 3, ">")
+                .Limit (10)
+                .Offset (10)
+                .Append ("FOR UPDATE")
+                .Prepend ("FOR SELECT")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
@@ -67,14 +67,14 @@ test.object ("postgresql.queries.EagerSelect")
             WITH t0 AS
             (
               SELECT *
-              FROM "products"
+              FROM "test_products"
               WHERE "id" = '4'
               LIMIT 1
             )
             , t2 AS
             (
               SELECT *
-              FROM "tags"
+              FROM "test_tags"
               WHERE name ILIKE 'joseph'
             )
 
@@ -93,9 +93,9 @@ test.object ("postgresql.queries.EagerSelect")
               t3."name" AS "t3_name"
 
             FROM t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
               LEFT JOIN t2 ON t2."id" = t1."tag_id"
-              LEFT JOIN "users" t3 ON t3."id" = t0."owner_id" AND '9' = a + 3
+              LEFT JOIN "test_users" t3 ON t3."id" = t0."owner_id" AND '9' = a + 3
 
             WHERE t0."name" = 'notebook' AND t0."name" = t1."name" AND LENGTH (t0.name) > 20
             GROUP BY t0."name", UPPER (t0.name)
@@ -111,24 +111,24 @@ test.object ("postgresql.queries.EagerSelect")
         .after (s =>
         {
             s.result
-                .$from (s.Product)
-                    .$with (query =>
+                .From (s.Product)
+                    .With (query =>
                     {
                         query
-                            .$where ("id", 4)
-                            .$limit (1)
+                            .Where ("id", 4)
+                            .Limit (1)
                         ;
                     })
-                .$join (s.Product.fieldMap.tags.relationship.joinModelClass)
-                    .$on ("id", "product_id")
-                .$havingExpr ("t0.age > 3")
+                .Join (s.Product.fieldMap.tags.relationship.joinModelClass)
+                    .On ("id", "product_id")
+                .HavingExpr ("t0.age > 3")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
             WITH t0 AS
             (
               SELECT *
-              FROM "products"
+              FROM "test_products"
               WHERE "id" = '4'
               LIMIT 1
             )
@@ -142,7 +142,7 @@ test.object ("postgresql.queries.EagerSelect")
               t1."tag_id" AS "t1_tag_id"
 
             FROM t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
 
             HAVING t0.age > 3
         `)
@@ -152,28 +152,28 @@ test.object ("postgresql.queries.EagerSelect")
         .after (s =>
         {
             s.result
-                .$column ("t0.id")
-                .$column ("t0.name", "nn")
-                .$column ("t1.owner_id", "user_id")
-                .$columnExpr ("AVG (age)", "age")
-                .$from (s.Product)
-                    .$with (query =>
+                .Column ("t0.id")
+                .Column ("t0.name", "nn")
+                .Column ("t1.owner_id", "user_id")
+                .ColumnExpr ("AVG (age)", "age")
+                .From (s.Product)
+                    .With (query =>
                     {
                         query
-                            .$where ("id", 4)
-                            .$limit (1)
+                            .Where ("id", 4)
+                            .Limit (1)
                         ;
                     })
-                .$join (s.Product.fieldMap.tags.relationship.joinModelClass)
-                    .$on ("id", "product_id")
-                .$havingExpr ("t0.age > 3")
+                .Join (s.Product.fieldMap.tags.relationship.joinModelClass)
+                    .On ("id", "product_id")
+                .HavingExpr ("t0.age > 3")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
             WITH t0 AS
             (
               SELECT *
-              FROM "products"
+              FROM "test_products"
               WHERE "id" = '4'
               LIMIT 1
             )
@@ -185,7 +185,7 @@ test.object ("postgresql.queries.EagerSelect")
               AVG (age) AS "age"
 
             FROM t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
 
             HAVING t0.age > 3
         `)
@@ -195,20 +195,20 @@ test.object ("postgresql.queries.EagerSelect")
         .after (s =>
         {
             s.result
-                .$table (s.Product.table)
-                    .$with (query =>
+                .Table (s.Product.table)
+                    .With (query =>
                     {
                         query
-                            .$where ("id", 4)
-                            .$limit (1)
+                            .Where ("id", 4)
+                            .Limit (1)
                         ;
                     })
             ;
         })
-        .expectingMethodToThrow ("result.$on", ["id", "product_id"], "error.two_tables_required")
+        .expectingMethodToThrow ("result.On", ["id", "product_id"], "error.two_tables_required")
         .commit ()
 
     .should ("throw if the 'with' method is called when no tables were defined")
-        .expectingMethodToThrow ("result.$with", null, "error.no_table_added")
+        .expectingMethodToThrow ("result.With", null, "error.no_table_added")
         .commit ()
 ;

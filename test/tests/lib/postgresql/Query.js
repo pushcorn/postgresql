@@ -49,7 +49,7 @@ test.object ("postgresql.Query.With", { property: "sql" })
         `)
         .commit ()
 
-    .given ("users", nit.new ("postgresql.queries.Select").$from ("users").$limit (1))
+    .given ("users", nit.new ("postgresql.queries.Select").From ("users").Limit (1))
         .returns (nit.trim.text`
             WITH "users" AS
             (
@@ -139,13 +139,15 @@ test.object ("postgresql.Query.From", { property: "sql" })
                 .field ("[name]", "string")
             ;
         })
-        .before (s => s.args = [s.User, "u"])
-        .returns (`"users" u`)
+        .up (s => s.User = s.db.lookup ("test.models.User"))
+        .up (s => s.args = [s.User, "u"])
+        .returns (`"test_users" u`)
         .commit ()
 
     .should ("render the sql to `%{result}` when the input is (postgresql.Table {}, \"uu\")")
-        .before (s => s.args = [s.User.table, "uu"])
-        .returns (`"users" uu`)
+        .up (s => s.User = s.db.lookup ("test.models.User"))
+        .up (s => s.args = [s.User.table, "uu"])
+        .returns (`"test_users" uu`)
         .commit ()
 
     .should ("render the sql to `%{result}` when the input is (%{args|formatArgs})")
@@ -197,17 +199,19 @@ test.object ("postgresql.Query.Join", { property: "sql" })
                 .field ("[name]", "string")
             ;
         })
-        .before (s => s.args = [s.User, "u", { ons: JoinCondition ("u.name", "p.name") }])
-        .returns (`JOIN "users" u ON u."name" = p."name"`)
+        .up (s => s.User = s.db.lookup ("test.models.User"))
+        .up (s => s.args = [s.User, "u", { ons: JoinCondition ("u.name", "p.name") }])
+        .returns (`JOIN "test_users" u ON u."name" = p."name"`)
         .commit ()
 
     .should ("render the sql to `%{result}` when the input is (postgresql.Table {}, \"uu\")")
-        .before (s => s.args = [s.User.table, "uu", { ons: JoinCondition ("uu.name", "p.name"), type: "left" }])
-        .returns (`LEFT JOIN "users" uu ON uu."name" = p."name"`)
+        .up (s => s.User = s.db.lookup ("test.models.User"))
+        .up (s => s.args = [s.User.table, "uu", { ons: JoinCondition ("uu.name", "p.name"), type: "left" }])
+        .returns (`LEFT JOIN "test_users" uu ON uu."name" = p."name"`)
         .commit ()
 
     .should ("render the sql to `%{result}` when the input is (postgresql.Table {}, \"uu\")")
-        .before (s => s.args =
+        .up (s => s.args =
         [
             s.User.table,
             "uu",
@@ -220,7 +224,7 @@ test.object ("postgresql.Query.Join", { property: "sql" })
                 ]
             }
         ])
-        .returns (`RIGHT JOIN "users" uu ON uu."name" = p."name" AND uu."age" = '3'`)
+        .returns (`RIGHT JOIN "test_users" uu ON uu."name" = p."name" AND uu."age" = '3'`)
         .commit ()
 ;
 
@@ -228,11 +232,11 @@ test.object ("postgresql.Query.Join", { property: "sql" })
 test.method ("postgresql.Query", "merge")
     .should ("merge the values from another query")
         .before (s => s.object = nit.new ("postgresql.queries.Select")
-            .$from ("users")
+            .From ("users")
         )
         .given (nit.new ("postgresql.queries.Select")
-            .$limit (10)
-            .$where ("name", "John")
+            .Limit (10)
+            .Where ("name", "John")
         )
         .expectingPropertyToBe ("result.sql", nit.trim.text`
             SELECT *

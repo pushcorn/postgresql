@@ -3,17 +3,17 @@ test.object ("postgresql.queries.Update")
         .after (s =>
         {
             s.result
-                .$table ("users", "u")
-                .$set ("name", "John Doe")
-                .$set ("age", 3)
-                .$setAny ("note", "")
-                .$setExpr ("count", "count + 1")
-                .$from ("status", "s")
-                .$where ("role", "manager")
-                .$whereRef ("s.id", "u.status_id")
-                .$whereExpr ("creationTime < '2000'")
-                .$prepend ("WITH ()")
-                .$append ("RETURNING *")
+                .Table ("users", "u")
+                .Set ("name", "John Doe")
+                .Set ("age", 3)
+                .SetAny ("note", "")
+                .SetExpr ("count", "count + 1")
+                .From ("status", "s")
+                .Where ("role", "manager")
+                .WhereRef ("s.id", "u.status_id")
+                .WhereExpr ("creationTime < '2000'")
+                .Prepend ("WITH ()")
+                .Append ("RETURNING *")
             ;
         })
         .expectingPropertyToBe ("result.sql", nit.trim.text`
