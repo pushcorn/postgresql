@@ -119,6 +119,14 @@ test.method ("postgresql.QueryOptions", "clone", true)
 ;
 
 
+test.object ("postgresql.QueryOptions.Relationship")
+    .should ("cast the filter to a Select query")
+        .given ({ filter: "name ILIKE 'john'" })
+        .expectingPropertyToBeOfType ("instance.filter", "postgresql.queries.Select")
+        .commit ()
+;
+
+
 test.object ("postgresql.QueryOptions", true, "relationshipMap")
     .should ("contain the relationships indexed by path")
     .given (

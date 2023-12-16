@@ -1,16 +1,19 @@
-const Migration = nit.require ("postgresql.Migration");
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
 nit.require ("postgresql.mocks.PgClient");
 
 
 test.command ("postgresql.commands.RollbackMigration")
-    .mock (Migration.table, "exists", true)
+    .mock ("postgresql.Table.prototype", "exists", true)
+    .mock ("object", "info")
+    .before (s => s.context.db = nit.new ("postgresql.Database"))
+    .before (s => (s.db = s.context.db).connect ())
+    .init (s => s.db = undefined)
     .snapshot ()
 
     .should ("show the info message if no migrations to rollback")
         .application ()
-        .mock ("context.db.client", "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             return this.result =
             {
@@ -18,14 +21,13 @@ test.command ("postgresql.commands.RollbackMigration")
                 rows: []
             };
         })
-        .mock ("object", "info")
-        .expectingPropertyToBe ("mocks.2.invocations.0.args.0", "info.no_rollback_need")
+        .expectingPropertyToBe ("mocks.1.invocations.0.args.0", "info.no_rollback_need")
         .commit ()
 
 
     .should ("rollback one migration if count is not specified")
         .application ()
-        .mock ("context.db.client", "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             let { strategy } = this;
             let command = statement.split (/\s+/)[0];
@@ -40,8 +42,6 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .mock ("object", "info")
-        .before (s => s.context.db.connect ())
         .before (async function ()
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
@@ -50,21 +50,22 @@ test.command ("postgresql.commands.RollbackMigration")
             let file = nit.File (dir.join (dir.read ()[0]));
             let content = file.read ().replace (/\.onDown[^}]+\{[^}]+\}\)/s, nit.trim.text`
             .onDown (function (db)
-            {
-                db.downCalled = true;
-            })`);
+                    {
+                        db.downCalled = true;
+                    })
+            `);
 
             file.write (content);
 
             this.context.input.yes = true;
         })
-        .expectingPropertyToBe ("mocks.2.invocations.0.args.0", "info.perform_rollback")
+        .expectingPropertyToBe ("mocks.1.invocations.0.args.0", "info.perform_rollback")
         .expectingPropertyToBe ("context.db.downCalled", true)
         .commit ()
 
     .should ("rollback specified number of migrations")
         .application ()
-        .mock ("context.db.client", "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             let { strategy } = this;
             let command = statement.split (/\s+/)[0];
@@ -79,8 +80,6 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .mock ("object", "info")
-        .before (s => s.context.db.connect ())
         .before (async function ()
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
@@ -93,9 +92,10 @@ test.command ("postgresql.commands.RollbackMigration")
                 let file = nit.File (dir.join (name));
                 let content = file.read ().replace (/\.onDown[^}]+\{[^}]+\}\)/s, nit.trim.text`
                 .onDown (function (db)
-                {
-                    db.downCalled = ~~db.downCalled + 1;
-                })`);
+                        {
+                            db.downCalled = ~~db.downCalled + 1;
+                        })
+                `);
 
                 file.write (content);
             });
@@ -103,14 +103,13 @@ test.command ("postgresql.commands.RollbackMigration")
             this.context.input.yes = true;
             this.context.input.count = 2;
         })
-        .expectingPropertyToBe ("mocks.2.invocations.length", 2)
+        .expectingPropertyToBe ("mocks.1.invocations.length", 2)
         .expectingPropertyToBe ("context.db.downCalled", 2)
         .commit ()
 
     .should ("cancel the rollback if the confirmation is declined")
         .application ()
-        .before (s => s.context.db.connect ())
-        .mock ("context.db.client", "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             let command = statement.split (/\s+/)[0];
             let rows = [];
@@ -122,7 +121,6 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .mock ("object", "info")
         .mock ("object", "confirm", false)
         .commit ()
 ;

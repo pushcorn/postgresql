@@ -64,8 +64,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."id" AS "t1_id",
               t1."name" AS "t1_name"
 
-            FROM "products" t0
-              LEFT JOIN "users" t1 ON t1."id" = t0."owner_id"
+            FROM "test_products" t0
+              LEFT JOIN "test_users" t1 ON t1."id" = t0."owner_id"
         `)
         .expectingMethodToReturnValueContaining ("Product.fieldMap.tags.relationshipPath.toPojo", null,
         {
@@ -112,9 +112,9 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t2."id" AS "t2_id",
               t2."name" AS "t2_name"
 
-            FROM "products" t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
-              LEFT JOIN "tags" t2 ON t2."id" = t1."tag_id"
+            FROM "test_products" t0
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_tags" t2 ON t2."id" = t1."tag_id"
         `)
         .expectingMethodToReturnValueContaining ("Tag.fieldMap.products.relationshipPath.toPojo", null,
         {
@@ -161,9 +161,9 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t2."name" AS "t2_name",
               t2."owner_id" AS "t2_owner_id"
 
-            FROM "tags" t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."tag_id" = t0."id"
-              LEFT JOIN "products" t2 ON t2."id" = t1."product_id"
+            FROM "test_tags" t0
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."tag_id" = t0."id"
+              LEFT JOIN "test_products" t2 ON t2."id" = t1."product_id"
         `)
         .expectingModelEagerQueryToBe ("Product", nit.trim.text`
             SELECT
@@ -180,10 +180,10 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t3."id" AS "t3_id",
               t3."name" AS "t3_name"
 
-            FROM "products" t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
-              LEFT JOIN "tags" t2 ON t2."id" = t1."tag_id"
-              LEFT JOIN "users" t3 ON t3."id" = t0."owner_id"
+            FROM "test_products" t0
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."product_id" = t0."id"
+              LEFT JOIN "test_tags" t2 ON t2."id" = t1."tag_id"
+              LEFT JOIN "test_users" t3 ON t3."id" = t0."owner_id"
         `)
         .expectingModelEagerQueryToBe ("Tag", nit.trim.text`
             SELECT
@@ -197,16 +197,16 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t2."name" AS "t2_name",
               t2."owner_id" AS "t2_owner_id"
 
-            FROM "tags" t0
-              LEFT JOIN "productTagsTagProductsLinks" t1 ON t1."tag_id" = t0."id"
-              LEFT JOIN "products" t2 ON t2."id" = t1."product_id"
+            FROM "test_tags" t0
+              LEFT JOIN "test_productTagsTagProductsLinks" t1 ON t1."tag_id" = t0."id"
+              LEFT JOIN "test_products" t2 ON t2."id" = t1."product_id"
         `)
         .expectingModelEagerQueryToBe ("User", nit.trim.text`
             SELECT
               t0."id" AS "t0_id",
               t0."name" AS "t0_name"
 
-            FROM "users" t0
+            FROM "test_users" t0
         `)
         .commit ()
 
@@ -261,8 +261,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."name" AS "t1_name",
               t1."country_id" AS "t1_country_id"
 
-            FROM "countries" t0
-              LEFT JOIN "capitals" t1 ON t1."country_id" = t0."id"
+            FROM "test_countries" t0
+              LEFT JOIN "test_capitals" t1 ON t1."country_id" = t0."id"
         `)
         .expectingMethodToReturnValueContaining ("Capital.fieldMap.country.relationshipPath.toPojo", null,
         {
@@ -295,8 +295,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."id" AS "t1_id",
               t1."name" AS "t1_name"
 
-            FROM "capitals" t0
-              LEFT JOIN "countries" t1 ON t1."id" = t0."country_id"
+            FROM "test_capitals" t0
+              LEFT JOIN "test_countries" t1 ON t1."id" = t0."country_id"
         `)
         .expectingModelEagerQueryToBe ("Country", nit.trim.text`
             SELECT
@@ -307,8 +307,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."name" AS "t1_name",
               t1."country_id" AS "t1_country_id"
 
-            FROM "countries" t0
-              LEFT JOIN "capitals" t1 ON t1."country_id" = t0."id"
+            FROM "test_countries" t0
+              LEFT JOIN "test_capitals" t1 ON t1."country_id" = t0."id"
         `)
         .expectingModelEagerQueryToBe ("Capital", nit.trim.text`
             SELECT
@@ -319,8 +319,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."id" AS "t1_id",
               t1."name" AS "t1_name"
 
-            FROM "capitals" t0
-              LEFT JOIN "countries" t1 ON t1."id" = t0."country_id"
+            FROM "test_capitals" t0
+              LEFT JOIN "test_countries" t1 ON t1."id" = t0."country_id"
         `)
         .commit ()
 
@@ -386,8 +386,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."total" AS "t1_total",
               t1."order_id" AS "t1_order_id"
 
-            FROM "orders" t0
-              LEFT JOIN "orderItems" t1 ON t1."order_id" = t0."id"
+            FROM "test_orders" t0
+              LEFT JOIN "test_orderItems" t1 ON t1."order_id" = t0."id"
         `)
         .expectingMethodToReturnValueContaining ("OrderItem.fieldMap.order.relationshipPath.toPojo", null,
         {
@@ -423,8 +423,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."id" AS "t1_id",
               t1."user" AS "t1_user"
 
-            FROM "orderItems" t0
-              LEFT JOIN "orders" t1 ON t1."id" = t0."order_id"
+            FROM "test_orderItems" t0
+              LEFT JOIN "test_orders" t1 ON t1."id" = t0."order_id"
         `)
         .expectingModelEagerQueryToBe ("Order", nit.trim.text`
             SELECT
@@ -438,8 +438,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."total" AS "t1_total",
               t1."order_id" AS "t1_order_id"
 
-            FROM "orders" t0
-              LEFT JOIN "orderItems" t1 ON t1."order_id" = t0."id"
+            FROM "test_orders" t0
+              LEFT JOIN "test_orderItems" t1 ON t1."order_id" = t0."id"
         `)
         .expectingModelEagerQueryToBe ("OrderItem", nit.trim.text`
             SELECT
@@ -453,8 +453,8 @@ test.method ("postgresql.RelationshipPath", "new", true)
               t1."id" AS "t1_id",
               t1."user" AS "t1_user"
 
-            FROM "orderItems" t0
-              LEFT JOIN "orders" t1 ON t1."id" = t0."order_id"
+            FROM "test_orderItems" t0
+              LEFT JOIN "test_orders" t1 ON t1."id" = t0."order_id"
         `)
         .commit ()
 
@@ -575,7 +575,7 @@ test.method ("postgresql.RelationshipPath", "toQuery", { recreate: false })
             WITH u AS
             (
               SELECT *
-              FROM "users"
+              FROM "test_users"
               WHERE name ILIKE 'john'
             )
 
@@ -587,7 +587,7 @@ test.method ("postgresql.RelationshipPath", "toQuery", { recreate: false })
               u."id" AS "u_id",
               u."name" AS "u_name"
 
-            FROM "products" t0
+            FROM "test_products" t0
               LEFT JOIN u ON u."id" = t0."owner_id"
         `)
         .commit ()

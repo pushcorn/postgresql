@@ -14,7 +14,7 @@ test.command ("postgresql.commands.Migrate")
                 rows: []
             };
         })
-        .mock (Migration.table, "exists", true)
+        .mock ("postgresql.Table.prototype", "exists", true)
         .mock ("object", "info")
         .before (async function ()
         {

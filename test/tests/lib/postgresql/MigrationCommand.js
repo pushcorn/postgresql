@@ -1,12 +1,8 @@
-const postgresql = nit.require ("postgresql");
 const MockPgClient = nit.require ("postgresql.mocks.PgClient");
-
-nit.require ("postgresql.MigrationCommand");
 
 
 test.object ("postgresql.MigrationCommand.Context")
     .should ("include the current migration state")
-        .given ({ db: nit.new ("postgresql.Database") })
         .up (function ()
         {
             MockPgClient
@@ -16,11 +12,12 @@ test.object ("postgresql.MigrationCommand.Context")
                 })
             ;
         })
-        .mock (postgresql.Migration.table, "exists", true)
+        .after (s => s.instance.registerService (nit.new ("postgresql.Database")))
+        .mock ("postgresql.Migration.table", "exists", true)
         .expectingMethodToReturnValue ("result.getMigratedScripts", null, ["a.js", "b.js"])
         .commit ()
 
-    .given ({ db: nit.new ("postgresql.Database") })
+    .reset ()
         .up (function ()
         {
             MockPgClient
@@ -30,8 +27,9 @@ test.object ("postgresql.MigrationCommand.Context")
                 })
             ;
         })
-        .mock (postgresql.Migration.table, "exists", false)
-        .mock (postgresql.Migration.table, "create")
+        .mock ("postgresql.Migration.table", "exists", false)
+        .mock ("postgresql.Migration.table", "create")
+        .after (s => s.instance.registerService (nit.new ("postgresql.Database")))
         .after (function ()
         {
             this.result.input.dir.read = function ()
@@ -40,5 +38,17 @@ test.object ("postgresql.MigrationCommand.Context")
             };
         })
         .expectingMethodToReturnValue ("result.getUnmigratedScripts", null, ["b.js"])
+        .commit ()
+;
+
+
+test.method ("postgresql.MigrationCommand", "run")
+    .should ("ensure the migration table exists before running the command")
+        .up (s => s.class = s.class.defineSubclass ("MyCommand")
+            .onRun (() => s.runCalled = true)
+        )
+        .mock ("postgresql.Table.prototype", "exists", true)
+        .expectingPropertyToBe ("runCalled", true)
+        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
         .commit ()
 ;
