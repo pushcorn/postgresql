@@ -18,11 +18,11 @@ test.workflowStep ("postgresql:update-entity")
         .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "id" = '10'
             LIMIT 1
             --
-            UPDATE "users"
+            UPDATE "test_users"
             SET "name" = 'Jane Doe'
             WHERE "id" = '10'
         `)

@@ -14,7 +14,7 @@ test.method ("postgresql.ids.SmallSerial", "marshall", true)
         })
         .mock ("class.db", "value", () => 2)
         .returns ({ value: 2 })
-        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", `SELECT NEXTVAL (PG_GET_SERIAL_SEQUENCE ('"users"', 'id'))`)
+        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", `SELECT NEXTVAL (PG_GET_SERIAL_SEQUENCE ('"test_users"', 'id'))`)
         .commit ()
 
     .should ("return marshalled object for non-insert actions")

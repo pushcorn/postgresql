@@ -11,7 +11,7 @@ test.workflowStep ("postgresql:insert-entity")
         .up (s => s.args = s.db.lookup ("test.models.User").new ({ id: 10, name: "John Doe" }))
         .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
-            INSERT INTO "users" ("id", "name")
+            INSERT INTO "test_users" ("id", "name")
             VALUES ('10', 'John Doe')
         `)
         .commit ()

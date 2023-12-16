@@ -13,11 +13,11 @@ test.workflowStep ("postgresql:delete-entity")
         .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "id" = '10'
             LIMIT 1
             --
-            DELETE FROM "users"
+            DELETE FROM "test_users"
             WHERE "id" = '10'
         `)
         .commit ()

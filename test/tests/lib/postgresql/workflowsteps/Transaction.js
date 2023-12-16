@@ -23,11 +23,11 @@ test.workflowStep ("postgresql:transaction")
             BEGIN
             --
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "id" = '0'
             LIMIT 1
             --
-            INSERT INTO "users" ("id", "name")
+            INSERT INTO "test_users" ("id", "name")
             VALUES ('0', 'John Doe')
             --
             COMMIT

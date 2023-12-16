@@ -13,7 +13,7 @@ test.workflowStep ("postgresql:load")
         .before (s => s.db.client.result = { rows: [{ id: 3, name: "John Doe" }] })
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "name" = 'John Doe'
             LIMIT 1
         `)

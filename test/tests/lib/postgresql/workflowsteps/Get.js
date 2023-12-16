@@ -12,7 +12,7 @@ test.workflowStep ("postgresql:get")
         .registerDbService ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "id" = '10'
             LIMIT 1
         `)

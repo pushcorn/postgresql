@@ -12,7 +12,7 @@ test.workflowStep ("postgresql:select")
         .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "name" = 'John Doe'
         `)
         .commit ()

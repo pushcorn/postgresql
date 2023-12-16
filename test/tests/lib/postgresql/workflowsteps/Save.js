@@ -12,11 +12,11 @@ test.workflowStep ("postgresql:save")
         .registerDbService ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
-            FROM "users"
+            FROM "test_users"
             WHERE "id" = '0'
             LIMIT 1
             --
-            INSERT INTO "users" ("id", "name")
+            INSERT INTO "test_users" ("id", "name")
             VALUES ('0', 'John Doe')
         `)
         .commit ()
