@@ -13,6 +13,15 @@ test.object ("postgresql.Model", false)
         )
         .expectingPropertyToBe ("class.tableName", "users")
         .commit ()
+
+    .should ("have two memo static propertis marshallableFields and marshallableFieldMap")
+        .up (s => s.class = s.class.defineSubclass ("test.models.User")
+            .field ("<id>", "string", { key: true })
+            .field ("fullname", "string", { transient: true })
+        )
+        .expectingPropertyToBe ("class.marshallableFields.length", 1)
+        .expectingPropertyToBeOfType ("class.marshallableFieldMap.id", "postgresql.Model.Field")
+        .commit ()
 ;
 
 
