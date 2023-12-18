@@ -2,6 +2,7 @@ nit.test.Strategy
     .property ("models...", "string")
     .memo ("postgresql", () => nit.require ("postgresql"))
     .memo ("Model", () => nit.require ("postgresql.Model"))
+    .memo ("MockPgClient", () => nit.require ("postgresql.mocks.PgClient"))
 
     .method ("useModels", function (...models)
     {
@@ -11,11 +12,11 @@ nit.test.Strategy
     })
     .method ("useMockPgClient", function ()
     {
-        nit.require ("postgresql.mocks.PgClient");
-
         return this
             .up (async (s) =>
             {
+                s.MockPgClient.init ();
+
                 s.db = new s.postgresql.Database;
 
                 nit.require ("postgresql.registries.Cached").clearCache ();
@@ -31,6 +32,7 @@ nit.test.Strategy
                     self[model.simpleName] = model;
                 });
             })
+            .deinit (s => s.MockPgClient.deinit ())
             .snapshot ()
         ;
     })
@@ -76,11 +78,12 @@ nit.test.Strategy
             })
             .down (async ({ db, error }) =>
             {
-                if (!error)
+                if (!error && db.client)
                 {
                     db?.query ("SET CONSTRAINTS ALL IMMEDIATE");
                 }
             })
+            .deinit (s => s.db.save ())
             .snapshot ()
         ;
     })

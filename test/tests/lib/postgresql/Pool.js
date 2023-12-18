@@ -7,6 +7,7 @@ test.method ("postgresql.Pool", "connect")
     .expectingPropertyToBeOfType ("object.pgPool", "postgresql.mocks.PgPool")
     .expectingPropertyToBe ("object.stats",
     {
+        id: "",
         total: 1,
         waiting: 0,
         idle: 0,

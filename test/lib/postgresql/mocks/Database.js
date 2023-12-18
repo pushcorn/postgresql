@@ -23,27 +23,30 @@ module.exports = function (nit, postgresql, Self)
         .defineInnerClass ("Rewrite", Rewrite =>
         {
             Rewrite
-                .field ("<from>", "string", "The statement to be rewrited.")
+                .field ("<from>", "string|RegExp", "The statement to be rewrited.")
                 .field ("<to>", "any", "The rewrited statement.")
+                .method ("applicableTo", function (statement)
+                {
+                    let { from } = this;
+
+                    return !!(nit.is.str (from) ? statement == from : statement.match (from));
+                })
                 .method ("perform", function (statement)
                 {
-                    let { from, to } = this;
+                    let { to } = this;
 
-                    if (statement == from)
+                    if (nit.is.array (to))
                     {
-                        if (nit.is.array (to))
-                        {
-                            return to.length ? to.shift () : undefined;
-                        }
-                        else
-                        if (nit.is.func (to))
-                        {
-                            return to (statement);
-                        }
-                        else
-                        {
-                            return to;
-                        }
+                        return to.length ? to.shift () : undefined;
+                    }
+                    else
+                    if (nit.is.func (to))
+                    {
+                        return to (statement);
+                    }
+                    else
+                    {
+                        return to;
                     }
                 })
             ;
@@ -153,6 +156,7 @@ module.exports = function (nit, postgresql, Self)
 
         .field ("record", "boolean", "Enable the record mode if true.")
         .field ("dataFile", "nit.File", "The query data file.")
+        .field ("suffix", "string", "The additional file suffix.")
         .property ("expects...", Self.Expect.name)
         .property ("rewrites...", Self.Rewrite.name)
         .property ("connected", "boolean", { writer })
@@ -165,7 +169,7 @@ module.exports = function (nit, postgresql, Self)
 
             if (!self.dataFile)
             {
-                self.dataFile = nit.path.join (Self.sourceFile.dirname, nit.path.parse (Self.sourceFile.basename).name + ".data.json");
+                self.dataFile = nit.path.join (Self.sourceFile.dirname, nit.path.parse (Self.sourceFile.basename).name + self.suffix + ".data.json");
             }
         })
 
@@ -210,11 +214,14 @@ module.exports = function (nit, postgresql, Self)
 
             return self;
         })
-        .method ("disconnect", async function ()
+        .method ("save", async function ()
         {
             let self = this;
 
-            await Self.superclass.prototype.disconnect.call (self);
+            if (self.transacting && self.client)
+            {
+                await nit.invoke.silent ([this, "rollback"]);
+            }
 
             if (self.record && !global.test.unexpectedErrors.length)
             {
@@ -237,7 +244,7 @@ module.exports = function (nit, postgresql, Self)
             {
                 try
                 {
-                    statement = self.rewrites.find (r => r.from == statement)?.perform (statement) || statement;
+                    statement = self.rewrites.find (r => r.applicableTo (statement))?.perform (statement) || statement;
 
                     let result = nit.clone.shallow (await Self.superclass.prototype.execute.call (self, statement));
 

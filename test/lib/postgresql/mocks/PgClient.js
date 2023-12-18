@@ -2,9 +2,19 @@ module.exports = function (nit, postgresql, Self)
 {
     return (Self = nit.test.defineMock ("postgresql.mocks.PgClient"))
         .plugin ("event-emitter", "notification")
-        .do (function ()
+        .constant ("PG_CLIENT", postgresql.pg.Client)
+        .staticMethod ("init", function ()
         {
+            Self.reset ();
             postgresql.pg.Client = Self;
+
+            return Self;
+        })
+        .staticMethod ("deinit", function ()
+        {
+            postgresql.pg.Client = Self.PG_CLIENT;
+
+            return Self;
         })
         .field ("result", "object?", "The results to return.")
         .field ("statement", "string", "The last statement.")

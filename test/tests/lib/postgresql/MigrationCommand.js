@@ -1,4 +1,4 @@
-const MockPgClient = nit.require ("postgresql.mocks.PgClient");
+const MockPgClient = nit.require ("postgresql.mocks.PgClient").init ();
 
 
 test.object ("postgresql.MigrationCommand.Context")

@@ -26,6 +26,27 @@ test.method ("postgresql.mocks.Database.Rewrite", "perform")
 ;
 
 
+test.method ("postgresql.mocks.Database.Rewrite", "applicableTo")
+    .should ("return true if the specified statement matches the 'from' string")
+        .up (s => s.createArgs = ["SELECT UUID_GENERATE_V4 ()", "SELECT '72133cfb-c1b3-4bf9-a4cf-819f2ee24cee'"])
+        .given ("SELECT UUID_GENERATE_V4 ()")
+        .returns (true)
+        .commit ()
+
+    .should ("return true if the specified statement matches the 'from' pattern")
+        .up (s => s.createArgs = [/select uuid.*/i, "SELECT '72133cfb-c1b3-4bf9-a4cf-819f2ee24cee'"])
+        .given ("SELECT UUID_GENERATE_V4 ()")
+        .returns (true)
+        .commit ()
+
+    .should ("return false if the specified statement DOES NOT match the 'from' pattern")
+        .up (s => s.createArgs = [/update users.*/i, "UPDATE people SET enabled = 'f'"])
+        .given ("SELECT UUID_GENERATE_V4 ()")
+        .returns (false)
+        .commit ()
+;
+
+
 test.method ("postgresql.mocks.Database.Result", "command", true)
     .should ("return a result for the specified command")
         .given ("BEGIN")
@@ -408,9 +429,9 @@ test.method ("postgresql.mocks.Database", "connect")
 ;
 
 
-test.method ("postgresql.mocks.Database", "disconnect")
+test.method ("postgresql.mocks.Database", "save")
     .useMockPgClient ()
-    .should ("disconnect the database and write the recorded queries to file")
+    .should ("save recorded queries to file")
         .application ()
         .up (s =>
         {
@@ -465,7 +486,7 @@ test.method ("postgresql.mocks.Database", "execute")
             db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT '72133cfb-c1b3-4bf9-a4cf-819f2ee24cee'");
 
             await db.query ("SELECT UUID_GENERATE_V4 ()");
-            await db.disconnect ();
+            await db.save ();
 
             self.data = JSON.parse (await db.dataFile.readAsync ());
         })
@@ -485,7 +506,7 @@ test.method ("postgresql.mocks.Database", "execute")
         .given (nit.new ("postgresql.queries.Select").From ("users"))
         .after (async ({ self, object: db }) =>
         {
-            await db.disconnect ();
+            await db.save ();
             self.data = JSON.parse (await db.dataFile.readAsync ());
         })
         .expectingPropertyToBe ("data.expects.length", 1)
@@ -507,7 +528,7 @@ test.method ("postgresql.mocks.Database", "execute")
         ))
         .after (async ({ self, object: db }) =>
         {
-            await db.disconnect ();
+            await db.save ();
 
             self.data = JSON.parse (await db.dataFile.readAsync ());
         })

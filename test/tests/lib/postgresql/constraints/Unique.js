@@ -1,4 +1,4 @@
-const MockPgClient = nit.require ("postgresql.mocks.PgClient");
+const MockPgClient = nit.require ("postgresql.mocks.PgClient").init ();
 const postgresql = nit.require ("postgresql");
 
 const User = postgresql.defineModel ("test.models.User")

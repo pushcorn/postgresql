@@ -1,16 +1,11 @@
-const postgresql = nit.require ("postgresql");
-const MockPgClient = nit
-    .require ("postgresql.mocks.PgClient")
-    .require ("postgresql.mocks.PgPool")
-;
-
+nit.require ("postgresql.mocks.PgPool");
 
 nit.test.Strategy
     .method ("mockClient", function (result)
     {
         return this
-            .up (s => s.client = new MockPgClient ({ result }))
-            .up (() => MockPgClient.reset ())
+            .up (s => s.client = new s.MockPgClient ({ result }))
+            .up (s => s.MockPgClient.init ())
             .mock ("object", "connect", { iterations: 1 }, function ()
             {
                 let { target, strategy } = this;
@@ -21,6 +16,7 @@ nit.test.Strategy
 
                 return target;
             })
+            .deinit (s => s.MockPgClient.deinit ())
             .deinit (s => s.client = undefined)
         ;
     })
@@ -325,7 +321,7 @@ test.method ("postgresql.Database", "values")
 test.method ("postgresql.Database", "begin")
     .should ("start a transaction")
         .mockClient ()
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.statement", "BEGIN")
         .expectingPropertyToBe ("object.client.query.invocations.length", 1)
         .commit ()
@@ -333,7 +329,7 @@ test.method ("postgresql.Database", "begin")
     .should ("not start a new transaction if one exists")
         .mockClient ()
         .after (s => s.object.begin ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.statement", "BEGIN")
         .expectingPropertyToBe ("object.client.query.invocations.length", 1)
         .commit ()
@@ -343,14 +339,14 @@ test.method ("postgresql.Database", "begin")
 test.method ("postgresql.Database", "commit")
     .should ("not commit if no transaction was started")
         .mockClient ()
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client", undefined)
         .commit ()
 
     .should ("commit if a transaction was started")
         .mockClient ()
         .before (s => s.object.begin ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.statement", "COMMIT")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
         .commit ()
@@ -359,7 +355,7 @@ test.method ("postgresql.Database", "commit")
         .mockClient ()
         .before (s => s.object.begin ())
         .after (s => s.object.commit ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.statement", "COMMIT")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
         .commit ()
@@ -369,14 +365,14 @@ test.method ("postgresql.Database", "commit")
 test.method ("postgresql.Database", "rollback")
     .should ("not rollback if no transaction was started")
         .mockClient ()
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client", undefined)
         .commit ()
 
     .should ("rollback if a transaction was started")
         .mockClient ()
         .before (s => s.object.begin ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.statement", "ROLLBACK")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
         .commit ()
@@ -389,7 +385,7 @@ test.method ("postgresql.Database", "rollback")
             await s.object.rollback ();
             await s.object.rollback ();
         })
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.statement", "ROLLBACK")
         .expectingPropertyToBe ("object.client.query.invocations.length", 2)
         .commit ()
@@ -467,13 +463,13 @@ test.method ("postgresql.Database", "execute")
 test.method ("postgresql.Database", "connect")
     .should ("set up the client")
         .mockClient ()
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .commit ()
 
     .should ("only create the client if not connected")
         .mockClient ()
         .before (s => s.object.connect ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client.connect.invocations.length", 1)
         .commit ()
 ;
@@ -481,7 +477,7 @@ test.method ("postgresql.Database", "connect")
 
 test.method ("postgresql.Database", "connect", { createArgs: [{ pooling: true }] })
     .should ("return the pooled client if pooling is enabled")
-        .returnsInstanceOf ("postgresql.Database")
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBeOfType ("object.client", "postgresql.mocks.PgPool.Client")
         .commit ()
 ;
@@ -491,7 +487,7 @@ test.method ("postgresql.Database", "disconnect")
     .should ("disconnect and release the client")
         .mockClient ()
         .before (s => s.object.connect ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("object.client", undefined)
         .commit ()
 
@@ -499,14 +495,14 @@ test.method ("postgresql.Database", "disconnect")
         .mockClient ()
         .before (s => s.object.connect ())
         .after (s => s.object.connect ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .commit ()
 
     .should ("rollback the current transaction before disconnect")
         .mockClient ()
         .mock ("object", "rollback")
         .before (s => s.object.begin ())
-        .returnsInstanceOf (postgresql.Database)
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("mocks.1.invocations.length", 1)
         .commit ()
 ;
@@ -516,7 +512,7 @@ test.method ("postgresql.Database", "disconnect", { createArgs: [{ pooling: true
     .should ("issue DISCARD ALL before releasing the client to the pool")
         .mock ("object.client", "query")
         .before (s => s.object.connect ())
-        .returnsInstanceOf ("postgresql.Database")
+        .returnsResultOfExpr ("object")
         .expectingPropertyToBe ("mocks.0.invocations.0.args.0", "DISCARD ALL")
         .commit ()
 ;
@@ -524,10 +520,11 @@ test.method ("postgresql.Database", "disconnect", { createArgs: [{ pooling: true
 
 test.method ("postgresql.Database.Registry", "lookup")
     .should ("return the model class from the cached registry")
-        .up (s => s.createArgs = new postgresql.Database)
-        .before (() =>
+        .mockClient ()
+        .up (s => s.createArgs = new s.postgresql.Database)
+        .before (s =>
         {
-            postgresql.defineModel ("test.models.Country")
+            s.postgresql.defineModel ("test.models.Country")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                     .constraint ("postgresql:unique")
@@ -541,9 +538,9 @@ test.method ("postgresql.Database.Registry", "lookup")
 ;
 
 
-test.object (postgresql.Database)
+test.object ("postgresql.Database", false)
     .should ("have a shared property that provides a global database instance")
-        .expectingPropertyToBeOfType ("result.shared", "postgresql.Database")
+        .expectingPropertyToBeOfType ("class.shared", "postgresql.Database")
         .commit ()
 ;
 
@@ -576,21 +573,22 @@ test.method ("postgresql.Database", "debug")
 
 test.method ("postgresql.Database", "createTables")
     .should ("create tables for the given model classes")
+        .mockClient ()
         .before (s =>
         {
-            postgresql.defineModel ("test.models.Person")
+            s.postgresql.defineModel ("test.models.Person")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                 .field ("followers...", "test.models.Person")
             ;
 
-            postgresql.defineModel ("test.models.Country")
+            s.postgresql.defineModel ("test.models.Country")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                     .constraint ("postgresql:unique")
             ;
 
-            postgresql.defineModel ("test.models.Capital")
+            s.postgresql.defineModel ("test.models.Capital")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                     .constraint ("postgresql:unique")
@@ -720,21 +718,22 @@ test.method ("postgresql.Database", "createTables")
 
 test.method ("postgresql.Database", "dropTables")
     .should ("drop the tables owned by the specifed models")
+        .mockClient ()
         .before (s =>
         {
-            postgresql.defineModel ("test.models.Person")
+            s.postgresql.defineModel ("test.models.Person")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                 .field ("followers...", "test.models.Person")
             ;
 
-            postgresql.defineModel ("test.models.Country")
+            s.postgresql.defineModel ("test.models.Country")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                     .constraint ("postgresql:unique")
             ;
 
-            postgresql.defineModel ("test.models.Capital")
+            s.postgresql.defineModel ("test.models.Capital")
                 .field ("<id>", "string", { key: true })
                 .field ("<name>", "string")
                     .constraint ("postgresql:unique")
@@ -774,5 +773,23 @@ test.method ("postgresql.Database", "acquire")
     .should ("create a new db with the connection from the pool")
         .mock ("class.prototype", "connect")
         .expectingPropertyToBe ("mocks.0.invocations.length", 1)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "listen")
+    .should ("listen to the channel")
+        .mockClient ()
+        .given ("test")
+        .expectingPropertyToBe ("object.client.statement", `LISTEN "test"`)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "unlisten")
+    .should ("unlisten to the channel")
+        .mockClient ()
+        .given ("test")
+        .expectingPropertyToBe ("object.client.statement", `UNLISTEN "test"`)
         .commit ()
 ;

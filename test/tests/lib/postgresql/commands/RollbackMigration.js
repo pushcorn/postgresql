@@ -1,6 +1,6 @@
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
-nit.require ("postgresql.mocks.PgClient");
+nit.require ("postgresql.mocks.PgClient").init ();
 
 
 test.command ("postgresql.commands.RollbackMigration")

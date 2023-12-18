@@ -1,4 +1,4 @@
-const MockPgClient = nit.require ("postgresql.mocks.PgClient");
+const MockPgClient = nit.require ("postgresql.mocks.PgClient").init ();
 const Migration = nit.require ("postgresql.Migration");
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 

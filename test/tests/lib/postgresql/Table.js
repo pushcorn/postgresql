@@ -1,4 +1,4 @@
-nit.require ("postgresql.mocks.PgClient");
+nit.require ("postgresql.mocks.PgClient").init ();
 
 
 test.object ("postgresql.Table")
