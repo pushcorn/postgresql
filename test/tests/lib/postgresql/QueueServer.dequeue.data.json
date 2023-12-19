@@ -383,9 +383,9 @@
             }
         },
         {
-            "statement": "COMMIT",
+            "statement": "ROLLBACK",
             "result": {
-                "command": "",
+                "command": "ROLLBACK",
                 "rows": [],
                 "rowCount": 0,
                 "fields": []
@@ -395,24 +395,6 @@
             "statement": "UNLISTEN \"postgresql_jobs\"",
             "result": {
                 "command": "UNLISTEN",
-                "rows": [],
-                "rowCount": 0,
-                "fields": []
-            }
-        },
-        {
-            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
-            "result": {
-                "command": "SET",
-                "rows": [],
-                "rowCount": 0,
-                "fields": []
-            }
-        },
-        {
-            "statement": "ROLLBACK",
-            "result": {
-                "command": "ROLLBACK",
                 "rows": [],
                 "rowCount": 0,
                 "fields": []

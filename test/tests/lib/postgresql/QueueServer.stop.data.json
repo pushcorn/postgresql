@@ -105,18 +105,18 @@
             }
         },
         {
-            "statement": "UNLISTEN \"postgresql_jobs\"",
+            "statement": "ROLLBACK",
             "result": {
-                "command": "UNLISTEN",
+                "command": "ROLLBACK",
                 "rows": [],
                 "rowCount": 0,
                 "fields": []
             }
         },
         {
-            "statement": "ROLLBACK",
+            "statement": "UNLISTEN \"postgresql_jobs\"",
             "result": {
-                "command": "ROLLBACK",
+                "command": "UNLISTEN",
                 "rows": [],
                 "rowCount": 0,
                 "fields": []

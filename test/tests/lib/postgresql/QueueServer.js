@@ -165,7 +165,7 @@ test.method ("postgresql.QueueServer", "dequeue")
         .after (s => s.object.dequeue ())
         .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
-        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
+        .expectingPropertyToBe ("mocks.0.invocations.length", 2)
         .expectingPropertyToBe ("mocks.1.invocations.length", 1)
         .expectingPropertyToBe ("mocks.2.invocations.length", 3)
         .expectingPropertyToBe ("mocks.3.invocations.length", 1)
@@ -321,7 +321,7 @@ test.method ("postgresql.QueueServer", "runJob")
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.error", /MY_CMD_ERR/)
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.status", "failed")
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.retries", 1)
-        .expectingPropertyToBe ("mocks.3.invocations.length", 1)
+        .expectingPropertyToBe ("mocks.3.invocations.length", 2)
         .expectingPropertyToBe ("mocks.4.invocations.length", 1)
         .commit ()
 ;
@@ -331,6 +331,7 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
     .useMockDatabase ({ suffix: ".updateEnqueueTimer" })
     .should ("set up the timer for the failed or scheduled job")
         .up (s => s.createArgs = { db: s.db })
+        .up (s => s.class.UpdateEnqueueTimerTask.updated = false)
         .mock ("db", "insert", function (table, values)
         {
             let { target, targetMethod } = this;
@@ -342,22 +343,20 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
             return nit.invoke ([target, targetMethod], [table, values]);
         })
         .mock ("object", "enqueueScheduledTasks")
-        .mock ("class.Task.prototype", "sleep", function ()
+        .mock ("class.Task.prototype", "sleep", async function ()
         {
-            let { iteration } = this;
+            let { iteration, strategy: s } = this;
 
-            if (iteration == 1 || iteration == 3 || iteration == 4)
+            if (iteration == 5)
+            {
+                let job = await s.object.Job.get ("aa69a37c-811a-4537-b3da-88b7af70be1c");
+
+                await job.update ({ status: "failed" });
+            }
+
+            if (iteration == 1 || iteration == 3 || iteration == 4 || iteration == 5)
             {
                 return true;
-            }
-        })
-        .mock ("postgresql.Model", "find", function ()
-        {
-            let { iteration, obj, targetMethod } = this;
-
-            if (iteration == 1 || iteration == 3)
-            {
-                return nit.invoke ([obj, targetMethod], arguments);
             }
         })
         .mock ("db", "disconnect")
@@ -377,7 +376,7 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
         .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
         .expectingPropertyToBe ("mocks.1.invocations.length", 1)
-        .expectingPropertyToBe ("mocks.2.invocations.0.args.0", 100)
+        .expectingPropertyToBe ("mocks.2.invocations.1.args.0", 100)
         .commit ()
 ;
 
@@ -453,7 +452,7 @@ test.method ("postgresql.QueueServer", "getStats")
             dropped: 0,
             taskQueue:
             {
-                pending: 0,
+                pending: 1,
                 queued: 0
             }
             ,
@@ -469,7 +468,7 @@ test.method ("postgresql.QueueServer", "getStats")
             dropped: 0,
             taskQueue:
             {
-                pending: 0,
+                pending: 1,
                 queued: 0
             }
             ,

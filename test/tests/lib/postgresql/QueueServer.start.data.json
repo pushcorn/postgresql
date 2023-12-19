@@ -105,18 +105,83 @@
             }
         },
         {
-            "statement": "UNLISTEN \"postgresql_jobs\"",
+            "statement": "SELECT *\nFROM \"postgresql_jobs\"\nWHERE status IN ('failed', 'scheduled')\nORDER BY \"priority\", \"rtime\"\nLIMIT 1",
             "result": {
-                "command": "UNLISTEN",
+                "command": "SELECT",
                 "rows": [],
                 "rowCount": 0,
-                "fields": []
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "command",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "priority",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "status",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "error",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "output",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "duration",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "exitCode",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "retries",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "mtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    }
+                ]
             }
         },
         {
             "statement": "ROLLBACK",
             "result": {
                 "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "UNLISTEN \"postgresql_jobs\"",
+            "result": {
+                "command": "UNLISTEN",
                 "rows": [],
                 "rowCount": 0,
                 "fields": []

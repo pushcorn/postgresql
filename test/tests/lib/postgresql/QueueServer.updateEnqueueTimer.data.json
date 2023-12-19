@@ -105,6 +105,71 @@
             }
         },
         {
+            "statement": "SELECT *\nFROM \"postgresql_jobs\"\nWHERE status IN ('failed', 'scheduled')\nORDER BY \"priority\", \"rtime\"\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "command",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "priority",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "status",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "error",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "output",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "duration",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "exitCode",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "retries",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "mtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
             "statement": "SELECT UUID_GENERATE_V4 ()",
             "result": {
                 "command": "SELECT",
@@ -221,6 +286,252 @@
                         "command": "shell echo 'test'",
                         "priority": 100,
                         "status": "scheduled",
+                        "error": "",
+                        "output": "",
+                        "duration": 0,
+                        "exitCode": 0,
+                        "retries": 0,
+                        "mtime": "2023-12-18T01:15:21.609Z",
+                        "rtime": "2023-12-18T01:15:21.609Z"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "command",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "priority",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "status",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "error",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "output",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "duration",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "exitCode",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "retries",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "mtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"postgresql_jobs\"\nWHERE \"id\" = 'aa69a37c-811a-4537-b3da-88b7af70be1c'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": "aa69a37c-811a-4537-b3da-88b7af70be1c",
+                        "command": "shell echo 'test'",
+                        "priority": 100,
+                        "status": "scheduled",
+                        "error": "",
+                        "output": "",
+                        "duration": 0,
+                        "exitCode": 0,
+                        "retries": 0,
+                        "mtime": "2023-12-18T01:15:21.609Z",
+                        "rtime": "2023-12-18T01:15:21.609Z"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "command",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "priority",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "status",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "error",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "output",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "duration",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "exitCode",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "retries",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "mtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"postgresql_jobs\"\nWHERE \"id\" = 'aa69a37c-811a-4537-b3da-88b7af70be1c'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": "aa69a37c-811a-4537-b3da-88b7af70be1c",
+                        "command": "shell echo 'test'",
+                        "priority": 100,
+                        "status": "scheduled",
+                        "error": "",
+                        "output": "",
+                        "duration": 0,
+                        "exitCode": 0,
+                        "retries": 0,
+                        "mtime": "2023-12-18T01:15:21.609Z",
+                        "rtime": "2023-12-18T01:15:21.609Z"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "command",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "priority",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "status",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "error",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "output",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "duration",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "exitCode",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "retries",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "mtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'failed'\nWHERE \"id\" = 'aa69a37c-811a-4537-b3da-88b7af70be1c'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"postgresql_jobs\"\nWHERE status IN ('failed', 'scheduled')\nORDER BY \"priority\", \"rtime\"\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "id": "aa69a37c-811a-4537-b3da-88b7af70be1c",
+                        "command": "shell echo 'test'",
+                        "priority": 100,
+                        "status": "failed",
                         "error": "",
                         "output": "",
                         "duration": 0,
