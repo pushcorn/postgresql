@@ -30,9 +30,9 @@ test.object ("postgresql.MigrationCommand.Context")
         .mock ("postgresql.Migration.table", "exists", false)
         .mock ("postgresql.Migration.table", "create")
         .after (s => s.instance.registerService (nit.new ("postgresql.Database")))
-        .after (function ()
+        .after (s =>
         {
-            this.result.input.dir.read = function ()
+            s.result.input.dir.read = function ()
             {
                 return ["a.js", "b.js"];
             };
