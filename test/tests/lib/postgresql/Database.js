@@ -555,6 +555,18 @@ test.method ("postgresql.Database", "info")
 
 
 test.method ("postgresql.Database", "debug")
+    .should ("include the pooling info if pooling is enabled")
+        .up (s => s.createArgs = { pooling: true })
+        .up (() => nit.debug ("postgresql.Database"))
+        .given ("This is a test.")
+        .mock (nit, "log")
+        .after (() => nit.debug.PATTERNS = [])
+        .expectingPropertyToBe ("mocks.0.invocations.0.args", /\[DEBUG].*postgresql.Database.*main.*this is a test/i)
+        .commit ()
+;
+
+
+test.method ("postgresql.Database", "debug")
     .should ("log the debug message to the console")
         .given ("This is a debug message.")
         .before (s =>
@@ -771,6 +783,12 @@ test.method ("postgresql.Database", "notify")
 
 test.method ("postgresql.Database", "acquire")
     .should ("create a new db with the connection from the pool")
+        .mock ("class.prototype", "connect")
+        .expectingPropertyToBe ("mocks.0.invocations.length", 1)
+        .commit ()
+
+    .should ("reuse the existing pool if pooling is enabled")
+        .up (s => s.createArgs = { pooling: true })
         .mock ("class.prototype", "connect")
         .expectingPropertyToBe ("mocks.0.invocations.length", 1)
         .commit ()
