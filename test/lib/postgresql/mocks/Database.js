@@ -169,10 +169,18 @@ module.exports = function (nit, postgresql, Self)
 
             if (!self.dataFile)
             {
-                self.dataFile = nit.path.join (Self.sourceFile.dirname, nit.path.parse (Self.sourceFile.basename).name + self.suffix + ".data.json");
+                self.updateSuffix (self.suffix);
             }
         })
 
+        .method ("updateSuffix", function (suffix)
+        {
+            let self = this;
+
+            self.dataFile = nit.path.join (Self.sourceFile.dirname, nit.path.parse (Self.sourceFile.basename).name + suffix + ".data.json");
+
+            return self;
+        })
         .method ("expect", function ()
         {
             this.expects.push (new Self.Expect (...arguments));

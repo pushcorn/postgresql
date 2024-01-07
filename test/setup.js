@@ -19,6 +19,12 @@ nit.test.Strategy
                 s.MockPgClient.init ();
 
                 s.db = new s.postgresql.Database;
+                s.DatabaseServiceProvider = nit.defineServiceProvider ("test.serviceproviders.Database")
+                    .provides ("postgresql.Database")
+                    .onCreate (() => s.db)
+                ;
+
+                s.dbProvider = new s.DatabaseServiceProvider;
 
                 nit.require ("postgresql.registries.Cached").clearCache ();
 
@@ -42,15 +48,20 @@ nit.test.Strategy
         const Database = nit.require ("postgresql.mocks.Database");
 
         let db;
+        let oldDb;
 
         return this
+            .init (s =>
+            {
+                oldDb = s.db;
+                db = db || new Database (...args);
+                s.db = db;
+            })
             .up (async (s) =>
             {
-                db = db || new Database (...args);
-
-                if (s.db)
+                if (oldDb)
                 {
-                    await db.rollback ();
+                    await oldDb.rollback ();
                 }
 
                 await db.rollback ();
@@ -59,7 +70,6 @@ nit.test.Strategy
 
                 db.registry.models = {};
 
-                s.db = db;
                 s.DatabaseServiceProvider = nit.defineServiceProvider ("test.serviceproviders.Database")
                     .provides ("postgresql.Database")
                     .onCreate (() => s.db)

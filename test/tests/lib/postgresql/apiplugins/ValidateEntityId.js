@@ -17,10 +17,12 @@ test.plugin ("postgresql.apiplugins.ValidateEntityId", "dispatch")
         .snapshot ()
 
     .should ("throw if no entry for the ID was found")
+        .init (s => s.db.updateSuffix (".failure"))
         .throws (404)
         .commit ()
 
     .should ("register the loaded the entity that matches the specified ID")
+        .init (s => s.db.updateSuffix (".success"))
         .mock ("postgresql.dbmodels.Job", "get", function ()
         {
             return nit.new ("postgresql.dbmodels.Job",
