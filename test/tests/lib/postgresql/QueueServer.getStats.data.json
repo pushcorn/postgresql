@@ -87,24 +87,6 @@
             }
         },
         {
-            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'queued'\nWHERE \"status\" = 'running'",
-            "result": {
-                "command": "UPDATE",
-                "rows": [],
-                "rowCount": 0,
-                "fields": []
-            }
-        },
-        {
-            "statement": "LISTEN \"postgresql_jobs\"",
-            "result": {
-                "command": "LISTEN",
-                "rows": [],
-                "rowCount": 0,
-                "fields": []
-            }
-        },
-        {
             "statement": "SELECT UUID_GENERATE_V4 ()",
             "result": {
                 "command": "SELECT",
@@ -129,6 +111,85 @@
                 "command": "INSERT",
                 "rows": [],
                 "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "schemaname": "public",
+                        "tablename": "postgresql_jobs",
+                        "tableowner": "joseph",
+                        "tablespace": null,
+                        "hasindexes": true,
+                        "hasrules": false,
+                        "hastriggers": false,
+                        "rowsecurity": false
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'queued'\nWHERE \"status\" = 'running'",
+            "result": {
+                "command": "UPDATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "LISTEN \"postgresql_jobs\"",
+            "result": {
+                "command": "LISTEN",
+                "rows": [],
+                "rowCount": 0,
                 "fields": []
             }
         },

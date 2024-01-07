@@ -73,26 +73,11 @@ test.object ("postgresql.QueueServer.Task.Context")
     .snapshot ()
     .should ("acquire a connection from the pool if pooling is enabled")
         .before (s => s.instance.task = {})
-        .before (s => s.instance.task.owner =
+        .before (s => s.instance.task.owner = nit.new ("postgresql.QueueServer",
         {
-            Job:
-            {
-                name: "postgresql.dbmodels.Job"
-            }
-            ,
-            db:
-            {
-                pooling: true,
-                acquire: function ()
-                {
-                    s.acquired = true;
-
-                    return nit.new ("postgresql.Database");
-                }
-            }
-        })
+            db: { pooling: true }
+        }))
         .after (s => s.instance.db)
-        .expectingPropertyToBe ("acquired", true)
         .expectingPropertyToBeOfType ("result.Job", "postgresql.dbmodels.Job", true)
         .expectingPropertyToBeOfType ("result.startTime", "integer")
         .expecting ("the duration is greater than zero", s => s.result.duration > 0)
@@ -100,16 +85,20 @@ test.object ("postgresql.QueueServer.Task.Context")
 
     .should ("use the existing db if pooling is not enabled")
         .before (s => s.instance.task = {})
-        .before (s => s.instance.task.owner =
+        .before (s => s.instance.task.owner = nit.new ("postgresql.QueueServer",
         {
-            db:
-            {
-                pooling: false,
-                existing: true
-            }
-        })
+            db: { pooling: false, existing: true }
+        }))
         .after (s => s.instance.db)
-        .expectingPropertyToBe ("instance.db.existing", true)
+        .expectingPropertyToBe ("instance.db.pooling", false)
+        .commit ()
+;
+
+
+test.method ("postgresql.QueueServer.Task.Context", "lookupServiceProvider")
+    .should ("return undefined if the type is not postgresql.Database")
+        .given ("postgresql.Model")
+        .returns ()
         .commit ()
 ;
 
@@ -414,6 +403,7 @@ test.method ("postgresql.QueueServer", "getStats")
     .useMockDatabase ({ suffix: ".getStats" })
     .should ("return the server stats")
         .up (s => s.createArgs = { db: s.db })
+        .useModels ("postgresql.dbmodels.Job")
         .mock ("db", "insert", function (table, values)
         {
             let { target, targetMethod } = this;
@@ -425,22 +415,19 @@ test.method ("postgresql.QueueServer", "getStats")
             return nit.invoke ([target, targetMethod], [table, values]);
         })
         .mock ("db", "disconnect")
-        .mock ("db", "acquire", function ()
-        {
-            return this.obj;
-        })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
-        .before (s => s.object.start ())
         .before (s =>
         {
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
         })
         .before (s => s.object.Job.create ("", "shell echo 'test'"))
+        .before (s => s.object.start ())
+        .after (s => s.object.databaseProvider.create = () => s.db)
         .after (s => s.db.pooling = "test")
         .after (s => s.db.pool = {})
         .after (s => nit.dpg (s.db.pool, "stats", () => nit.new ("postgresql.Pool.Stats", { id: "test" })))
         .after (async (s) => s.statsWithPool = await s.object.getStats ())
-        .after (s => s.object.stop ())
+        .after (s => s.object.stop (true))
         .returnsInstanceOf ("postgresql.QueueServer.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
         {
