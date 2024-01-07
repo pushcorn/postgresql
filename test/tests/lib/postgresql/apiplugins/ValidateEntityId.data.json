@@ -1,0 +1,268 @@
+{
+    "expects": [
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"postgresql_jobs\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"command\" TEXT NOT NULL,\n    \"priority\" INTEGER DEFAULT 100,\n    \"status\" TEXT DEFAULT 'queued',\n    \"error\" TEXT,\n    \"output\" TEXT,\n    \"duration\" INTEGER DEFAULT 0,\n    \"exitCode\" INTEGER DEFAULT 0,\n    \"retries\" INTEGER DEFAULT 0,\n    \"mtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    \"rtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_postgresql_jobs_status_priority_rtime\"\nON \"postgresql_jobs\" (\"status\", \"priority\", \"rtime\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"postgresql_jobs\"\nWHERE \"id\" = 'aa69a37c-811a-4537-b3da-88b7af70be1c'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "id",
+                        "dataTypeID": 2950,
+                        "format": "text"
+                    },
+                    {
+                        "name": "command",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "priority",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "status",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "error",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "output",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    },
+                    {
+                        "name": "duration",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "exitCode",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "retries",
+                        "dataTypeID": 23,
+                        "format": "text"
+                    },
+                    {
+                        "name": "mtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rtime",
+                        "dataTypeID": 1114,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"postgresql_jobs\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"command\" TEXT NOT NULL,\n    \"priority\" INTEGER DEFAULT 100,\n    \"status\" TEXT DEFAULT 'queued',\n    \"error\" TEXT,\n    \"output\" TEXT,\n    \"duration\" INTEGER DEFAULT 0,\n    \"exitCode\" INTEGER DEFAULT 0,\n    \"retries\" INTEGER DEFAULT 0,\n    \"mtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    \"rtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_postgresql_jobs_status_priority_rtime\"\nON \"postgresql_jobs\" (\"status\", \"priority\", \"rtime\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        }
+    ]
+}

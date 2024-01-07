@@ -3,6 +3,7 @@ nit.test.Strategy
     .memo ("postgresql", () => nit.require ("postgresql"))
     .memo ("Model", () => nit.require ("postgresql.Model"))
     .memo ("MockPgClient", () => nit.require ("postgresql.mocks.PgClient"))
+    .memo ("http", () => nit.require ("http"))
 
     .method ("useModels", function (...models)
     {
@@ -59,6 +60,12 @@ nit.test.Strategy
                 db.registry.models = {};
 
                 s.db = db;
+                s.DatabaseServiceProvider = nit.defineServiceProvider ("test.serviceproviders.Database")
+                    .provides ("postgresql.Database")
+                    .onCreate (() => s.db)
+                ;
+
+                s.dbProvider = new s.DatabaseServiceProvider;
             })
             .before (async ({ self, models, db }) =>
             {
