@@ -19,12 +19,7 @@ nit.test.Strategy
                 s.MockPgClient.init ();
 
                 s.db = new s.postgresql.Database;
-                s.DatabaseServiceProvider = nit.defineServiceProvider ("test.serviceproviders.Database")
-                    .provides ("postgresql.Database")
-                    .onCreate (() => s.db)
-                ;
-
-                s.dbProvider = new s.DatabaseServiceProvider;
+                s.dbProvider = nit.ServiceProvider.createProviderForObject (s.db);
 
                 nit.require ("postgresql.registries.Cached").clearCache ();
 
@@ -40,6 +35,7 @@ nit.test.Strategy
                 });
             })
             .deinit (s => s.MockPgClient.deinit ())
+            .deinit (s => s.db = null)
             .snapshot ()
         ;
     })
@@ -70,12 +66,7 @@ nit.test.Strategy
 
                 db.registry.models = {};
 
-                s.DatabaseServiceProvider = nit.defineServiceProvider ("test.serviceproviders.Database")
-                    .provides ("postgresql.Database")
-                    .onCreate (() => s.db)
-                ;
-
-                s.dbProvider = new s.DatabaseServiceProvider;
+                s.dbProvider = nit.ServiceProvider.createProviderForObject (s.db);
             })
             .before (async ({ self, models, db }) =>
             {
