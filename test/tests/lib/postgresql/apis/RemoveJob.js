@@ -26,8 +26,8 @@ test.api ("postgresql:remove-job", "DELETE /postgresql/queue/jobs/1234")
 
             return nit.invoke ([target, targetMethod], arguments);
         })
-        .before (s => s.context.serviceproviders.push (s.dbProvider))
-        .before (s => s.context.serviceproviders.push (nit.ServiceProvider.createProviderForClass ("postgresql.QueueServer")))
+        .before (s => s.context.serviceproviders.push (s.db))
+        .before (s => s.context.serviceproviders.push (nit.lookupClass ("postgresql.QueueServer")))
         .expectingPropertyToBeOfType ("result.response", "postgresql.responses.JobRemoved")
         .expectingPropertyToBe ("db.client.statements.2", nit.trim.text`
             DELETE FROM "postgresql_jobs"

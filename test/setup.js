@@ -19,7 +19,6 @@ nit.test.Strategy
                 s.MockPgClient.init ();
 
                 s.db = new s.postgresql.Database;
-                s.dbProvider = nit.ServiceProvider.createProviderForObject (s.db);
 
                 nit.require ("postgresql.registries.Cached").clearCache ();
 
@@ -55,14 +54,12 @@ nit.test.Strategy
 
                 s.db = db = db || new Database (...args);
             })
-            .up (async (s) =>
+            .up (async () =>
             {
                 await db.begin ();
                 await db.query ("SET CONSTRAINTS ALL DEFERRED");
 
                 db.registry.models = {};
-
-                s.dbProvider = nit.ServiceProvider.createProviderForObject (s.db);
             })
             .before (async ({ self, models, db }) =>
             {

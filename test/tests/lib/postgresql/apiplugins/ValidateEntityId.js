@@ -13,7 +13,7 @@ test.plugin ("postgresql.apiplugins.ValidateEntityId", "dispatch")
             })
         )
         .init (s => s.hostClassName = "")
-        .up (s => s.args = s.ctx = s.http.Context.new ({ data: { id: "aa69a37c-811a-4537-b3da-88b7af70be1c" }}, { serviceproviders: s.dbProvider }))
+        .up (s => s.args = s.ctx = s.http.Context.new ({ data: { id: "aa69a37c-811a-4537-b3da-88b7af70be1c" }}, { serviceproviders: s.db }))
         .snapshot ()
 
     .should ("throw if no entry for the ID was found")

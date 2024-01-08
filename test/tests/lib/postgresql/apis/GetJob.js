@@ -26,7 +26,7 @@ test.api ("postgresql:get-job", "GET /postgresql/queue/jobs/1234")
 
             return nit.invoke ([target, targetMethod], arguments);
         })
-        .before (s => s.context.serviceproviders.push (s.dbProvider))
+        .before (s => s.context.serviceproviders.push (s.db))
         .expectingPropertyToBeOfType ("result.response", "postgresql.responses.JobReturned")
         .expectingPropertyToBe ("result.response.job.id", "1234")
         .commit ()

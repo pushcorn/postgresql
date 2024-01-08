@@ -1,7 +1,7 @@
 test.api ("postgresql:list-jobs")
     .useMockPgClient ()
-        .before (s => s.context.serviceproviders.push (s.dbProvider))
-        .before (s => s.context.serviceproviders.push (nit.ServiceProvider.createProviderForClass ("postgresql.QueueServer")))
+        .before (s => s.context.serviceproviders.push (s.db))
+        .before (s => s.context.serviceproviders.push (nit.lookupClass ("postgresql.QueueServer")))
         .snapshot ()
 
     .should ("return a list of jobs")

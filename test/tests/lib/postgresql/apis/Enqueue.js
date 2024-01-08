@@ -21,12 +21,8 @@ test.api ("postgresql.apis.Enqueue")
         .commit ()
 
     .should ("enqueue a job")
-        .up (s => s.DbProvider = nit.defineServiceProvider ("DbProvider")
-            .provides ("postgresql.Database")
-            .onCreate (() => s.db)
-        )
         .given ({ data: { command: "shell echo test" } })
-        .before (s => s.context.serviceproviders.push (new s.DbProvider))
+        .before (s => s.context.serviceproviders.push (s.db))
         .before (s =>
         {
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
@@ -62,7 +58,7 @@ test.api ("postgresql.apis.Enqueue")
 
     .should ("be able to enqueue a delayed job")
         .given ({ data: { command: "shell echo test2", scheduleDelay: 60 } })
-        .before (s => s.context.serviceproviders.push (new s.DbProvider))
+        .before (s => s.context.serviceproviders.push (s.db))
         .before (s => s.now = Date.now ())
         .before (s =>
         {
@@ -101,7 +97,7 @@ test.api ("postgresql.apis.Enqueue")
 
     .should ("be able to enqueue a job that runs at the specified time")
         .given ({ data: { command: "shell echo test2", scheduleAt: new Date ("2024-01-08T01:20:00.000Z") } })
-        .before (s => s.context.serviceproviders.push (new s.DbProvider))
+        .before (s => s.context.serviceproviders.push (s.db))
         .before (s => s.now = Date.now ())
         .before (s =>
         {
