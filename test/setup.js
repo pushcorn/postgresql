@@ -44,23 +44,19 @@ nit.test.Strategy
         const Database = nit.require ("postgresql.mocks.Database");
 
         let db;
-        let oldDb;
 
         return this
-            .init (s =>
+            .init (async (s) =>
             {
-                oldDb = s.db;
-                db = db || new Database (...args);
-                s.db = db;
+                if (db)
+                {
+                    await db.rollback ();
+                }
+
+                s.db = db = db || new Database (...args);
             })
             .up (async (s) =>
             {
-                if (oldDb)
-                {
-                    await oldDb.rollback ();
-                }
-
-                await db.rollback ();
                 await db.begin ();
                 await db.query ("SET CONSTRAINTS ALL DEFERRED");
 

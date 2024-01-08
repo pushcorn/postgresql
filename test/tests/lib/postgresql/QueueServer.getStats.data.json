@@ -301,15 +301,6 @@
             }
         },
         {
-            "statement": "SET CONSTRAINTS ALL IMMEDIATE",
-            "result": {
-                "command": "SET",
-                "rows": [],
-                "rowCount": 0,
-                "fields": []
-            }
-        },
-        {
             "statement": "ROLLBACK",
             "result": {
                 "command": "ROLLBACK",

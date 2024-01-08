@@ -118,8 +118,8 @@ test.method ("postgresql.QueueServer.Task", "sleep")
 
 
 test.method ("postgresql.QueueServer", "dequeue")
-    .useMockDatabase ({ suffix: ".dequeue" })
     .should ("dequeue a job from the database")
+        .useMockDatabase ({ suffix: ".dequeue" })
         .up (s => s.createArgs = { db: s.db })
         .mock ("object", "updateEnqueueTimer")
         .mock ("object", "runJob")
@@ -154,6 +154,8 @@ test.method ("postgresql.QueueServer", "dequeue")
         .after (s => s.object.dequeue ())
         .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
+        .after (s => s.mocks[5].restore ())
+        .after (s => s.db.disconnect ())
         .expectingPropertyToBe ("mocks.0.invocations.length", 2)
         .expectingPropertyToBe ("mocks.1.invocations.length", 1)
         .expectingPropertyToBe ("mocks.2.invocations.length", 3)
@@ -163,8 +165,8 @@ test.method ("postgresql.QueueServer", "dequeue")
 
 
 test.method ("postgresql.QueueServer", "runJob")
-    .useMockDatabase ({ suffix: ".runJob.succeeded" })
     .should ("save the output of a successful run")
+        .useMockDatabase ({ suffix: ".runJob.succeeded" })
         .up (s => s.createArgs = { db: s.db })
         .mock (nit, "lookupCommand", function ()
         {
@@ -194,6 +196,7 @@ test.method ("postgresql.QueueServer", "runJob")
         })
         .mock ("object", "dequeue")
         .mock ("db", "disconnect")
+        .mock ("class.Task.prototype", "sleep")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
@@ -201,7 +204,10 @@ test.method ("postgresql.QueueServer", "runJob")
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
         })
         .before (s => s.object.Job.create ("", "shell echo 'test'"))
+        .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
+        .after (s => s.mocks[4].restore ())
+        .after (s => s.db.disconnect ())
         .expectingPropertyToContain ("mocks.2.invocations.1.args.1",
         {
             status: "succeeded",
@@ -213,8 +219,8 @@ test.method ("postgresql.QueueServer", "runJob")
 
 
 test.method ("postgresql.QueueServer", "runJob")
-    .useMockDatabase ({ suffix: ".runJob.dropped" })
     .should ("set job as dropped if max retries has been reached")
+        .useMockDatabase ({ suffix: ".runJob.dropped" })
         .up (s => s.createArgs = { db: s.db, maxRetries: 1 })
         .mock (nit, "lookupCommand", function ()
         {
@@ -245,6 +251,7 @@ test.method ("postgresql.QueueServer", "runJob")
         .mock ("object", "dequeue")
         .mock ("object.taskQueue", "error")
         .mock ("db", "disconnect")
+        .mock ("class.Task.prototype", "sleep")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
@@ -252,7 +259,10 @@ test.method ("postgresql.QueueServer", "runJob")
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
         })
         .before (s => s.object.Job.create ("", "shell echo 'test'", { retries: 2 }))
+        .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
+        .after (s => s.mocks[5].restore ())
+        .after (s => s.db.disconnect ())
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.status", "dropped")
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.error", /MY_CMD_ERR/)
         .expectingPropertyToBe ("mocks.3.invocations.length", 1)
@@ -262,8 +272,8 @@ test.method ("postgresql.QueueServer", "runJob")
 
 
 test.method ("postgresql.QueueServer", "runJob")
-    .useMockDatabase ({ suffix: ".runJob.failed" })
     .should ("set job as failed on error")
+        .useMockDatabase ({ suffix: ".runJob.failed" })
         .up (s => s.createArgs = { db: s.db })
         .mock (nit, "lookupCommand", function ()
         {
@@ -299,6 +309,7 @@ test.method ("postgresql.QueueServer", "runJob")
         .mock ("object", "updateEnqueueTimer")
         .mock ("object.taskQueue", "error")
         .mock ("db", "disconnect")
+        .mock ("class.Task.prototype", "sleep")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
@@ -306,7 +317,10 @@ test.method ("postgresql.QueueServer", "runJob")
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
         })
         .before (s => s.object.Job.create ("", "shell echo 'test'"))
+        .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
+        .after (s => s.mocks[5].restore ())
+        .after (s => s.db.disconnect ())
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.error", /MY_CMD_ERR/)
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.status", "failed")
         .expectingPropertyToBe ("mocks.2.invocations.1.args.1.retries", 1)
@@ -317,8 +331,8 @@ test.method ("postgresql.QueueServer", "runJob")
 
 
 test.method ("postgresql.QueueServer", "updateEnqueueTimer")
-    .useMockDatabase ({ suffix: ".updateEnqueueTimer" })
     .should ("set up the timer for the failed or scheduled job")
+        .useMockDatabase ({ suffix: ".updateEnqueueTimer" })
         .up (s => s.createArgs = { db: s.db })
         .up (s => s.class.UpdateEnqueueTimerTask.updated = false)
         .mock ("db", "insert", function (table, values)
@@ -364,6 +378,8 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
         .after (s => s.object.updateEnqueueTimer ())
         .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
+        .after (s => s.mocks[3].restore ())
+        .after (s => s.db.disconnect ())
         .expectingPropertyToBe ("mocks.1.invocations.length", 1)
         .expectingPropertyToBe ("mocks.2.invocations.1.args.0", 100)
         .commit ()
@@ -371,8 +387,8 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
 
 
 test.method ("postgresql.QueueServer", "enqueueScheduledTasks")
-    .useMockDatabase ({ suffix: ".enqueueScheduledTasks" })
     .should ("update failed or scheduled tasks to queued")
+        .useMockDatabase ({ suffix: ".enqueueScheduledTasks" })
         .up (s => s.createArgs = { db: s.db })
         .mock ("db", "insert", function (table, values)
         {
@@ -385,6 +401,7 @@ test.method ("postgresql.QueueServer", "enqueueScheduledTasks")
             return nit.invoke ([target, targetMethod], [table, values]);
         })
         .mock ("object", "dequeue")
+        .mock ("class.Task.prototype", "sleep")
         .mock ("db", "disconnect")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
@@ -393,15 +410,18 @@ test.method ("postgresql.QueueServer", "enqueueScheduledTasks")
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
         })
         .before (s => s.object.Job.create ("", "shell echo 'test'"))
+        .after (s => s.object.taskQueue.waitUntilIdle ())
         .after (s => s.object.stop ())
+        .after (s => s.mocks[3].restore ())
+        .after (s => s.db.disconnect ())
         .expectingPropertyToBe ("mocks.1.invocations.length", 1)
         .commit ()
 ;
 
 
 test.method ("postgresql.QueueServer", "getStats")
-    .useMockDatabase ({ suffix: ".getStats" })
     .should ("return the server stats")
+        .useMockDatabase ({ suffix: ".getStats" })
         .up (s => s.createArgs = { db: s.db })
         .useModels ("postgresql.dbmodels.Job")
         .mock ("db", "insert", function (table, values)
@@ -415,6 +435,7 @@ test.method ("postgresql.QueueServer", "getStats")
             return nit.invoke ([target, targetMethod], [table, values]);
         })
         .mock ("db", "disconnect")
+        .mock ("object", "updateEnqueueTimer")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s =>
         {
@@ -428,6 +449,8 @@ test.method ("postgresql.QueueServer", "getStats")
         .after (s => nit.dpg (s.db.pool, "stats", () => nit.new ("postgresql.Pool.Stats", { id: "test" })))
         .after (async (s) => s.statsWithPool = await s.object.getStats ())
         .after (s => s.object.stop (true))
+        .after (s => s.mocks[1].restore ())
+        .after (s => s.db.disconnect ())
         .returnsInstanceOf ("postgresql.QueueServer.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
         {
@@ -439,7 +462,7 @@ test.method ("postgresql.QueueServer", "getStats")
             dropped: 0,
             taskQueue:
             {
-                pending: 1,
+                pending: 0,
                 queued: 0
             }
             ,
@@ -455,7 +478,7 @@ test.method ("postgresql.QueueServer", "getStats")
             dropped: 0,
             taskQueue:
             {
-                pending: 1,
+                pending: 0,
                 queued: 0
             }
             ,
