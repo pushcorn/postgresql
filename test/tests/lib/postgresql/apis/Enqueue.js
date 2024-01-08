@@ -1,8 +1,10 @@
 test.api ("postgresql.apis.Enqueue")
     .useMockDatabase ()
-    .useModels ("postgresql.dbmodels.Job")
-    .snapshot ()
+        .useModels ("postgresql.dbmodels.Job")
+        .snapshot ()
+
     .should ("return ValidationFailed if the command was not given")
+        .mock ("db", "save")
         .returnsInstanceOf ("postgresql.apis.Enqueue.Context")
         .expectingMethodToReturnValue ("result.response.toPojo", null,
         {
@@ -30,6 +32,7 @@ test.api ("postgresql.apis.Enqueue")
             s.db.rewrite ("SELECT UUID_GENERATE_V4 ()", "SELECT 'aa69a37c-811a-4537-b3da-88b7af70be1c' AS uuid_generate_v4");
             s.db.rewrite ("COMMIT", "ROLLBACK");
         })
+        .mock ("db", "save")
         .mock ("db", "insert", function (table, values)
         {
             let { target, targetMethod } = this;
@@ -76,6 +79,7 @@ test.api ("postgresql.apis.Enqueue")
 
             return nit.invoke ([target, targetMethod], [table, values]);
         })
+        .mock ("db", "save")
         .returnsInstanceOf ("postgresql.apis.Enqueue.Context")
         .expecting ("the job is scheduled after the specified delay", s => s.rtime - s.now >= 60000)
         .expectingMethodToReturnValueContaining ("result.response.toPojo", null,
