@@ -1,12 +1,14 @@
-const MockPgClient = nit.require ("postgresql.mocks.PgClient").init ();
 const Migration = nit.require ("postgresql.Migration");
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
 
 test.command ("postgresql.commands.Migrate")
+    .useMockPgClient ()
+        .snapshot ()
+
     .should ("perform the migration")
         .application ()
-        .mock (MockPgClient.prototype, "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             return this.result =
             {
@@ -16,6 +18,7 @@ test.command ("postgresql.commands.Migrate")
         })
         .mock ("postgresql.Table.prototype", "exists", true)
         .mock ("object", "info")
+        .before (s => s.context.serviceproviders.push (s.db))
         .before (async function ()
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
@@ -39,7 +42,7 @@ test.command ("postgresql.commands.Migrate")
 
     .should ("cancel if confirmation is declined")
         .application ()
-        .mock (MockPgClient.prototype, "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             return this.result =
             {
@@ -49,6 +52,7 @@ test.command ("postgresql.commands.Migrate")
         })
         .mock (Migration.table, "exists", true)
         .mock ("object", "confirm", false)
+        .before (s => s.context.serviceproviders.push (s.db))
         .before (async function ()
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
@@ -57,7 +61,7 @@ test.command ("postgresql.commands.Migrate")
 
     .should ("show the info message if no migration is available")
         .application ()
-        .mock (MockPgClient.prototype, "query", function (statement)
+        .mock ("db.client", "query", function (statement)
         {
             return this.result =
             {
@@ -68,6 +72,7 @@ test.command ("postgresql.commands.Migrate")
         .mock (Migration.table, "exists", true)
         .mock ("object", "info")
         .mock ("context.input.dir", "read", () => [])
+        .before (s => s.context.serviceproviders.push (s.db))
         .before (async function ()
         {
             this.context.input.yes = true;

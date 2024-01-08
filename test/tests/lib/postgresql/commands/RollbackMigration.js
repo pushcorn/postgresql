@@ -1,15 +1,13 @@
 const CreateMigration = nit.require ("postgresql.commands.CreateMigration");
 
-nit.require ("postgresql.mocks.PgClient").init ();
-
 
 test.command ("postgresql.commands.RollbackMigration")
-    .mock ("postgresql.Table.prototype", "exists", true)
-    .mock ("object", "info")
-    .before (s => s.context.db = nit.new ("postgresql.Database"))
-    .before (s => (s.db = s.context.db).connect ())
-    .init (s => s.db = undefined)
-    .snapshot ()
+    .useMockPgClient ()
+        .mock ("postgresql.Table.prototype", "exists", true)
+        .mock ("object", "info")
+        .before (s => s.context.serviceproviders.push (s.db))
+        .init (s => s.db = undefined)
+        .snapshot ()
 
     .should ("show the info message if no migrations to rollback")
         .application ()
@@ -42,11 +40,12 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .before (async function ()
+        .before (s => s.context.serviceproviders.push (s.db))
+        .before (async (s) =>
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
 
-            let { dir } = this.context.input;
+            let { dir } = s.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
             let content = file.read ().replace (/\.onDown[^}]+\{[^}]+\}\)/s, nit.trim.text`
             .onDown (function (db)
@@ -57,7 +56,7 @@ test.command ("postgresql.commands.RollbackMigration")
 
             file.write (content);
 
-            this.context.input.yes = true;
+            s.context.input.yes = true;
         })
         .expectingPropertyToBe ("mocks.1.invocations.0.args.0", "info.perform_rollback")
         .expectingPropertyToBe ("context.db.downCalled", true)
@@ -80,12 +79,13 @@ test.command ("postgresql.commands.RollbackMigration")
 
             return this.result = { command, rows };
         })
-        .before (async function ()
+        .before (s => s.context.serviceproviders.push (s.db))
+        .before (async (s) =>
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
             await CreateMigration ().run ("create-groups-table", { yes: true });
 
-            let { dir } = this.context.input;
+            let { dir } = s.context.input;
 
             dir.read ().forEach (name =>
             {
@@ -100,8 +100,8 @@ test.command ("postgresql.commands.RollbackMigration")
                 file.write (content);
             });
 
-            this.context.input.yes = true;
-            this.context.input.count = 2;
+            s.context.input.yes = true;
+            s.context.input.count = 2;
         })
         .expectingPropertyToBe ("mocks.1.invocations.length", 2)
         .expectingPropertyToBe ("context.db.downCalled", 2)
@@ -109,6 +109,7 @@ test.command ("postgresql.commands.RollbackMigration")
 
     .should ("cancel the rollback if the confirmation is declined")
         .application ()
+        .before (s => s.context.serviceproviders.push (s.db))
         .mock ("db.client", "query", function (statement)
         {
             let command = statement.split (/\s+/)[0];
