@@ -108,6 +108,10 @@ nit.test.Strategy
     {
         return this.before (s => s[property || "context"].registerService (s.db));
     })
+    .method ("registerDbProvider", function (property)
+    {
+        return this.before (s => s[property || "context"].serviceproviders.push (s.db));
+    })
     .method ("expectingFieldEagerQueryToBe", function (dotPath, query)
     {
         const self = this;

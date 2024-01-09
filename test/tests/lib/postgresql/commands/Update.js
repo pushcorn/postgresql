@@ -1,6 +1,6 @@
-test.task ("postgresql.tasks.Update")
-    .useMockPgClient ()
+test.command ("postgresql:update")
     .should ("update the rows that match the specified criteria")
+        .useMockPgClient ()
         .given ("users",
         {
             values:
@@ -13,7 +13,7 @@ test.task ("postgresql.tasks.Update")
                 "": "age > 10"
             }
         })
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             UPDATE "users"
             SET "disabled" = 'true'

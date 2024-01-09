@@ -1,8 +1,8 @@
-test.task ("postgresql.tasks.Select")
-    .useMockPgClient ()
+test.command ("postgresql:select")
     .should ("find the rows that match the criteria")
+        .useMockPgClient ()
         .given ("users", { otherClauses: "WHERE age > 10" })
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "users"

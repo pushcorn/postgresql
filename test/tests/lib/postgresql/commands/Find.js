@@ -1,8 +1,8 @@
-test.task ("postgresql.tasks.Find")
-    .useMockPgClient ()
+test.command ("postgresql:find")
     .should ("find the row that matches the criteria")
+        .useMockPgClient ()
         .given ("users", { matches: { id: 3 } })
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "users"
