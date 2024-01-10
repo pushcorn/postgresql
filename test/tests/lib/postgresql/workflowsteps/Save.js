@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:save")
             ;
         })
         .given ("test.models.User", { data: { name: "John Doe" } })
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
             FROM "test_users"

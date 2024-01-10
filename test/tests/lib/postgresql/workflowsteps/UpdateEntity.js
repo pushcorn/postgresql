@@ -15,7 +15,7 @@ test.workflowStep ("postgresql:update-entity")
             }
         ])
         .before (s => s.db.client.result = { rows: [{ id: 10, name: "John Doe" }] })
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             SELECT *
             FROM "test_users"

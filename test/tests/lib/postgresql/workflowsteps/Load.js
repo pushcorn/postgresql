@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:load")
             ;
         })
         .given ("test.models.User", { matches: { name: "John Doe" } })
-        .registerDbService ()
+        .registerDbProvider ()
         .before (s => s.db.client.result = { rows: [{ id: 3, name: "John Doe" }] })
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *

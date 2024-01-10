@@ -1,5 +1,7 @@
 test.method ("postgresql.Model", "get", true)
     .useMockDatabase ()
+        .snapshot ()
+
     .should ("find the entity with the primary key values")
         .defineModel ("test.models.User", User =>
         {
@@ -15,6 +17,7 @@ test.method ("postgresql.Model", "get", true)
             await s.User.new (123, "John Doe").save ();
         })
         .given (123)
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.User")
         .expectingMethodToReturnValue ("result.toPojo", null, { id: 123, name: "John Doe" })
         .commit ()
@@ -53,6 +56,7 @@ test.method ("postgresql.Model", "get", true)
             }).save ();
         })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Capital")
         .expectingPropertyToBeOfType ("result.stats.0", "test.models.Capital.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
@@ -105,6 +109,7 @@ test.method ("postgresql.Model", "get", true)
             }).save ();
         })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Capital")
         .expectingPropertyToBeOfType ("result.stats.0", "test.models.Capital.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
@@ -153,6 +158,7 @@ test.method ("postgresql.Model", "get", true)
             }).save ();
         })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Capital")
         .expectingPropertyToBeOfType ("result.stats", "test.models.Capital.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
@@ -197,6 +203,7 @@ test.method ("postgresql.Model", "get", true)
             }).save ();
         })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Capital")
         .expectingPropertyToBeOfType ("result.stats", "test.models.Capital.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
@@ -245,6 +252,7 @@ test.method ("postgresql.Model", "get", true)
             }).save ();
         })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Capital")
         .expectingPropertyToBeOfType ("result.stats.0", "test.models.Capital.Stats")
         .expectingMethodToReturnValue ("result.toPojo", null,
@@ -275,6 +283,7 @@ test.method ("postgresql.Model", "get", true)
             await s.Book.new (10, "Learn JavaScript", { tags: ["a", "b"] }).save ();
         })
         .given (10)
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Book")
         .expectingPropertyToBeOfType ("result.tags.0", "string")
         .expectingMethodToReturnValue ("result.toPojo", null,
@@ -332,6 +341,7 @@ test.method ("postgresql.Model", "get", true)
             }).save (true);
         })
         .given (10, nit.require ("postgresql.QueryOptions").eager ())
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Product")
         .expectingPropertyToBeOfType ("result.owner", "test.models.User")
         .expectingPropertyToBeOfType ("result.tags.0", "test.models.Tag")
@@ -402,6 +412,7 @@ test.method ("postgresql.Model", "get", true)
             }).save (true);
         })
         .given (1, nit.require ("postgresql.QueryOptions").eager ())
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Activity")
         .expectingMethodToReturnValue ("result.toPojo", null,
         {
@@ -488,6 +499,7 @@ test.method ("postgresql.Model", "get", true)
             }).save (true);
         })
         .given (10, nit.require ("postgresql.QueryOptions").eager ())
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Product")
         .expectingMethodToReturnValue ("result.toPojo", null,
         {
@@ -542,6 +554,7 @@ test.method ("postgresql.Model", "get", true)
 
         })
         .given (1, nit.require ("postgresql.QueryOptions").eager ())
+        .mock ("db", "save")
         .returnsInstanceOf ("test.models.Person")
         .expectingPropertyToBe ("result.father.children.0.id.value", 1)
         .expectingMethodToReturnValue ("result.toPojo", null,

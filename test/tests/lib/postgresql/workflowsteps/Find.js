@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:find")
             ;
         })
         .given ("test.models.User", { matches: { name: "John Doe" } })
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "test_users"

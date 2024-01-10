@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:get")
             ;
         })
         .given ("test.models.User", 10)
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "test_users"

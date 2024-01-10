@@ -1,5 +1,7 @@
 test.workflowStep ("postgresql:transaction")
     .useMockPgClient ()
+        .snapshot ()
+
     .should ("wrap other steps in a transaction")
         .defineModel ("test.models.User", User =>
         {
@@ -18,7 +20,7 @@ test.workflowStep ("postgresql:transaction")
             }
         })
         .up (s => s.WorkflowStep = s.postgresql.WorkflowStep)
-        .registerDbService ()
+        .registerDbProvider ()
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             BEGIN
             --
@@ -45,7 +47,7 @@ test.workflowStep ("postgresql:transaction")
             }
         })
         .up (s => s.WorkflowStep = s.postgresql.WorkflowStep)
-        .registerDbService ()
+        .registerDbProvider ()
         .throws ("error.component_not_found")
         .expectingMethodToReturnValue ("db.client.statements.join", "\n--\n", nit.trim.text`
             BEGIN

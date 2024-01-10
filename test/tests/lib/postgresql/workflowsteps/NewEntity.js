@@ -9,7 +9,7 @@ test.workflowStep ("postgresql:new-entity")
             ;
         })
         .given ("test.models.User", { data: { id: 10, name: "John Doe" } })
-        .registerDbService ()
+        .registerDbProvider ()
         .returnsInstanceOf ("postgresql.workflowsteps.NewEntity.Context")
         .expectingPropertyToBeOfType ("result.output", "test.models.User")
         .expectingPropertyToBe ("result.output.id", 10)

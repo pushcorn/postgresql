@@ -22,19 +22,8 @@
             "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
-                "rows": [
-                    {
-                        "schemaname": "public",
-                        "tablename": "postgresql_jobs",
-                        "tableowner": "joseph",
-                        "tablespace": null,
-                        "hasindexes": true,
-                        "hasrules": false,
-                        "hastriggers": false,
-                        "rowsecurity": false
-                    }
-                ],
-                "rowCount": 1,
+                "rows": [],
+                "rowCount": 0,
                 "fields": [
                     {
                         "name": "schemaname",
@@ -77,6 +66,24 @@
                         "format": "text"
                     }
                 ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"postgresql_jobs\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"command\" TEXT NOT NULL,\n    \"priority\" INTEGER DEFAULT 100,\n    \"status\" TEXT DEFAULT 'queued',\n    \"error\" TEXT,\n    \"output\" TEXT,\n    \"duration\" INTEGER DEFAULT 0,\n    \"exitCode\" INTEGER DEFAULT 0,\n    \"retries\" INTEGER DEFAULT 0,\n    \"mtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    \"rtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_postgresql_jobs_status_priority_rtime\"\nON \"postgresql_jobs\" (\"status\", \"priority\", \"rtime\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
             }
         },
         {

@@ -237,6 +237,7 @@ test.method ("postgresql.QueueServer", "runJob")
             let date = new Date ("2023-12-18T01:15:21.609Z");
 
             values.rtime = values.mtime = date;
+            values.error = nit.trim (values.error).split ("\n").shift ();
 
             return nit.invoke ([target, targetMethod], [table, values]);
         })
@@ -245,6 +246,7 @@ test.method ("postgresql.QueueServer", "runJob")
             let { target, targetMethod } = this;
 
             values.duration = 200;
+            values.error = nit.trim (values.error).split ("\n").shift ();
 
             return nit.invoke ([target, targetMethod], [table, values]);
         })
@@ -290,6 +292,7 @@ test.method ("postgresql.QueueServer", "runJob")
             let date = new Date ("2023-12-18T01:15:21.609Z");
 
             values.rtime = values.mtime = date;
+            values.error = nit.trim (values.error).split ("\n").shift ();
 
             return nit.invoke ([target, targetMethod], [table, values]);
         })
@@ -298,6 +301,7 @@ test.method ("postgresql.QueueServer", "runJob")
             let { target, targetMethod } = this;
 
             values.duration = 200;
+            values.error = nit.trim (values.error).split ("\n").shift ();
 
             if (values.rtime)
             {
@@ -436,6 +440,18 @@ test.method ("postgresql.QueueServer", "getStats")
         })
         .mock ("db", "disconnect")
         .mock ("object", "updateEnqueueTimer")
+        .mock ("db.client", "query", async function ()
+        {
+            let { target, targetMethod } = this;
+            let result = await nit.invoke ([target, targetMethod], arguments);
+
+            if (nit.get (result, "rows.0.tablename") == "postgresql_jobs")
+            {
+                result.rows[0].tableowner = "";
+            }
+
+            return result;
+        })
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s =>
         {

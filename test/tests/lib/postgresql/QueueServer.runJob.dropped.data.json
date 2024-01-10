@@ -22,19 +22,8 @@
             "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
             "result": {
                 "command": "SELECT",
-                "rows": [
-                    {
-                        "schemaname": "public",
-                        "tablename": "postgresql_jobs",
-                        "tableowner": "joseph",
-                        "tablespace": null,
-                        "hasindexes": true,
-                        "hasrules": false,
-                        "hastriggers": false,
-                        "rowsecurity": false
-                    }
-                ],
-                "rowCount": 1,
+                "rows": [],
+                "rowCount": 0,
                 "fields": [
                     {
                         "name": "schemaname",
@@ -80,7 +69,25 @@
             }
         },
         {
-            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'queued', \"duration\" = '200'",
+            "statement": "CREATE TABLE IF NOT EXISTS \"postgresql_jobs\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"command\" TEXT NOT NULL,\n    \"priority\" INTEGER DEFAULT 100,\n    \"status\" TEXT DEFAULT 'queued',\n    \"error\" TEXT,\n    \"output\" TEXT,\n    \"duration\" INTEGER DEFAULT 0,\n    \"exitCode\" INTEGER DEFAULT 0,\n    \"retries\" INTEGER DEFAULT 0,\n    \"mtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    \"rtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_postgresql_jobs_status_priority_rtime\"\nON \"postgresql_jobs\" (\"status\", \"priority\", \"rtime\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'queued', \"duration\" = '200', \"error\" = ''",
             "result": {
                 "command": "UPDATE",
                 "rows": [],
@@ -284,7 +291,7 @@
             }
         },
         {
-            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'dropped', \"error\" = 'Error: MY_CMD_ERR\n    at test_commands_MyCmd.nit.Command.run (/Users/joseph/Private/projects/pc-nit/code/nit/packages/postgresql/test/tests/lib/postgresql/QueueServer.js:230:30)\n    at Function.apply [as invoke] (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3936:27)\n    at nit_Command_ChainedMethod_Chains_Context.invoke (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/plugins/LifecycleComponent.js:57:40)\n    at Function.apply (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3936:27)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3958:37)\n    at nit_CallChain_Call.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7722:39)\n    at Function.apply (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3936:27)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3958:37)\n    at Function.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7922:43)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3969:27)\n    at Function.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7922:43)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3969:27)\n    at Function.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7922:43)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3969:27)\n    at Function.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7922:43)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3969:27)\n    at Function.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7922:43)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3969:27)\n    at Function.then (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7922:43)\n    at Function.apply (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3936:27)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3958:37)\n    at Function.call [as return] (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:4008:32)\n    at nit_CallChain.invoke (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:7929:37)\n    at test_commands_MyCmd_RunChainedMethod_Chains.invoke (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/plugins/CallChains.js:73:52)\n    at Function.apply (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3936:27)\n    at Function.call (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:3958:37)\n    at Function.call [as return] (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:4008:32)\n    at test_commands_MyCmd_RunChainedMethod.invoke (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/plugins/ChainedMethod.js:17:53)\n    at test_commands_MyCmd.apply (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/plugins/ChainedMethod.js:66:50)\n    at test_commands_MyCmd.apply (/Users/joseph/Private/projects/pc-nit/code/nit/public/lib/nit.js:5498:52)\n    at postgresql_QueueServer_RunJobTask.run (/Users/joseph/Private/projects/pc-nit/code/nit/packages/postgresql/lib/postgresql/QueueServer.js:240:34)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)', \"duration\" = '200'",
+            "statement": "UPDATE \"postgresql_jobs\"\nSET \"status\" = 'dropped', \"error\" = 'Error: MY_CMD_ERR', \"duration\" = '200'",
             "result": {
                 "command": "UPDATE",
                 "rows": [],

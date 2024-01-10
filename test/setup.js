@@ -104,10 +104,6 @@ nit.test.Strategy
             })
         ;
     })
-    .method ("registerDbService", function (property)
-    {
-        return this.before (s => s[property || "context"].registerService (s.db));
-    })
     .method ("registerDbProvider", function (property)
     {
         return this.before (s => s[property || "context"].serviceproviders.push (s.db));
