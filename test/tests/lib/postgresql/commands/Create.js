@@ -1,6 +1,6 @@
-test.workflowStep ("postgresql:create")
-    .useMockPgClient ()
-    .should ("insert the model")
+test.command ("postgresql:create")
+    .should ("create an entity")
+        .useMockPgClient ()
         .defineModel ("test.models.User", User =>
         {
             User

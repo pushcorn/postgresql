@@ -1,11 +1,11 @@
+nit.require ("postgresql.mocks.PgPool");
+
+
 test.command ("postgresql:queue-server")
     .should ("start the queue server")
-        .useMockPgClient ()
         .up (s => s.args = { stopTimeout: 0 })
         .up (s => s.Logger = nit.require ("plugins.Logger"))
         .mock ("Logger.Logger.prototype", "writeLog")
-        .mock ("db", "disconnect")
-        .before (s => s.context.serviceproviders.push (s.db))
         .after (s => s.object.server.stop ())
         .expectingPropertyToBe ("mocks.0.invocations.length", 3)
         .commit ()
