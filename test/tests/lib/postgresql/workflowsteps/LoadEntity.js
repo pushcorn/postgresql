@@ -1,6 +1,6 @@
-test.workflowStep ("postgresql:find")
+test.workflowStep ("postgresql:load-entity")
     .useMockPgClient ()
-    .should ("find the model")
+    .should ("load the model")
         .defineModel ("test.models.User", User =>
         {
             User
@@ -10,6 +10,7 @@ test.workflowStep ("postgresql:find")
         })
         .given ("test.models.User", { matches: { name: "John Doe" } })
         .registerDbProvider ()
+        .before (s => s.db.client.result = { rows: [{ id: 3, name: "John Doe" }] })
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "test_users"

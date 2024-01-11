@@ -1,6 +1,6 @@
-test.workflowStep ("postgresql:save")
-    .useMockPgClient ()
+test.command ("postgresql:save")
     .should ("save the model")
+        .useMockPgClient ()
         .defineModel ("test.models.User", User =>
         {
             User
@@ -21,3 +21,4 @@ test.workflowStep ("postgresql:save")
         `)
         .commit ()
 ;
+

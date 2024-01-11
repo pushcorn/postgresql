@@ -1,6 +1,6 @@
-test.workflowStep ("postgresql:load")
-    .useMockPgClient ()
-    .should ("load the model")
+test.command ("postgresql:get")
+    .should ("get the model by key(s)")
+        .useMockPgClient ()
         .defineModel ("test.models.User", User =>
         {
             User
@@ -8,13 +8,12 @@ test.workflowStep ("postgresql:load")
                 .field ("[name]", "string")
             ;
         })
-        .given ("test.models.User", { matches: { name: "John Doe" } })
+        .given ("test.models.User", 10)
         .registerDbProvider ()
-        .before (s => s.db.client.result = { rows: [{ id: 3, name: "John Doe" }] })
         .expectingPropertyToBe ("db.client.statement", nit.trim.text`
             SELECT *
             FROM "test_users"
-            WHERE "name" = 'John Doe'
+            WHERE "id" = '10'
             LIMIT 1
         `)
         .commit ()

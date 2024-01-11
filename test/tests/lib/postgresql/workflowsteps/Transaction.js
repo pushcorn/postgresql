@@ -14,9 +14,13 @@ test.workflowStep ("postgresql:transaction")
         {
             steps:
             {
-                type: "postgresql:save",
-                model: "test.models.User",
-                data: { name: "John Doe" }
+                type: "command",
+                name: "postgresql:save",
+                options:
+                {
+                    model: "test.models.User",
+                    data: { name: "John Doe" }
+                }
             }
         })
         .up (s => s.WorkflowStep = s.postgresql.WorkflowStep)
@@ -41,9 +45,13 @@ test.workflowStep ("postgresql:transaction")
         {
             steps:
             {
-                type: "postgresql:save",
-                model: "test.models.User2",
-                data: { name: "John Doe" }
+                type: "command",
+                name: "postgresql:save",
+                options:
+                {
+                    model: "test.models.User2",
+                    data: { name: "John Doe" }
+                }
             }
         })
         .up (s => s.WorkflowStep = s.postgresql.WorkflowStep)

@@ -535,6 +535,13 @@ test.method ("postgresql.Database.Registry", "lookup")
         .expectingPropertyToBe ("result.name", "test.models.Country")
         .expectingPropertyToBeOfType ("result.db", "postgresql.Database")
         .commit ()
+
+    .should ("return undefined if optional is true and the model does not exist")
+        .mockClient ()
+        .up (s => s.createArgs = new s.postgresql.Database)
+        .given ("test.models.City", true)
+        .returns ()
+        .commit ()
 ;
 
 
