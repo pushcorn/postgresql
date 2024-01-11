@@ -1,6 +1,6 @@
 test.api ("postgresql.apis.Enqueue")
     .useMockDatabase ()
-        .useModels ("postgresql.dbmodels.Job")
+        .useModels ("postgresql.models.Job")
         .snapshot ()
 
     .should ("return ValidationFailed if the command was not given")

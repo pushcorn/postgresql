@@ -78,7 +78,7 @@ test.object ("postgresql.QueueServer.Task.Context")
             db: { pooling: true }
         }))
         .after (s => s.instance.db)
-        .expectingPropertyToBeOfType ("result.Job", "postgresql.dbmodels.Job", true)
+        .expectingPropertyToBeOfType ("result.Job", "postgresql.models.Job", true)
         .expectingPropertyToBeOfType ("result.startTime", "integer")
         .expecting ("the duration is greater than zero", s => s.result.duration > 0)
         .commit ()
@@ -427,7 +427,7 @@ test.method ("postgresql.QueueServer", "getStats")
     .should ("return the server stats")
         .useMockDatabase ({ suffix: ".getStats" })
         .up (s => s.createArgs = { db: s.db })
-        .useModels ("postgresql.dbmodels.Job")
+        .useModels ("postgresql.models.Job")
         .mock ("db", "insert", function (table, values)
         {
             let { target, targetMethod } = this;

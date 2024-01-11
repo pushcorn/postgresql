@@ -1,7 +1,7 @@
 test.plugin ("postgresql.apiplugins.ValidateEntityId", "dispatch")
     .useMockDatabase ()
-        .useModels ("postgresql.dbmodels.Job")
-        .init (s => s.pluginArgs = "postgresql.dbmodels.Job")
+        .useModels ("postgresql.models.Job")
+        .init (s => s.pluginArgs = "postgresql.models.Job")
         .init (s => s.addPlugin = "class")
         .init (s => s.pluginMethod = "apiplugin")
         .init (s => s.hostClass = nit.defineClass ("MyApi", "postgresql.Api")
@@ -23,15 +23,15 @@ test.plugin ("postgresql.apiplugins.ValidateEntityId", "dispatch")
 
     .should ("register the loaded the entity that matches the specified ID")
         .init (s => s.db.updateSuffix (".success"))
-        .mock ("postgresql.dbmodels.Job", "get", function ()
+        .mock ("postgresql.models.Job", "get", function ()
         {
-            return nit.new ("postgresql.dbmodels.Job",
+            return nit.new ("postgresql.models.Job",
             {
                 id: "aa69a37c-811a-4537-b3da-88b7af70be1c",
                 command: "shell echo test"
             });
         })
-        .after (s => s.registered = s.ctx.lookupObject ("postgresql.dbmodels.Job"))
+        .after (s => s.registered = s.ctx.lookupObject ("postgresql.models.Job"))
         .returnsInstanceOf ("MyApi.Context")
         .expectingPropertyToBe ("registered.id", "aa69a37c-811a-4537-b3da-88b7af70be1c")
         .commit ()
