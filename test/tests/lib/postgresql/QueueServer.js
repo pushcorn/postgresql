@@ -349,7 +349,7 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
 
             return nit.invoke ([target, targetMethod], [table, values]);
         })
-        .mock ("object", "enqueueScheduledTasks")
+        .mock ("object", "enqueueScheduledJobs")
         .mock ("class.Task.prototype", "sleep", async function ()
         {
             let { iteration, strategy: s } = this;
@@ -390,9 +390,9 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
 ;
 
 
-test.method ("postgresql.QueueServer", "enqueueScheduledTasks")
-    .should ("update failed or scheduled tasks to queued")
-        .useMockDatabase ({ suffix: ".enqueueScheduledTasks" })
+test.method ("postgresql.QueueServer", "enqueueScheduledJobs")
+    .should ("update failed or scheduled jobs to queued")
+        .useMockDatabase ({ suffix: ".enqueueScheduledJobs" })
         .up (s => s.createArgs = { db: s.db })
         .mock ("db", "insert", function (table, values)
         {
