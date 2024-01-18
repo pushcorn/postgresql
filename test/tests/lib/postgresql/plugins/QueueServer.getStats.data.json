@@ -1,0 +1,304 @@
+{
+    "expects": [
+        {
+            "statement": "BEGIN",
+            "result": {
+                "command": "BEGIN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SET CONSTRAINTS ALL DEFERRED",
+            "result": {
+                "command": "SET",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [],
+                "rowCount": 0,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "CREATE TABLE IF NOT EXISTS \"postgresql_jobs\"\n(\n    \"id\" UUID NOT NULL DEFAULT UUID_GENERATE_V4 (),\n    \"command\" TEXT NOT NULL,\n    \"priority\" INTEGER DEFAULT 100,\n    \"status\" TEXT DEFAULT 'queued',\n    \"error\" TEXT,\n    \"output\" TEXT,\n    \"duration\" INTEGER DEFAULT 0,\n    \"exitCode\" INTEGER DEFAULT 0,\n    \"retries\" INTEGER DEFAULT 0,\n    \"mtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    \"rtime\" TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW (),\n    PRIMARY KEY (\"id\")\n)",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "CREATE INDEX IF NOT EXISTS \"idx_postgresql_jobs_status_priority_rtime\"\nON \"postgresql_jobs\" (\"status\", \"priority\", \"rtime\")",
+            "result": {
+                "command": "CREATE",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT UUID_GENERATE_V4 ()",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "uuid_generate_v4": "aa69a37c-811a-4537-b3da-88b7af70be1c"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "uuid_generate_v4",
+                        "dataTypeID": 25,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "INSERT INTO \"postgresql_jobs\" (\"id\", \"command\", \"priority\", \"status\", \"error\", \"output\", \"duration\", \"exitCode\", \"retries\", \"mtime\", \"rtime\")\nVALUES ('aa69a37c-811a-4537-b3da-88b7af70be1c', 'shell echo ''test''', '100', 'scheduled', '', '', '0', '0', '0', '2023-12-18T01:15:21.609Z', '2023-12-18T01:15:21.609Z')",
+            "result": {
+                "command": "INSERT",
+                "rows": [],
+                "rowCount": 1,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT *\nFROM \"pg_tables\"\nWHERE \"tablename\" = 'postgresql_jobs'\nLIMIT 1",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "schemaname": "public",
+                        "tablename": "postgresql_jobs",
+                        "tableowner": "",
+                        "tablespace": null,
+                        "hasindexes": true,
+                        "hasrules": false,
+                        "hastriggers": false,
+                        "rowsecurity": false
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "schemaname",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablename",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tableowner",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "tablespace",
+                        "dataTypeID": 19,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasindexes",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hasrules",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "hastriggers",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    },
+                    {
+                        "name": "rowsecurity",
+                        "dataTypeID": 16,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "LISTEN \"postgresql_jobs\"",
+            "result": {
+                "command": "LISTEN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "SELECT\n  SUM (CASE WHEN status = 'running' THEN 1 ELSE 0 END) AS \"running\",\n  SUM (CASE WHEN status = 'queued' THEN 1 ELSE 0 END) AS \"queued\",\n  SUM (CASE WHEN status = 'scheduled' THEN 1 ELSE 0 END) AS \"scheduled\",\n  SUM (CASE WHEN status = 'succeeded' THEN 1 ELSE 0 END) AS \"succeeded\",\n  SUM (CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS \"failed\",\n  SUM (CASE WHEN status = 'dropped' THEN 1 ELSE 0 END) AS \"dropped\"\n\nFROM \"postgresql_jobs\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "running": "0",
+                        "queued": "0",
+                        "scheduled": "1",
+                        "succeeded": "0",
+                        "failed": "0",
+                        "dropped": "0"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "running",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "queued",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "scheduled",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "succeeded",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "failed",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "dropped",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "SELECT\n  SUM (CASE WHEN status = 'running' THEN 1 ELSE 0 END) AS \"running\",\n  SUM (CASE WHEN status = 'queued' THEN 1 ELSE 0 END) AS \"queued\",\n  SUM (CASE WHEN status = 'scheduled' THEN 1 ELSE 0 END) AS \"scheduled\",\n  SUM (CASE WHEN status = 'succeeded' THEN 1 ELSE 0 END) AS \"succeeded\",\n  SUM (CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS \"failed\",\n  SUM (CASE WHEN status = 'dropped' THEN 1 ELSE 0 END) AS \"dropped\"\n\nFROM \"postgresql_jobs\"",
+            "result": {
+                "command": "SELECT",
+                "rows": [
+                    {
+                        "running": "0",
+                        "queued": "0",
+                        "scheduled": "1",
+                        "succeeded": "0",
+                        "failed": "0",
+                        "dropped": "0"
+                    }
+                ],
+                "rowCount": 1,
+                "fields": [
+                    {
+                        "name": "running",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "queued",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "scheduled",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "succeeded",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "failed",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    },
+                    {
+                        "name": "dropped",
+                        "dataTypeID": 20,
+                        "format": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "statement": "UNLISTEN \"postgresql_jobs\"",
+            "result": {
+                "command": "UNLISTEN",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        },
+        {
+            "statement": "ROLLBACK",
+            "result": {
+                "command": "ROLLBACK",
+                "rows": [],
+                "rowCount": 0,
+                "fields": []
+            }
+        }
+    ]
+}
