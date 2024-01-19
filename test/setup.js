@@ -3,6 +3,7 @@ nit.test.Strategy
     .memo ("postgresql", () => nit.require ("postgresql"))
     .memo ("Model", () => nit.require ("postgresql.Model"))
     .memo ("MockPgClient", () => nit.require ("postgresql.mocks.PgClient"))
+    .memo ("TimestampUpdater", () => nit.require ("postgresql.triggers.TimestampUpdater"))
     .memo ("http", () => nit.require ("http"))
 
     .method ("useModels", function (...models)

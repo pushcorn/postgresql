@@ -24,6 +24,7 @@ test.method ("postgresql.QueueServer", "dequeue")
             return nit.invoke ([target, targetMethod], [table, values]);
         })
         .mock ("db", "disconnect")
+        .mock ("TimestampUpdater.prototype", "perform")
         .before (s => s.object.start ())
         .before (s =>
         {
@@ -78,6 +79,7 @@ test.method ("postgresql.QueueServer", "runJob")
         .mock ("object", "dequeue")
         .mock ("db", "disconnect")
         .mock ("class.Task.prototype", "sleep")
+        .mock ("TimestampUpdater.prototype", "perform")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
@@ -135,6 +137,7 @@ test.method ("postgresql.QueueServer", "runJob")
         .mock ("object.taskQueue", "error")
         .mock ("db", "disconnect")
         .mock ("class.Task.prototype", "sleep")
+        .mock ("TimestampUpdater.prototype", "perform")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
@@ -195,6 +198,7 @@ test.method ("postgresql.QueueServer", "runJob")
         .mock ("object.taskQueue", "error")
         .mock ("db", "disconnect")
         .mock ("class.Task.prototype", "sleep")
+        .mock ("TimestampUpdater.prototype", "perform")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
@@ -248,6 +252,7 @@ test.method ("postgresql.QueueServer", "updateEnqueueTimer")
             }
         })
         .mock ("db", "disconnect")
+        .mock ("TimestampUpdater.prototype", "perform")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>

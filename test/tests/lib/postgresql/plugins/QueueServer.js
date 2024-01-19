@@ -235,6 +235,7 @@ test.method ("test.QueueServer", "dequeue")
             return nit.invoke ([target, targetMethod], [table, values]);
         })
         .mock ("db", "disconnect")
+        .mock ("TimestampUpdater.prototype", "perform")
         .before (s => s.object.start ())
         .before (s =>
         {
@@ -288,6 +289,7 @@ test.method ("test.QueueServer", "runJob")
         })
         .mock ("db", "disconnect")
         .mock ("class.Task.prototype", "sleep")
+        .mock ("TimestampUpdater.prototype", "perform")
         .given ("aa69a37c-811a-4537-b3da-88b7af70be1c")
         .before (s => s.object.start ())
         .before (s =>
