@@ -804,17 +804,17 @@ test.method ("postgresql.Database", "acquire")
 
 test.method ("postgresql.Database", "listen")
     .should ("listen to the channel")
-        .mockClient ()
+        .mock ("object", "execute")
         .given ("test")
-        .expectingPropertyToBe ("object.client.statement", `LISTEN "test"`)
+        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", `LISTEN "test"`)
         .commit ()
 ;
 
 
 test.method ("postgresql.Database", "unlisten")
     .should ("unlisten to the channel")
-        .mockClient ()
+        .mock ("object", "execute")
         .given ("test")
-        .expectingPropertyToBe ("object.client.statement", `UNLISTEN "test"`)
+        .expectingPropertyToBe ("mocks.0.invocations.0.args.0", `UNLISTEN "test"`)
         .commit ()
 ;

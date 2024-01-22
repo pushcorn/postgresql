@@ -80,12 +80,18 @@ nit.test.Strategy
             })
             .down (async ({ db, error }) =>
             {
-                if (!error && db.client)
+                if (!error && db)
                 {
-                    db?.query ("SET CONSTRAINTS ALL IMMEDIATE");
+                    nit.invoke.silent (() => db.query ("SET CONSTRAINTS ALL IMMEDIATE"));
                 }
             })
-            .deinit (s => s.db.save ())
+            .deinit (async (s) =>
+            {
+                if (s.last)
+                {
+                    await s.db.save ();
+                }
+            })
             .snapshot ()
         ;
     })

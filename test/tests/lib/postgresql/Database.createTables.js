@@ -62,6 +62,7 @@ test.method ("postgresql.Database", "createTables")
                 }
             }
         })
+        .after (s => s.db.disconnect ())
         .expectingPropertyToBe ("createdTables", ["test_products", "test_tags", "test_productTagsTagProductsLinks"])
         .expectingPropertyToBe ("droppedTables", ["test_products", "test_tags", "test_productTagsTagProductsLinks"])
         .commit ()

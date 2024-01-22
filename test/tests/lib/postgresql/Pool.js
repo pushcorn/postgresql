@@ -25,6 +25,8 @@ test.method ("postgresql.Pool", "end")
     })
     .returnsInstanceOf ("postgresql.Pool")
     .expectingPropertyToBe ("object.pgPool._clients.length", 0)
+    .expectingPropertyToBe ("object.ended", true)
+    .expectingMethodToReturnValueOfType ("object.end", null, "postgresql.Pool")
     .commit ()
 ;
 
