@@ -44,6 +44,7 @@ test.command ("postgresql.commands.RollbackMigration")
         .before (async (s) =>
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
+            await s.context.validateInput ();
 
             let { dir } = s.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
@@ -84,6 +85,7 @@ test.command ("postgresql.commands.RollbackMigration")
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
             await CreateMigration ().run ("create-groups-table", { yes: true });
+            await s.context.validateInput ();
 
             let { dir } = s.context.input;
 

@@ -19,11 +19,12 @@ test.command ("postgresql.commands.Migrate")
         .mock ("postgresql.Table.prototype", "exists", true)
         .mock ("object", "info")
         .before (s => s.context.serviceproviders.push (s.db))
-        .before (async function ()
+        .before (async (s) =>
         {
             await CreateMigration ().run ("create-users-table", { yes: true });
+            await s.context.validateInput ();
 
-            let { dir } = this.context.input;
+            let { dir } = s.context.input;
             let file = nit.File (dir.join (dir.read ()[0]));
             let content = file.read ().replace (/\.onUp[^}]+\{[^}]+\}\)/s, nit.trim.text`
             .onUp (function (db)
@@ -33,7 +34,7 @@ test.command ("postgresql.commands.Migrate")
 
             file.write (content);
 
-            this.context.input.yes = true;
+            s.context.input.yes = true;
         })
         .expectingPropertyToBe ("context.db.upCalled", true)
         .expectingPropertyToBe ("mocks.2.invocations.0.args.0", "info.perform_migration")
@@ -71,11 +72,14 @@ test.command ("postgresql.commands.Migrate")
         })
         .mock (Migration.table, "exists", true)
         .mock ("object", "info")
-        .mock ("context.input.dir", "read", () => [])
+        .before (s => s.context.validateInput ())
         .before (s => s.context.serviceproviders.push (s.db))
-        .before (async function ()
+        .before (async (s) =>
         {
-            this.context.input.yes = true;
+            await s.context.validateInput ();
+
+            s.context.input.yes = true;
+            s.mock ("context.input.dir", "read", () => []);
         })
         .expectingPropertyToBe ("mocks.2.invocations.0.args.0", "info.no_migration_required")
         .commit ()
