@@ -9,7 +9,7 @@ test.plugin ("postgresql.apiplugins.Transactional", "dispatch")
             .onPostDispatch (() => s.called.push ("postDispatchMyPlugin"))
         )
         .init (s => s.hostClass = nit.defineClass ("MyApi", "postgresql.Api"))
-        .up (s => s.args = s.ctx = s.http.Context.new (null, { serviceproviders: s.db }))
+        .up (s => s.args = s.http.Context.new (null, { serviceproviders: s.db }))
         .up (s => s.hostClass.apiplugin ("postgresql:my-plugin"))
         .snapshot ()
 
